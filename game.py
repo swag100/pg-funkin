@@ -1,35 +1,37 @@
+import sys
 import pygame
-from spritesheet import Spritesheet
 
-pygame.init()
+class Game(object):
+    def __init__(self, screen, states, initial_state):
+        self.screen = screen
+        self.states = states
+        self.state_name = initial_state
+        self.state = states[initial_state]
 
-screen = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption('Rhythm')
+        self.clock = pygame.time.Clock()
+        self.max_fps = 60
 
-
-class Game:
-    def __init__(self):
-        #Make sprite group instead of just a list to contain game objects
-        self.press = 'down'
+        self.done = False
     def handle_events(self):
         for event in pygame.event.get():
+            self.state.handle_event(event)
             if event.type == pygame.QUIT:
-                exit()
-    def tick(self):
-        
-        keys = pygame.key.get_pressed()
-        if keys[K_RIGHT]: self.press = 'right'
-        if keys[K_LEFT]: self.press = 'left'
-        if keys[K_UP]: self.press = 'up'
-        if keys[K_DOWN]: self.press = 'down'
+                sys.exit()
+    def set_state(self):
+        next_state = self.state.next_state
+        persistent_data = self.state.persistent_data
 
-        notes_sheet = Spritesheet('assets/images/noteStrumline.png')
-        self.note = notes_sheet.load_animation('static'+self.press)[0]
-
-        pygame.time.Clock().tick(60)
+        #Set new state, pass persistent data
+        self.state = self.states[next_state]
+        self.state.start(persistent_data)
+    def tick(self, dt):
+        if self.state.done: set_state()
+        self.state.tick(dt)
     def draw(self):
-        screen.fill((255, 255, 255))
-        
-        screen.blit(self.note, self.note.get_rect())
-
-        pygame.display.flip()
+        self.state.draw(self.screen)
+    def run(self):
+        while not self.done:
+            self.handle_events()
+            self.tick(self.clock.tick(self.max_fps))
+            self.draw()
+            pygame.display.flip()

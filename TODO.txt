@@ -1,0 +1,5 @@
+Just use playstate for now, implement creating strums --
+
+Implement conductor class to keep music synced and always know about the music
+Implement reading from song charts
+Implement spawning notes 
