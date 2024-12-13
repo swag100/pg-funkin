@@ -14,9 +14,9 @@ class Game(object):
         self.done = False
     def handle_events(self):
         for event in pygame.event.get():
-            self.state.handle_event(event)
             if event.type == pygame.QUIT:
                 sys.exit()
+            self.state.handle_event(event)
     def set_state(self):
         next_state = self.state.next_state
         persistent_data = self.state.persistent_data
@@ -25,7 +25,7 @@ class Game(object):
         self.state = self.states[next_state]
         self.state.start(persistent_data)
     def tick(self, dt):
-        if self.state.done: set_state()
+        if self.state.done: self.set_state()
         self.state.tick(dt)
     def draw(self):
         self.state.draw(self.screen)

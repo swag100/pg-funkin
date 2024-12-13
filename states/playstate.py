@@ -12,19 +12,15 @@ class PlayState(BaseState):
 
         #Make sprite group instead of just a list to contain game objects
         self.sheet = Spritesheet('assets/images/noteStrumline.png')
-        self.press = 'Down'
-    def start(self, persistent_data): 
-        pass
-    def handle_event(self, event): 
-        pass
+        self.press = 'confirmHoldDown'
     def tick(self, dt):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]: self.press = 'Right'
-        if keys[pygame.K_LEFT]: self.press = 'Left'
-        if keys[pygame.K_UP]: self.press = 'Up'
-        if keys[pygame.K_DOWN]: self.press = 'Down'
+        if keys[pygame.K_RIGHT]: self.press = 'staticRight'
+        if keys[pygame.K_LEFT]: self.press = 'staticLeft'
+        if keys[pygame.K_UP]: self.press = 'staticUp'
+        if keys[pygame.K_DOWN]: self.press = 'staticDown'
 
-        self.note = self.sheet.load_animation('static'+self.press)[0]
+        self.note = self.sheet.load_animation(self.press)[0]
 
         pygame.time.Clock().tick(60)
     def draw(self, screen):
