@@ -9,16 +9,21 @@ class Spritesheet:
         with open(filename.replace('png', 'xml'), 'r') as file:  
             my_xml = file.read()
             self.subtextures = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
-
-            for texture in self.subtextures: print(texture)
         file.close()
 
-    def get_sprite(self, name): #Retrieve sprite from spritesheet
+    def load_animation(self, name): #Retrieve list of frames of animation from spritesheet
+        animation = []
         for texture in self.subtextures:
-            if name == texture['@name']:
-                x, y = int(texture['@x']), int(texture['@y'])
-                w, h = int(texture['@width']), int(texture['@height'])
-                sprite = pygame.Surface((w, h))
-                sprite.set_colorkey((0,0,0))
+            texture_name = texture['@name'][:-4]
+            if name == texture_name:
+                x, y, w, h = (
+                    int(texture['@x']), 
+                    int(texture['@y']), 
+                    int(texture['@width']), 
+                    int(texture['@height'])
+                )
+
+                sprite = pygame.Surface((w, h), pygame.SRCALPHA)
                 sprite.blit(self.sprite_sheet,(0, 0),(x, y, w, h))
-                return sprite
+                animation.append(sprite)
+        return animation
