@@ -31,7 +31,10 @@ class Game(object):
         self.state.draw(self.screen)
     def run(self):
         while not self.done:
+            dt = self.clock.tick(self.max_fps) / 1000
+
             self.handle_events()
-            self.tick(self.clock.tick(self.max_fps))
+            self.tick(dt)
             self.draw()
+
             pygame.display.flip()

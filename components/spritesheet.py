@@ -6,6 +6,7 @@ class Spritesheet:
         self.filename = filename
 
         self.sprite_sheet = pygame.image.load(filename).convert_alpha()
+
         with open(filename.replace('png', 'xml'), 'r') as file:  
             my_xml = file.read()
             self.subtextures = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
