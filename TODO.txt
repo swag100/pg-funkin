@@ -1,5 +1,6 @@
-Just use playstate for now, implement creating strums --
+Create strumline component, implement creating strums --
 
 Implement conductor class to keep music synced and always know about the music
 Implement reading from song charts
 Implement spawning notes 
+Implement user input; what do we do when user tries to play the note? If they miss it?

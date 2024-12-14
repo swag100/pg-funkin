@@ -16,6 +16,29 @@ class PlayState(BaseState):
         self.sheet = Spritesheet('assets/images/noteStrumline.png')
 
         self.conductor = Conductor(100, 0)
+
+
+        #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
+        voices = [
+            pygame.mixer.Sound('assets/songs/bopeebo/Voices-dad.ogg'),
+            pygame.mixer.Sound('assets/songs/bopeebo/Voices-bf.ogg')
+        ]
+        for i in range(len(voices)):
+            pygame.mixer.Channel(i).play(voices[i])
+
+        pygame.mixer.music.load('assets/songs/bopeebo/Inst.ogg') #Countdown handled out of this class? Maybe?
+        pygame.mixer.music.play()
+        #pygame.mixer.music.set_volume(0.5)
+        
+    def handle_event(self, event): 
+        if event == pygame.event.Event(pygame.USEREVENT + 1): #BEAT HIT
+            print("Beat hit",self.conductor.cur_beat)
+
+            if self.conductor.cur_beat > -1: 
+                if self.conductor.cur_beat % 4 == 0:
+                    pygame.mixer.Sound("assets/sounds/metronome1.ogg").play()
+                else:
+                    pygame.mixer.Sound("assets/sounds/metronome2.ogg").play()
     def tick(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]: press = 'staticRight'
