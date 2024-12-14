@@ -17,8 +17,8 @@ class Conductor(object):
 
         self.cur_beat = self.cur_beat_time / self.crochet
         if self.cur_beat % 4 == 0:
-            pass #play high beep
+            pygame.mixer.Sound("assets/sounds/metronome1.ogg").play()
         else:
-            pass #play low beep
+            pygame.mixer.Sound("assets/sounds/metronome2.ogg").play()
 
         print(int(round(self.cur_beat, 2)))
