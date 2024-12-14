@@ -25,14 +25,15 @@ class PlayState(BaseState):
         ]
         for i in range(len(voices)):
             pygame.mixer.Channel(i).play(voices[i])
+            voices[i].set_volume(1)
 
         pygame.mixer.music.load('assets/songs/bopeebo/Inst.ogg') #Countdown handled out of this class? Maybe?
         pygame.mixer.music.play()
-        #pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(1)
         
     def handle_event(self, event): 
         if event == pygame.event.Event(pygame.USEREVENT + 1): #BEAT HIT
-            print("Beat hit",self.conductor.cur_beat)
+            # print("Beat hit",self.conductor.cur_beat)
 
             if self.conductor.cur_beat > -1: 
                 if self.conductor.cur_beat % 4 == 0:
@@ -40,15 +41,17 @@ class PlayState(BaseState):
                 else:
                     pygame.mixer.Sound("assets/sounds/metronome2.ogg").play()
     def tick(self, dt):
+        
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]: press = 'staticRight'
-        elif keys[pygame.K_LEFT]: press = 'staticLeft'
-        elif keys[pygame.K_UP]: press = 'staticUp'
-        elif keys[pygame.K_DOWN]: press = 'staticDown'
-        else: press = 'confirmHoldDown'
+        if keys[pygame.K_RIGHT]: press = 'confirmRight'
+        elif keys[pygame.K_LEFT]: press = 'confirmLeft'
+        elif keys[pygame.K_UP]: press = 'confirmUp'
+        elif keys[pygame.K_DOWN]: press = 'confirmDown'
+        else: press = 'staticDown'
 
-        self.note = self.sheet.load_animation(press)[0]
+        self.note = self.sheet.animations[press][0]
         self.note = pygame.transform.smoothscale_by(self.note, 0.7)
+        
 
         self.conductor.tick(dt)
 
