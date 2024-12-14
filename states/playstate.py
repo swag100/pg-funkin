@@ -13,7 +13,7 @@ class PlayState(BaseState):
 
         #Make sprite group instead of just a list to contain game objects
         self.sheet = Spritesheet('assets/images/noteStrumline.png')
-        self.conductor = Conductor(100, 0)
+        self.conductor = Conductor(100, 1000)
     def tick(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]: press = 'staticRight'
