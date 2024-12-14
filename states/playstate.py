@@ -1,19 +1,21 @@
 import pygame
-from components.spritesheet import Spritesheet
+from components.spritesheet import Spritesheet #not something that'd be directly imported to playstate, only components will import this
 from components.conductor import Conductor
 from .basestate import BaseState
 
 class PlayState(BaseState):
     def __init__(self):
         super(PlayState, self).__init__()
-        self.persistent_data = {}
 
-        self.done = False
+        #Default class variables; no need to override
+        #self.persistent_data = {}
+        #self.done = False
         #self.next_state = None
 
         #Make sprite group instead of just a list to contain game objects
         self.sheet = Spritesheet('assets/images/noteStrumline.png')
-        self.conductor = Conductor(100, 1000)
+
+        self.conductor = Conductor(100, 0)
     def tick(self, dt):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]: press = 'staticRight'
