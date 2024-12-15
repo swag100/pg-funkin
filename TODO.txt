@@ -1,6 +1,5 @@
 Create strumline component, implement creating strums --
+Implement user input; what do we do when user tries to play the note? If they miss it? Look into using events for this.
 
-Implement song class; will handle countdown, playing song, creating constructor
 Implement reading from song charts
-Implement spawning notes 
-Implement user input; what do we do when user tries to play the note? If they miss it?
+Implement spawning notes; is this the conductors' job?
