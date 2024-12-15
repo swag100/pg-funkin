@@ -12,12 +12,12 @@ class PlayState(BaseState):
         #self.done = False
         #self.next_state = None
 
-        #Make sprite group instead of just a list to contain game objects
-        self.sheet = Spritesheet('assets/images/noteStrumline.png')
-
         self.conductor = Conductor(100, 0)
 
+        #Make sprite group instead of just a list to contain game objects
+        self.sheet = Spritesheet('assets/images/noteStrumline.png', 0.7)
 
+        #LOADING MUSIC... MAYBE MOVE SOMEWHERE ELSE
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
         voices = [
             pygame.mixer.Sound('assets/songs/bopeebo/Voices-dad.ogg'),
@@ -43,14 +43,13 @@ class PlayState(BaseState):
     def tick(self, dt):
         
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]: press = 'confirmRight'
-        elif keys[pygame.K_LEFT]: press = 'confirmLeft'
-        elif keys[pygame.K_UP]: press = 'confirmUp'
-        elif keys[pygame.K_DOWN]: press = 'confirmDown'
+        if keys[pygame.K_RIGHT]: press = 'confirmHoldRight'
+        elif keys[pygame.K_LEFT]: press = 'confirmHoldLeft'
+        elif keys[pygame.K_UP]: press = 'confirmHoldUp'
+        elif keys[pygame.K_DOWN]: press = 'confirmHoldDown'
         else: press = 'staticDown'
 
-        self.note = self.sheet.animations[press][0]
-        self.note = pygame.transform.smoothscale_by(self.note, 0.7)
+        self.note = self.sheet.animations[press][int(dt * 10000) % len(self.sheet.animations[press])]
         
 
         self.conductor.tick(dt)
