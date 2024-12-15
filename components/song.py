@@ -4,7 +4,7 @@ import os
 
 from components.conductor import Conductor
 
-#Class that handles song playback; this includes conductor, audio files, and song countdown
+#Class that handles song playback; this includes conductor, audio files
 
 class Song:
     def __init__(self, name, difficulty = 'normal'):
@@ -16,7 +16,10 @@ class Song:
         metadata_file.close()
 
         play_data = self.metadata['playData']
+
         self.characters = play_data['characters']
+        self.difficulty = play_data['difficulties'][0] #Default to first item
+        if self.difficulty in play_data['difficulties']: self.difficulty = difficulty
 
         self.time_changes = self.metadata['timeChanges']
         self.start_bpm = self.time_changes[0]['bpm']
