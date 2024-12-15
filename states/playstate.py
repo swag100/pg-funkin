@@ -2,7 +2,6 @@ import pygame
 import constants
 from .basestate import BaseState
 
-from components.spritesheet import Spritesheet #not something that'd be directly imported to playstate, only components will import this
 from components.song import Song
 
 class PlayState(BaseState):
@@ -10,6 +9,11 @@ class PlayState(BaseState):
         super(PlayState, self).__init__()
 
         self.song = Song('bopeebo')
+
+        #create strums
+        #
+
+        #song object
         self.song.start()
         
     def handle_event(self, event): 
