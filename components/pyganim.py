@@ -12,9 +12,6 @@
 # bug reports to Al at al@inventwithpython.com
 #
 
-
-# TODO: Feature idea: if the same image file is specified, re-use the Surface object. (Make this optional though.)
-
 import pygame, time
 
 # setting up constants
@@ -38,7 +35,7 @@ FRAMERATE = 1/24
 
 
 class Animation(object):
-    def __init__(self, frames, loop=False):
+    def __init__(self, frames):
         # Constructor function for the animation object. Starts off in the STOPPED state.
         #
         # @param frames
@@ -61,6 +58,7 @@ class Animation(object):
         # The values are in seconds.
         # So self._startTimes[-1] tells you the length of the entire animation.
         # e.g. if _durations is [1, 1, 2.5], then _startTimes will be [0, 1, 2, 4.5]
+        self._loop = False # If True, the animation will keep looping. If False, the animation stops after playing once.
         self._startTimes = None
 
         # if the sprites are transformed, the originals are kept in _images
@@ -68,7 +66,6 @@ class Animation(object):
         self._transformedImages = []
 
         self._state = STOPPED # The state is always either PLAYING, PAUSED, or STOPPED
-        self._loop = loop # If True, the animation will keep looping. If False, the animation stops after playing once.
         self._rate = 1.0 # 2.0 means play the animation twice as fast, 0.5 means twice as slow
         self._visibility = True # If False, then nothing is drawn when the blit() methods are called
 
@@ -238,13 +235,13 @@ class Animation(object):
         return not self.loop and self.elapsed >= self._startTimes[-1]
 
 
-    def play(self, startTime=None):
-        print(self)
+    def play(self, loop=False, startTime=None):
         # Start playing the animation.
 
         # play() is essentially a setter function for self._state
         # NOTE: Don't adjust the self.state property, only self._state
 
+        self._loop = loop # If True, the animation will keep looping. If False, the animation stops after playing once.
         if startTime is None:
             startTime = time.time()
 
@@ -667,141 +664,6 @@ class Animation(object):
         self.elapsed = self._startTimes[frameNum]
 
     currentFrameNum = property(_propGetCurrentFrameNum, _propSetCurrentFrameNum)
-
-
-
-class Conductor(object):
-    def __init__(self, *animations):
-        assert len(animations) > 0, 'at least one PygAnimation object is required'
-
-        self._animations = []
-        self.add(*animations)
-
-
-    def add(self, *animations):
-        if type(animations[0]) == dict:
-            for k in animations[0].keys():
-                self._animations.append(animations[0][k])
-        elif type(animations[0]) in (tuple, list):
-            for i in range(len(animations[0])):
-                self._animations.append(animations[0][i])
-        else:
-            for i in range(len(animations)):
-                self._animations.append(animations[i])
-
-    def _propGetAnimations(self):
-        return self._animations
-
-    def _propSetAnimations(self, val):
-        self._animations = val
-
-    animations = property(_propGetAnimations, _propSetAnimations)
-
-    def play(self, startTime=None):
-        if startTime is None:
-            startTime = time.time()
-
-        for animObj in self._animations:
-            animObj.play(startTime)
-
-    def pause(self, startTime=None):
-        if startTime is None:
-            startTime = time.time()
-
-        for animObj in self._animations:
-            animObj.pause(startTime)
-
-    def stop(self):
-        for animObj in self._animations:
-            animObj.stop()
-
-    def reverse(self):
-        for animObj in self._animations:
-            animObj.reverse()
-
-    def clearTransforms(self):
-        for animObj in self._animations:
-            animObj.clearTransforms()
-
-    def makeTransformsPermanent(self):
-        for animObj in self._animations:
-            animObj.makeTransformsPermanent()
-
-    def togglePause(self):
-        for animObj in self._animations:
-            animObj.togglePause()
-
-    def nextFrame(self, jump=1):
-        for animObj in self._animations:
-            animObj.nextFrame(jump)
-
-    def prevFrame(self, jump=1):
-        for animObj in self._animations:
-            animObj.prevFrame(jump)
-
-    def rewind(self, seconds=None):
-        for animObj in self._animations:
-            animObj.rewind(seconds)
-
-    def fastForward(self, seconds=None):
-        for animObj in self._animations:
-            animObj.fastForward(seconds)
-
-    def flip(self, xbool, ybool):
-        for animObj in self._animations:
-            animObj.flip(xbool, ybool)
-
-    def scale(self, width_height):
-        for animObj in self._animations:
-            animObj.scale(width_height)
-
-    def rotate(self, angle):
-        for animObj in self._animations:
-            animObj.rotate(angle)
-
-    def rotozoom(self, angle, scale):
-        for animObj in self._animations:
-            animObj.rotozoom(angle, scale)
-
-    def scale2x(self):
-        for animObj in self._animations:
-            animObj.scale2x()
-
-    def smoothscale(self, width_height):
-        for animObj in self._animations:
-            animObj.smoothscale(width_height)
-
-    def convert(self):
-        for animObj in self._animations:
-            animObj.convert()
-
-    def convert_alpha(self):
-        for animObj in self._animations:
-            animObj.convert_alpha()
-
-    def set_alpha(self, *args, **kwargs):
-        for animObj in self._animations:
-            animObj.set_alpha(*args, **kwargs)
-
-    def scroll(self, dx=0, dy=0):
-        for animObj in self._animations:
-            animObj.scroll(dx, dy)
-
-    def set_clip(self, *args, **kwargs):
-        for animObj in self._animations:
-            animObj.set_clip(*args, **kwargs)
-
-    def set_colorkey(self, *args, **kwargs):
-        for animObj in self._animations:
-            animObj.set_colorkey(*args, **kwargs)
-
-    def lock(self):
-        for animObj in self._animations:
-            animObj.lock()
-
-    def unlock(self):
-        for animObj in self._animations:
-            animObj.unlock()
 
 
 def getInBetweenValue(lowerBound, value, upperBound):

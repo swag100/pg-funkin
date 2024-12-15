@@ -15,16 +15,15 @@ class Spritesheet:
         file.close()
 
     def load_animations(self, subtextures, scale):
-        self.frame_data = {}
+        frame_data = {}
         animations = {}
-        animation_objects = {}
         for i in range(len(subtextures)):
             texture = subtextures[i]
             texture_name = str(texture['@name'][:-4])
             texture_index = int(texture['@name'][-4:])
 
-            if texture_name not in self.frame_data: 
-                self.frame_data[texture_name] = []
+            if texture_name not in frame_data: 
+                frame_data[texture_name] = []
                 animations[texture_name] = []
             
             data = {
@@ -32,27 +31,22 @@ class Spritesheet:
                 'y': int(texture['@y']),
                 'width': int(texture['@width']),
                 'height': int(texture['@height']),
-                'frameX': -int(texture['@frameX']) * scale, 
-                'frameY': -int(texture['@frameY']) * scale
+                'frameX': int(texture['@frameX']) * scale, 
+                'frameY': int(texture['@frameY']) * scale,
+                'frameWidth': int(texture['@frameWidth']), 
+                'frameHeight': int(texture['@frameHeight'])
             }
 
-            sprite = pygame.Surface((data['width'], data['height']), pygame.SRCALPHA)
-            sprite.blit(self.sprite_sheet,(0, 0),(data['x'], data['y'], data['width'], data['height']))
+            sprite = pygame.Surface((data['frameWidth'], data['frameHeight']), pygame.SRCALPHA)
+            sprite.blit(self.sprite_sheet,(-data['frameX'], -data['frameY']),(data['x'], data['y'], data['width'], data['height']))
             sprite = pygame.transform.smoothscale_by(sprite, scale)
 
-            self.frame_data[texture_name] = data
+            frame_data[texture_name] = data
             animations[texture_name].insert(texture_index, sprite)
 
-        #Clean this up too, please
+        #Finally, convert animations into a dict of Animation objects
+        animation_objects = {}
         for key, value in animations.items():
             animation_objects[key] = pyganim.Animation(value)
+        
         return animation_objects
-    def draw(self, screen, dest):
-        #THIS HAS THE WRONG POSITIONS i think; FIX NOW
-        for texture_name in self.animations.keys():
-            dest = (
-                dest[0] + self.frame_data[texture_name]['frameX'], 
-                dest[1] + self.frame_data[texture_name]['frameY']
-            )
-
-            self.animations[texture_name].blit(screen, dest)

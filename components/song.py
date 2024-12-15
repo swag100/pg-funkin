@@ -19,7 +19,8 @@ class Song:
 
         self.characters = play_data['characters']
         self.difficulty = play_data['difficulties'][0] #Default to first item
-        if self.difficulty in play_data['difficulties']: self.difficulty = difficulty
+        if self.difficulty in play_data['difficulties']: 
+            self.difficulty = difficulty
 
         self.time_changes = self.metadata['timeChanges']
         self.start_bpm = self.time_changes[0]['bpm']
@@ -28,6 +29,7 @@ class Song:
     def start(self):
         self.conductor = Conductor(self.bpm) #Before conductor, do countdown? Handle countdown in conductor?
 
+        #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
         voices = [
             pygame.mixer.Sound(self.song_path(self.characters['player'])),
             pygame.mixer.Sound(self.song_path(self.characters['opponent']))
