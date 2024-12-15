@@ -13,33 +13,35 @@ class Spritesheet(pygame.sprite.Sprite):
         with open(filename.replace('png', 'xml'), 'r') as file:  
             my_xml = file.read()
             subtextures = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
-            self.animations = self.load_animations(subtextures, scale)
+            self.load_animations(subtextures, scale)
         file.close()
-
-
     def load_animations(self, subtextures, scale):
-        animations_dict = {}
+        self.frame_data = {}
+        self.animations = {}
         for i in range(len(subtextures)):
             texture = subtextures[i]
             texture_name = str(texture['@name'][:-4])
-            texture_id = int(texture['@name'][-4:])
+            texture_index = int(texture['@name'][-4:])
 
-            if texture_name not in animations_dict: 
-                animations_dict[texture_name] = []
+            if texture_name not in self.frame_data: 
+                self.animations[texture_name] = []
+                self.frame_data[texture_name] = []
+            
+            data = {
+                'x': int(texture['@x']),
+                'y': int(texture['@y']),
+                'width': int(texture['@width']),
+                'height': int(texture['@height']),
+                'frameX': int(texture['@frameX']) * scale, 
+                'frameY': int(texture['@frameY']) * scale,
+                'frameWidth': int(texture['@frameWidth']), #Don't know what these even are for, adding to be safe
+                'frameHeight': int(texture['@frameHeight']),
+                'scale': scale
+            }
 
-            x, y, w, h = (
-                int(texture['@x']),
-                int(texture['@y']),
-                int(texture['@width']), 
-                int(texture['@height'])
-            )
-            #int(texture['@frameX'])
-            #int(texture['@frameY'])
+            sprite = pygame.Surface((data['width'], data['height']), pygame.SRCALPHA)
+            sprite.blit(self.sprite_sheet,(0, 0),(data['x'], data['y'], data['width'], data['height']))
+            sprite = pygame.transform.smoothscale_by(sprite, data['scale'])
 
-            sprite = pygame.Surface((w, h), pygame.SRCALPHA)
-            sprite.blit(self.sprite_sheet,(0, 0),(x, y, w, h))
-            sprite = pygame.transform.smoothscale_by(sprite, scale)
-
-            animations_dict[texture_name].insert(texture_id, sprite)
-        print(animations_dict)
-        return animations_dict
+            self.frame_data[texture_name].insert(texture_index, data)
+            self.animations[texture_name].insert(texture_index, sprite)

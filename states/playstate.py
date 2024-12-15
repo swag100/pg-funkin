@@ -50,10 +50,13 @@ class PlayState(BaseState):
         else: press = 'staticDown'
 
         self.note = self.sheet.animations[press][int(dt * 10000) % len(self.sheet.animations[press])]
+        self.note_data = self.sheet.frame_data[press][int(dt * 10000) % len(self.sheet.animations[press])]
         
 
         self.conductor.tick(dt)
 
     def draw(self, screen):
         screen.fill((255, 255, 255))
-        screen.blit(self.note, self.note.get_rect())
+
+        note_rect = self.note.get_rect().move(-self.note_data['frameX'],-self.note_data['frameY'])
+        screen.blit(self.note, note_rect)
