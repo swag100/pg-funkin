@@ -43,10 +43,12 @@ class Spritesheet:
             self.frame_data[texture_name] = data
             animations[texture_name].insert(texture_index, sprite)
 
+        #Clean this up too, please
         for key, value in animations.items():
             animation_objects[key] = pyganim.Animation(value)
         return animation_objects
     def draw(self, screen, dest):
+        #THIS HAS THE WRONG POSITIONS i think; FIX NOW
         for texture_name in self.animations.keys():
             dest = (
                 dest[0] + self.frame_data[texture_name]['frameX'], 
