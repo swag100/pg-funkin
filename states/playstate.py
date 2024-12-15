@@ -33,21 +33,24 @@ class PlayState(BaseState):
                     pygame.mixer.Sound("assets/sounds/metronome1.ogg").play()
                 else:
                     pygame.mixer.Sound("assets/sounds/metronome2.ogg").play()
+
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                self.sheet.animations['confirmRight'].play()
+            if event.key == pygame.K_UP:
+                self.sheet.animations['confirmUp'].play()
+            if event.key == pygame.K_DOWN:
+                self.sheet.animations['confirmDown'].play()
+            if event.key == pygame.K_LEFT:
+                self.sheet.animations['confirmLeft'].play()
+        #if event.type == pygame.KEYUP:
+        #    self.sheet.animations['staticDown'].play()
+
     def tick(self, dt):
         self.song.tick(dt)
-        
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]: press = 'confirmHoldRight'
-        elif keys[pygame.K_LEFT]: press = 'confirmHoldLeft'
-        elif keys[pygame.K_UP]: press = 'confirmHoldUp'
-        elif keys[pygame.K_DOWN]: press = 'confirmHoldDown'
-        else: press = 'staticDown'
-
-        self.note = self.sheet.animations[press][int(dt * 11000) % len(self.sheet.animations[press])]
-        self.note_data = self.sheet.frame_data[press][int(dt * 11000) % len(self.sheet.animations[press])]
 
     def draw(self, screen):
         screen.fill((255, 255, 255))
 
-        note_rect = self.note.get_rect().move(self.note_data['frameX'],self.note_data['frameY'])
-        screen.blit(self.note, note_rect)
+        self.sheet.draw(screen, (0, 0))
