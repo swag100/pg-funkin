@@ -1,6 +1,7 @@
 import pygame
 import json
 import os
+import settings
 
 from components.conductor import Conductor
 
@@ -36,11 +37,11 @@ class Song:
         ]
         for i in range(len(voices)):
             pygame.mixer.Channel(i).play(voices[i])
-            #voices[i].set_volume(1)
+            voices[i].set_volume(settings.volume)
 
         pygame.mixer.music.load('assets/songs/bopeebo/Inst.ogg') 
         pygame.mixer.music.play()
-        #pygame.mixer.music.set_volume(1)
+        pygame.mixer.music.set_volume(settings.volume)
     
     def song_path(self, singer):
         return os.path.join('assets', 'songs', self.song_name, f'Voices-{singer}.ogg')
