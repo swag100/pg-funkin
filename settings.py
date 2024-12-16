@@ -21,4 +21,4 @@ KEYBINDS = {
 BEAT_HIT = pygame.USEREVENT + 1
 
 ###variables
-volume = 0.1 #Will go from 0 to 1; increments or decrements by 0.1
+volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
