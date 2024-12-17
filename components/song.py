@@ -5,6 +5,8 @@ import settings
 from components.conductor import Conductor
 from components.chart_reader import ChartReader
 
+#Class containing any business to do with the song. Also health, score, accuracy
+
 class Song:
     def __init__(self, song_name, difficulty = 'normal'):
         self.song_name = song_name

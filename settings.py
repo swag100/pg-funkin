@@ -7,9 +7,19 @@ WINDOW_SIZE = (1280, 720)
 DIRECTIONS = ['left','down','up','right']
 SONG_OFFSET = 0
 
+SCROLL_SPEED_DIVISOR = 2.1
+
 #strum positions
 OPPONENT_STRUMLINE_OFFSET = (16, 24)
 PLAYER_STRUMLINE_OFFSET = (700 - 24, 24)
+
+#hit windows, milliseconds
+HIT_WINDOWS = {
+    'sick': 45,
+    'good': 90,
+    'bad': 135,
+    'shit': 160
+}
 
 #keybinds
 KEYBINDS = {
@@ -27,3 +37,4 @@ BEAT_HIT = 'beat hit'
 
 ###variables
 volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
+metronome = False #Play metronome
