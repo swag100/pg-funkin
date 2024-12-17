@@ -1,34 +1,22 @@
 import pygame
-import json
 import os
 import settings
 
 from components.conductor import Conductor
-
-#Class that handles song playback; this includes conductor, audio files
+from components.chart_reader import ChartReader
 
 class Song:
-    def __init__(self, name, difficulty = 'normal'):
-        self.song_name = name
+    def __init__(self, song_name, difficulty = 'normal'):
+        self.song_name = song_name
 
-        metadata_path = os.path.join('assets', 'data', name, f'{name}-metadata.json')
-        with open(metadata_path) as metadata_file:
-            self.metadata = json.loads(metadata_file.read())
-        metadata_file.close()
+        self.chart_reader = ChartReader(song_name, difficulty)
 
-        play_data = self.metadata['playData']
+        self.characters = self.chart_reader.metadata['playData']['characters']
+        self.bpm = self.chart_reader.bpm
 
-        self.characters = play_data['characters']
-        self.difficulty = play_data['difficulties'][0] #Default to first item
-        if self.difficulty in play_data['difficulties']: 
-            self.difficulty = difficulty
-
-        self.time_changes = self.metadata['timeChanges']
-        self.start_bpm = self.time_changes[0]['bpm']
-        self.bpm = self.start_bpm
+        self.conductor = Conductor(self, settings.SONG_OFFSET)
 
     def start(self):
-        self.conductor = Conductor(self.bpm) #Before conductor, do countdown? Handle countdown in conductor?
 
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
         voices = [
@@ -45,6 +33,3 @@ class Song:
     
     def song_path(self, singer):
         return os.path.join('assets', 'songs', self.song_name, f'Voices-{singer}.ogg')
-    
-    def tick(self, dt):
-        self.conductor.tick(dt)

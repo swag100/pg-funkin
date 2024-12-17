@@ -5,6 +5,11 @@ WINDOW_TITLE = 'Rhythm'
 WINDOW_SIZE = (1280, 720)
 
 DIRECTIONS = ['left','down','up','right']
+SONG_OFFSET = 0
+
+#strum positions
+OPPONENT_STRUMLINE_OFFSET = (16, 24)
+PLAYER_STRUMLINE_OFFSET = (700 - 24, 24)
 
 #keybinds
 KEYBINDS = {
@@ -18,7 +23,7 @@ KEYBINDS = {
 }
 
 #events
-BEAT_HIT = pygame.USEREVENT + 1
+BEAT_HIT = 'beat hit'
 
 ###variables
 volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
