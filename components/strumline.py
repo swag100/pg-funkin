@@ -31,6 +31,7 @@ class StrumNote(pygame.sprite.Sprite):
             'press': (20, 20)
         }
 
+        self.anim_time = 0 #How much time has this animation been playing
         self.animations = strum_spritesheet.animations
         self.animations['confirmHold' + self.direction.title()].reverse()
         self.animation = None
@@ -55,6 +56,8 @@ class StrumNote(pygame.sprite.Sprite):
 
     def play_animation(self, prefix, loop = False, start_time = None):
         if self.animation: self.animation.stop()
+
+        self.anim_time = 0 #How much time has this animation been playing
 
         self.anim_prefix = prefix
         self.animation = self.animations[prefix + self.direction.title()]
@@ -127,23 +130,17 @@ class Strumline(object):
     def get_rating(self, note):
         for rating, hit_window in settings.HIT_WINDOWS.items():
             if self.note_in_hit_window(note, hit_window):
-                pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
                 return rating
 
 
     def handle_event(self, event):
-        if self.bot_strum:
-            if event.type == pygame.USEREVENT:
-                if event.id == settings.BEAT_HIT:
-                    if self.strum_note.animation.isFinished():
-                        self.strum_note.play_animation('static')
-            return
-
         if self.state == PRESSED:
             self.state = HOLDING
         if self.state != HOLDING:
             self.state = None
-            
+
+        if self.bot_strum: return
+                
         if event.type == pygame.KEYDOWN:
             if event.key in settings.KEYBINDS[self.name]:
                 self.strum_note.play_animation('press')
@@ -152,10 +149,11 @@ class Strumline(object):
                     hit_window = list(settings.HIT_WINDOWS.items())[-1][1]
                     if self.note_in_hit_window(note, hit_window):
                         self.state = PRESSED
-                        self.notes.remove(note)
+                        
+                        rating = self.get_rating(note)
+                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
 
-                    if self.state == PRESSED:
-                        self.get_rating(note)
+                        self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
 
@@ -172,26 +170,38 @@ class Strumline(object):
                 if self.bot_strum or self.state == HOLDING:
                     sustain.eat(dt)
 
+                    self.strum_note.anim_time = 0 #for bot strum animation
+
                     if self.strum_note.animation.isFinished() and self.strum_note.anim_prefix != 'confirmHold':
-                        self.strum_note.play_animation('confirmHold', False) #Fix later; this should NOT during hold.
+                        self.strum_note.play_animation('confirmHold', False)
 
                     if sustain.note.time + (sustain.length / 1000) <= self.conductor.song_position:
                         self.sustains.remove(sustain)
-                    
-                if self.state == RELEASED and sustain.note in self.notes:
-                    self.sustains.remove(sustain)
-
+                        
+                        self.state = RELEASED
+                        self.strum_note.play_animation('press')
+                        if self.bot_strum: 
+                            self.strum_note.play_animation('static')
+                else:
+                    if self.state == RELEASED:
+                        self.sustains.remove(sustain)
 
         for note in self.notes: 
             note.tick(dt)
 
-            #Kill all notes that are missed
-            if note.y <= self.pos[1] - 1000: self.notes.remove(note)
-
             if self.bot_strum:
                 if note.time <= self.conductor.song_position: 
+                    self.state = PRESSED
                     self.notes.remove(note)
                     self.strum_note.play_animation('confirm')
+
+            #Kill all notes that are missed
+            if note.y <= self.pos[1] - 1000: self.notes.remove(note)
+        
+        self.strum_note.anim_time += dt
+        if self.bot_strum and self.strum_note.anim_time >= (self.conductor.crochet / 2):
+            self.state = RELEASED
+            self.strum_note.play_animation('static')
 
     def draw(self, screen):
         self.strum_note.draw(screen)

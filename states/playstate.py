@@ -27,6 +27,7 @@ class PlayState(BaseState):
         for strumline in self.strums: strumline.handle_event(event)
 
         if event.type == pygame.USEREVENT:
+            """
             if event.id == settings.BEAT_HIT: #BEAT HIT
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
                 high_beep.set_volume(settings.volume)
@@ -37,7 +38,8 @@ class PlayState(BaseState):
                         high_beep.play()
                     else:
                         low_beep.play()
-
+            """
+            
             if event.id in settings.HIT_WINDOWS:
                 rating = Popup(event.id, (500, 500))
                 #Create rating object, add rating to song.ratings list, award score

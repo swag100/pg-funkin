@@ -1,6 +1,5 @@
 import pygame
 import settings
-import math
 
 from components.spritesheet import Spritesheet
 

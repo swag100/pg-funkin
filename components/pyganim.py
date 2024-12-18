@@ -12,7 +12,7 @@
 # bug reports to Al at al@inventwithpython.com
 #
 
-import pygame, time, settings
+import pygame, time
 
 # setting up constants
 PLAYING = 'playing'
