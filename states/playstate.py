@@ -28,17 +28,15 @@ class PlayState(BaseState):
 
         if event.type == pygame.USEREVENT:
             if event.id == settings.BEAT_HIT: #BEAT HIT
-
-                if settings.metronome:
-                    high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
-                    high_beep.set_volume(settings.volume)
-                    low_beep = pygame.mixer.Sound("assets/sounds/metronome2.ogg")
-                    low_beep.set_volume(settings.volume)
-                    if self.song.conductor.cur_beat >= 0: 
-                        if self.song.conductor.cur_beat % 4 == 0:
-                            high_beep.play()
-                        else:
-                            low_beep.play()
+                high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
+                high_beep.set_volume(settings.volume)
+                low_beep = pygame.mixer.Sound("assets/sounds/metronome2.ogg")
+                low_beep.set_volume(settings.volume)
+                if self.song.conductor.cur_beat >= 0: 
+                    if self.song.conductor.cur_beat % 4 == 0:
+                        high_beep.play()
+                    else:
+                        low_beep.play()
 
             if event.id in settings.HIT_WINDOWS:
                 rating = Popup(event.id, (500, 500))

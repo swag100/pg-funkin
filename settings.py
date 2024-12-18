@@ -12,6 +12,7 @@ SCROLL_SPEED_DIVISOR = 2.1
 #strum positions
 OPPONENT_STRUMLINE_OFFSET = (16, 24)
 PLAYER_STRUMLINE_OFFSET = (700 - 24, 24)
+STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
 
 #hit windows, milliseconds
 HIT_WINDOWS = {
@@ -37,4 +38,3 @@ BEAT_HIT = 'beat hit'
 
 ###variables
 volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
-metronome = False #Play metronome
