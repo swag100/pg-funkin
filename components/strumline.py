@@ -4,12 +4,17 @@ import settings
 from components.spritesheet import Spritesheet
 from components.note import Note, Sustain
 
+#Constants for state detecton.
+PRESSED = 'pressed' #Will enter after a successful hit, no matter the rating
+HOLDING = 'holding' #Can only enter after being in pressed state for a frame
+RELEASED = 'released' #Entered for a frame during release
+
 #GRAPHIC of individual receptor; handles VISUAL REPRESENTATION OF RECEPTOR
 class StrumNote(pygame.sprite.Sprite):
     def __init__(self, strumline, id):
         pygame.sprite.Sprite.__init__(self)
 
-        spritesheet = Spritesheet('assets/images/noteStrumline.png', 0.7)
+        strum_spritesheet = Spritesheet('assets/images/noteStrumline.png', settings.STRUMLINE_SCALE_MULT)
 
         #self.strumline = strumline
         self.strumline = strumline
@@ -17,29 +22,32 @@ class StrumNote(pygame.sprite.Sprite):
         self.direction = settings.DIRECTIONS[id % 4]
 
         #Hardcoded for now... Maybe add a json for this later? :)
+        #Also, these are not scaleable. make them relative later? Multiply these by 1.3?
         self.anim_offsets = {
             'static': (0, 0),
             'confirm': (-6, -6),
             'confirmHold': (-6, -6),
-            'press': (18, 18)
+            'note': (18, 18),
+            'press': (20, 20)
         }
 
-        self.animations = spritesheet.animations
+        self.animations = strum_spritesheet.animations
+        self.animations['confirmHold' + self.direction.title()].reverse()
         self.animation = None
 
         self.play_animation('static')
-        self.update_position()
+        self.pos = self.position('static')
 
-    def update_position(self):
+    def position(self, prefix):
         #Hardcode right note offset.
         note_offset = (0, 0)
         if self.id % 4 == 3: note_offset = (4, -2)
 
         #Implement anim offset:
         anim_offset = (0, 0)
-        if self.anim_prefix in self.anim_offsets: anim_offset = self.anim_offsets[self.anim_prefix]
+        if prefix in self.anim_offsets: anim_offset = self.anim_offsets[prefix]
 
-        self.pos = (
+        return (
             self.strumline.pos[0] + anim_offset[0] + note_offset[0],
             self.strumline.pos[1] + anim_offset[1] + note_offset[1]
         )
@@ -53,25 +61,21 @@ class StrumNote(pygame.sprite.Sprite):
 
         self.animation.play(loop, start_time)
 
-    def handle_event(self, event):
-        #replace these with userevents; i.e. NOTE_HIT, NOTE_MISS, NOTE_MISS_RELEASE?
-        if event.type == pygame.KEYDOWN:
-            if event.key in settings.KEYBINDS[self.direction]:
-                self.play_animation('press')
-        if event.type == pygame.KEYUP:
-            if event.key in settings.KEYBINDS[self.direction]:
-                self.play_animation('static')
-
     def draw(self, screen):
-        self.update_position()
+        self.pos = self.position(self.anim_prefix)
 
         self.animation.blit(screen, self.pos)
 
-#This is the STRUMLINE which manages every note passed to each strum GRAPHIC.
+#This is the STRUMLINE which manages every note passed to each strum GRAPHIC; this handles INPUT
 class Strumline(object):
-    def __init__(self, id, chart_reader):
+    def __init__(self, id, song):
         self.id = id #0,1,2,3,4,5,6,7
-        self.chart_reader = chart_reader
+        self.conductor = song.conductor
+        self.chart_reader = song.chart_reader
+
+        self.name = settings.DIRECTIONS[self.id % 4]
+
+        self.state = None #Strumline state, either PRESSED, HOLDING, or RELEASED, or None.
 
         self.bot_strum = False
         if self.id > 3:
@@ -88,21 +92,44 @@ class Strumline(object):
 
         #Create strum note, load all notes for the strum from chart
         self.strum_note = StrumNote(self, id)
-        self.notes = self.load_notes()
 
-    def load_notes(self): #Loads all notes for specific strum.
+        self.notes = self.load_chart()[0]
+        self.sustains = self.load_chart()[1]
+
+    def load_chart(self): #Loads all notes for specific strum.
         notes = []
+        sustains = []
+
+        #generate regular notes
+        speed = self.chart_reader.speed
         for note_data in self.chart_reader.chart[self.id]:
             time = int(note_data['t'])
-            speed = self.chart_reader.speed
 
-            length = 0
-            if 'l' in note_data: length = int(note_data['l'])
-
-            note = Note(self, time + settings.SONG_OFFSET, speed, length)
+            note = Note(self, time + settings.SONG_OFFSET, speed)
             notes.append(note)
 
-        return notes
+            if 'l' in note_data:
+                length = int(note_data['l'])
+                
+                sustain = Sustain(note, length)
+                sustains.append(sustain)
+
+        return notes, sustains
+
+    def note_in_hit_window(self, note, hit_window):
+        hit_window_start_ms = self.conductor.song_position - (hit_window / 1000)
+        hit_window_end_ms = self.conductor.song_position + (hit_window / 1000)
+
+        value = hit_window_start_ms <= note.time <= hit_window_end_ms
+        
+        return value
+
+    def get_rating(self, note):
+        for rating, hit_window in settings.HIT_WINDOWS.items():
+            if self.note_in_hit_window(note, hit_window):
+                pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
+                return rating
+
 
     def handle_event(self, event):
         if self.bot_strum:
@@ -112,21 +139,62 @@ class Strumline(object):
                         self.strum_note.play_animation('static')
             return
 
-        #animation
-        self.strum_note.handle_event(event)
+        if self.state == PRESSED:
+            self.state = HOLDING
+        if self.state != HOLDING:
+            self.state = None
+            
+        if event.type == pygame.KEYDOWN:
+            if event.key in settings.KEYBINDS[self.name]:
+                self.strum_note.play_animation('press')
+
+                for note in self.notes:
+                    hit_window = list(settings.HIT_WINDOWS.items())[-1][1]
+                    if self.note_in_hit_window(note, hit_window):
+                        self.state = PRESSED
+                        self.notes.remove(note)
+
+                    if self.state == PRESSED:
+                        self.get_rating(note)
+
+                        self.strum_note.play_animation('confirm') #Override animation
+
+        if event.type == pygame.KEYUP:
+            if event.key in settings.KEYBINDS[self.name]:
+                self.state = RELEASED
+                self.strum_note.play_animation('static')
 
     def tick(self, dt):
+        for sustain in self.sustains: 
+            sustain.tick(dt)
+
+            if sustain.note.time <= self.conductor.song_position: 
+                if self.bot_strum or self.state == HOLDING:
+                    sustain.eat(dt)
+
+                    if self.strum_note.animation.isFinished() and self.strum_note.anim_prefix != 'confirmHold':
+                        self.strum_note.play_animation('confirmHold', False) #Fix later; this should NOT during hold.
+
+                    if sustain.note.time + (sustain.length / 1000) <= self.conductor.song_position:
+                        self.sustains.remove(sustain)
+                    
+                if self.state == RELEASED and sustain.note in self.notes:
+                    self.sustains.remove(sustain)
+
+
         for note in self.notes: 
             note.tick(dt)
 
             #Kill all notes that are missed
-            if note.y <= self.pos[1] - 200: self.notes.remove(note)
+            if note.y <= self.pos[1] - 1000: self.notes.remove(note)
 
             if self.bot_strum:
-                if note.y <= self.pos[1] + 24: 
+                if note.time <= self.conductor.song_position: 
                     self.notes.remove(note)
                     self.strum_note.play_animation('confirm')
 
     def draw(self, screen):
         self.strum_note.draw(screen)
+        
+        for sustain in self.sustains: sustain.draw(screen)
         for note in self.notes: note.draw(screen)

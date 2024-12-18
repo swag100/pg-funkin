@@ -7,7 +7,7 @@ class Conductor(object):
         self.bpm = song.chart_reader.bpm
         self.crochet = 60 / self.bpm #Duration of beat in seconds
 
-        self.offset = (offset + 1) / 1000 #Add default offset: turn into milliseconds
+        self.offset = offset / 1000 #Add default offset: turn into milliseconds
         self.song_position = -self.offset 
 
         self.cur_beat_time = 0

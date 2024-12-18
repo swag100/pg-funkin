@@ -4,6 +4,7 @@ from .basestate import BaseState
 
 from components.song import Song
 from components.strumline import Strumline
+from components.popup import Popup
 
 class PlayState(BaseState):
     def __init__(self):
@@ -12,10 +13,13 @@ class PlayState(BaseState):
         #chart reader object
         self.song = Song('bopeebo', 'hard')
 
+        #popup sprite group
+        self.popups = []
+
         #create strums
         self.strums = []
         for i in range(8):
-            self.strums.append(Strumline(i, self.song.chart_reader))
+            self.strums.append(Strumline(i, self.song))
 
         self.song.start()
         
@@ -24,9 +28,6 @@ class PlayState(BaseState):
 
         if event.type == pygame.USEREVENT:
             if event.id == settings.BEAT_HIT: #BEAT HIT
-
-                #metronome
-                #print("Beat hit",self.song.conductor.cur_beat)
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
                 high_beep.set_volume(settings.volume)
                 low_beep = pygame.mixer.Sound("assets/sounds/metronome2.ogg")
@@ -37,9 +38,15 @@ class PlayState(BaseState):
                     else:
                         low_beep.play()
 
+            if event.id in settings.HIT_WINDOWS:
+                rating = Popup(event.id, (500, 500))
+                #Create rating object, add rating to song.ratings list, award score
+                self.popups.append(rating)
+
     def tick(self, dt):
         self.song.conductor.tick(dt)
-        for strum in self.strums: strum.tick(dt)
+        for strumline in self.strums: strumline.tick(dt)
+        for popup in self.popups: popup.tick(dt)
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
@@ -47,4 +54,5 @@ class PlayState(BaseState):
         screen.fill((255, 255, 255))
 
         for strumline in self.strums: strumline.draw(screen)
+        for popup in self.popups: popup.draw(screen)
         #for note in self.song.chart_reader.chart: note.draw(screen)

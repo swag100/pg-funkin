@@ -1,3 +1,12 @@
+TODO: create note splashes, hold cover effects.
+Create combo popups, combo count.
+Song score, health bar, gameoverstate.
+COUNTDOWN.
+Then, maybe work on camGame?
+
+FIX: Make hold notes look prettier? Right now they're gross.
+
+------------------------------------------------------------------------------------------
 Create strumline component, implement creating strums --
 Implement user input; what do we do when user tries to play the note? If they miss it? Look into using events for this.
 
