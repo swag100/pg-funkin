@@ -73,6 +73,7 @@ class Sustain(object):
     
     def eat(self, dt): #Stupid name; this handles holding sustains down
         self.y += self.y_change * dt
+        self.length -= dt * 1000
 
         image_rect = self.image.get_rect()
         new_image = pygame.Surface((image_rect.w, image_rect.h), pygame.SRCALPHA)

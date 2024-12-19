@@ -102,8 +102,9 @@ class Strumline(object):
         self.notes = self.load_chart()[0]
         self.sustains = self.load_chart()[1]
 
+        #lists containing fx for drawing; seperated for convenience
+        self.hold_cover = None
         self.note_splashes = []
-        self.hold_covers = []
         self.release_splashes = []
 
     def load_chart(self): #Loads all notes for specific strum.
@@ -165,8 +166,12 @@ class Strumline(object):
                                 strumline.note_splashes.append(NoteSplash(self))
 
                             Thread(target = do_splash, args = (self,)).start()
-
-                        self.notes.remove(note)
+                        
+                        if rating in ['shit', 'bad']:
+                            #note.animation.getCurrentFrame().fill((255, 255, 255, 128), special_flags = pygame.BLEND_RGBA_MULT) 
+                            note.animation.getCurrentFrame().fill((128, 128, 128), special_flags = pygame.BLEND_RGB_ADD) 
+                        else:
+                            self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
 
@@ -185,13 +190,21 @@ class Strumline(object):
                 if self.bot_strum or self.state == HOLDING:
                     sustain.eat(dt)
 
+                    if not self.hold_cover:
+                        self.hold_cover = HoldCover(sustain)
+
                     if self.strum_note.animation.isFinished() and self.strum_note.anim_prefix != 'confirmHold':
                         self.strum_note.play_animation('confirmHold', False)
 
-                    if sustain.note.time + (sustain.length / 1000) <= self.conductor.song_position:
+                    if sustain.length <= 0:
                         self.sustains.remove(sustain)
                         
                         self.state = RELEASED
+
+                        self.hold_cover = None
+                        if not self.bot_strum:
+                            self.release_splashes.append(ReleaseSplash(self))
+
                         self.strum_note.play_animation('press')
                         if self.bot_strum: 
                             self.strum_note.play_animation('static')
@@ -200,6 +213,10 @@ class Strumline(object):
                 else:
                     if self.state == RELEASED:
                         self.sustains.remove(sustain)
+                        self.hold_cover = None
+
+                        if sustain.length <= (self.conductor.crochet * 1000) / 4:
+                            self.release_splashes.append(ReleaseSplash(self))
 
         for note in self.notes: 
             note.tick(dt)
@@ -218,15 +235,24 @@ class Strumline(object):
             self.state = RELEASED
             self.strum_note.play_animation('static')
 
+
+        #stupid
+        if self.hold_cover: self.hold_cover.tick(dt)
+
         for splash in self.note_splashes:
             if splash.animation.isFinished():
                 self.note_splashes.remove(splash)
-
+        
+        for splash in self.release_splashes:
+            if splash.animation.isFinished():
+                self.release_splashes.remove(splash)
+        
+                
     def draw(self, screen):
         self.strum_note.draw(screen)
         
         for sustain in self.sustains: sustain.draw(screen)
-        for hold_cover in self.hold_covers: hold_cover.draw(screen)
+        if self.hold_cover: self.hold_cover.draw(screen)
         for note in self.notes: note.draw(screen)
         for splash in self.release_splashes: splash.draw(screen)
         for splash in self.note_splashes: splash.draw(screen)

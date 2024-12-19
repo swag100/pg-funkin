@@ -45,12 +45,22 @@ class Spritesheet:
                 data['frameWidth'] = int(texture['@frameWidth'])
                 data['frameHeight'] = int(texture['@frameHeight'])
 
-            sprite = pygame.Surface((data['frameWidth'], data['frameHeight']), pygame.SRCALPHA)
-            sprite.blit(self.sprite_sheet,(-data['frameX'], -data['frameY']),(data['x'], data['y'], data['width'], data['height']))
-            sprite = pygame.transform.smoothscale_by(sprite, self.scale)
+            sprite = pygame.Surface((data['width'], data['height']), pygame.SRCALPHA)
+            sprite.blit(self.sprite_sheet,(0, 0),(data['x'], data['y'], data['width'], data['height']))
+
+            sprite_cut_frame = (0, 0, data['width'], data['height'])
+
+            if '@rotated' in texture: #How many degrees? probably 90.
+                sprite = pygame.transform.rotate(sprite, 90)
+                sprite_cut_frame = (0, 0, data['height'], data['width']) #So sprites don't look cut off
+
+            final_sprite = pygame.Surface((data['frameWidth'], data['frameHeight']), pygame.SRCALPHA)
+            final_sprite.blit(sprite,(-data['frameX'], -data['frameY']), sprite_cut_frame)
+
+            final_sprite = pygame.transform.smoothscale_by(final_sprite, self.scale)
 
             frame_data.insert(i, data)
-            anim_frames.insert(i, sprite)
+            anim_frames.insert(i, final_sprite)
         
         return anim_frames
     
