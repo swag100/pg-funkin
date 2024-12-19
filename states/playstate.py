@@ -1,7 +1,6 @@
 import pygame
 import settings
 import random
-import os
 from .basestate import BaseState
 
 from components.song import Song
@@ -13,7 +12,12 @@ class PlayState(BaseState):
         super(PlayState, self).__init__()
 
         #chart reader object
-        self.song = Song('bopeebo', 'hard')
+        self.song = Song('fresh', 'hard')
+
+        #game variables
+        self.health = 0
+        self.combo = 0
+        self.points = 0
 
         #popup sprite group
         self.popups = []
@@ -30,16 +34,25 @@ class PlayState(BaseState):
 
         if event.type == pygame.USEREVENT:
             if event.id in settings.HIT_WINDOWS.keys():
-                rating = Popup(event.id, (500, 500))
+                self.points += 10
+                self.combo += 1 #Increase combo no matter the rating?
 
                 #unmute player voice if it was
                 if self.song.voices[0].get_volume() <= 0:
                     self.song.voices[0].set_volume(settings.volume)
 
                 #Create rating object, add rating to song.ratings list, award score
-                self.popups.append(rating)
+                self.popups.append(Popup(event.id, settings.ratings_position))
+
+                if self.combo >= 10:
+                    combo_string = f'{self.combo:03}'
+                    for i in range(len(combo_string)):
+                        self.popups.append(Popup(f'num{combo_string[i]}', settings.combo_position, 0.5, i))
+
 
             if event.id == 'miss':
+                self.combo = 0 # L
+
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
                 miss_noise.set_volume(settings.volume * 0.4)
                 miss_noise.play()

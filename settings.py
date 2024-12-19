@@ -24,8 +24,17 @@ HIT_WINDOWS = {
     'shit': 160
 }
 
+#events
+BEAT_HIT = 'beat hit'
+
+###user changing variables
+volume = 0.5 #Will go from 0 to 1; increments or decrements by 0.1
+
+ratings_position = [500, 500]
+combo_position = [650, 500]
+
 #keybinds
-KEYBINDS = {
+keybinds = {
     'left': [pygame.K_a, pygame.K_LEFT],
     'down': [pygame.K_s, pygame.K_DOWN],
     'up': [pygame.K_w, pygame.K_UP],
@@ -34,9 +43,3 @@ KEYBINDS = {
     'back': [pygame.K_ESCAPE], 
     'forward': [pygame.K_RETURN]
 }
-
-#events
-BEAT_HIT = 'beat hit'
-
-###variables
-volume = 1 #Will go from 0 to 1; increments or decrements by 0.1

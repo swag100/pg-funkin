@@ -150,7 +150,7 @@ class Strumline(object):
         if self.bot_strum: return
                 
         if event.type == pygame.KEYDOWN:
-            if event.key in settings.KEYBINDS[self.name]:
+            if event.key in settings.keybinds[self.name]:
                 self.strum_note.play_animation('press')
 
                 for note in self.notes:
@@ -183,9 +183,13 @@ class Strumline(object):
                         self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
+                
+                #If there was no press detected, it's a miss
+                if self.state != PRESSED:
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
-            if event.key in settings.KEYBINDS[self.name]:
+            if event.key in settings.keybinds[self.name]:
                 if self.state != None:
                     self.state = RELEASED
 
@@ -250,7 +254,7 @@ class Strumline(object):
             self.strum_note.play_animation('static')
 
 
-        #stupid
+        #for hold note effects(Stupid)
         if self.hold_cover: self.hold_cover.tick(dt)
 
         for splash in self.note_splashes:
