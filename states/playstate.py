@@ -1,5 +1,7 @@
 import pygame
 import settings
+import random
+import os
 from .basestate import BaseState
 
 from components.song import Song
@@ -31,7 +33,13 @@ class PlayState(BaseState):
                 rating = Popup(event.id, (500, 500))
                 #Create rating object, add rating to song.ratings list, award score
                 self.popups.append(rating)
-                
+
+            if event.id == 'miss':
+                miss_noise_path = os.path.join('assets', 'sounds', 'gameplay', f'missnote{random.randint(1, 2)}.ogg')
+                miss_noise = pygame.mixer.Sound(miss_noise_path)
+                miss_noise.set_volume(settings.volume * 0.5)
+                miss_noise.play()
+
             """
             if event.id == settings.BEAT_HIT: #BEAT HIT
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
@@ -47,6 +55,7 @@ class PlayState(BaseState):
 
     def tick(self, dt):
         self.song.conductor.tick(dt)
+
         for strumline in self.strums: strumline.tick(dt)
         for popup in self.popups: popup.tick(dt)
 
@@ -57,4 +66,5 @@ class PlayState(BaseState):
 
         for strumline in self.strums: strumline.draw(screen)
         for popup in self.popups: popup.draw(screen)
+        
         #for note in self.song.chart_reader.chart: note.draw(screen)

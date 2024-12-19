@@ -8,7 +8,7 @@ class NoteSplash:
         self.strumline = strumline
         self.direction = self.strumline.id % 4
 
-        rand_anim = randint(0, 1) + 1
+        rand_anim = randint(1, 2)
         peak = note_colors.copy()
         if rand_anim == 1: peak[1] = ' blue'
 

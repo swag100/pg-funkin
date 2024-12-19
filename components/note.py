@@ -9,6 +9,8 @@ class Note(object):
         self.time = time / 1000 #Time in the song that the note should reach the strums; read from json.
         self.speed = 1 * speed #Scroll speed
 
+        self.can_be_hit = True
+
         self.name = settings.DIRECTIONS[strumline.id % 4]
 
         self.x = self.strumline.pos[0]

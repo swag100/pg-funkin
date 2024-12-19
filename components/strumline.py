@@ -155,7 +155,7 @@ class Strumline(object):
 
                 for note in self.notes:
                     hit_window = list(settings.HIT_WINDOWS.items())[-1][1]
-                    if self.note_in_hit_window(note, hit_window):
+                    if self.note_in_hit_window(note, hit_window) and note.can_be_hit:
                         self.state = PRESSED
                         
                         rating = self.get_rating(note)
@@ -167,11 +167,17 @@ class Strumline(object):
 
                             Thread(target = do_splash, args = (self,)).start()
                         
+                        """
+                        #bad note
                         if rating in ['shit', 'bad']:
                             #note.animation.getCurrentFrame().fill((255, 255, 255, 128), special_flags = pygame.BLEND_RGBA_MULT) 
                             note.animation.getCurrentFrame().fill((128, 128, 128), special_flags = pygame.BLEND_RGB_ADD) 
+                            note.can_be_hit = False
                         else:
                             self.notes.remove(note)
+                        """
+                        
+                        self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
 
@@ -186,7 +192,7 @@ class Strumline(object):
         for sustain in self.sustains: 
             sustain.tick(dt)
 
-            if sustain.note.time <= self.conductor.song_position: 
+            if sustain.note.time <= self.conductor.song_position and sustain.note.can_be_hit: 
                 if self.bot_strum or self.state == HOLDING:
                     sustain.eat(dt)
 
@@ -228,7 +234,9 @@ class Strumline(object):
                     self.strum_note.play_animation('confirm')
 
             #Kill all notes that are missed
-            if note.y <= self.pos[1] - 1000: self.notes.remove(note)
+            if note.time + (self.conductor.crochet / 2) <= self.conductor.song_position: 
+                pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss')) #Post rating event
+                self.notes.remove(note)
         
         self.strum_note.anim_time += dt
         if self.bot_strum and self.strum_note.anim_time >= (self.conductor.crochet / 2):
