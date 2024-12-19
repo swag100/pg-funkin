@@ -23,14 +23,14 @@ class Song:
 
         song_prefix = os.path.join('assets', 'songs', self.song_name)
 
-        voices = [
+        self.voices = [
             pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['player']))),
             pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['opponent'])))
         ]
 
-        for i in range(len(voices)):
-            pygame.mixer.Channel(i).play(voices[i])
-            voices[i].set_volume(settings.volume)
+        for i in range(len(self.voices)):
+            self.voices[i].set_volume(settings.volume)
+            pygame.mixer.Channel(i).play(self.voices[i])
         
         inst_path = os.path.join(song_prefix, 'Inst.ogg')
 

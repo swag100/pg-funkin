@@ -52,10 +52,11 @@ class Sustain(object):
         
         spritesheet = pygame.image.load('assets/images/NOTE_hold_assets.png').convert_alpha()
         sheet_w = spritesheet.get_rect().w
+        sheet_h = spritesheet.get_rect().h
 
         sus_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect(sheet_w / 4 * self.id, 0, sheet_w / 8, 1))
-        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * settings.STRUMLINE_SCALE_MULT, self.length / 2)) #64: height of note end sprite
-        end_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect((sheet_w / 4) * self.id + (sheet_w / 8), 0, sheet_w / 8, 64))
+        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * settings.STRUMLINE_SCALE_MULT, (self.length / settings.SCROLL_SPEED_DIVISOR) - (sheet_h / 2))) #64: height of note end sprite
+        end_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect((sheet_w / 4) * self.id + (sheet_w / 8), 0, sheet_w / 8, sheet_h - 1))
         end_sprite = pygame.transform.smoothscale_by(end_sprite, settings.STRUMLINE_SCALE_MULT)
 
         sus_sprite_rect = sus_sprite.get_rect()
@@ -75,7 +76,7 @@ class Sustain(object):
     
     def eat(self, dt): #Stupid name; this handles holding sustains down
         self.y += self.y_change * dt
-        self.length -= dt * 1000
+        self.length -= self.y_change * dt * 2
 
         image_rect = self.image.get_rect()
         new_image = pygame.Surface((image_rect.w, image_rect.h), pygame.SRCALPHA)

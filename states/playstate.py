@@ -31,14 +31,22 @@ class PlayState(BaseState):
         if event.type == pygame.USEREVENT:
             if event.id in settings.HIT_WINDOWS.keys():
                 rating = Popup(event.id, (500, 500))
+
+                #unmute player voice if it was
+                if self.song.voices[0].get_volume() <= 0:
+                    self.song.voices[0].set_volume(settings.volume)
+
                 #Create rating object, add rating to song.ratings list, award score
                 self.popups.append(rating)
 
             if event.id == 'miss':
-                miss_noise_path = os.path.join('assets', 'sounds', 'gameplay', f'missnote{random.randint(1, 2)}.ogg')
-                miss_noise = pygame.mixer.Sound(miss_noise_path)
-                miss_noise.set_volume(settings.volume * 0.5)
+                miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
+                miss_noise.set_volume(settings.volume * 0.4)
                 miss_noise.play()
+
+                #voices[0] is players voice
+                #mute player vocals until palyer gets a rating
+                self.song.voices[0].set_volume(0)
 
             """
             if event.id == settings.BEAT_HIT: #BEAT HIT

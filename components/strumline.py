@@ -224,8 +224,11 @@ class Strumline(object):
                         self.sustains.remove(sustain)
                         self.hold_cover = None
 
-                        if sustain.length <= (self.conductor.crochet * 1000) / 4:
+                        if sustain.length <= ((self.conductor.crochet * 1000) / 4) + 2:
                             self.release_splashes.append(ReleaseSplash(self))
+                        else: 
+                            #This is a miss; it was let go prematurely
+                            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss')) #Post rating event
 
         for note in self.notes: 
             note.tick(dt)

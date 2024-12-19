@@ -1,17 +1,18 @@
-TODO: create note splashes, hold cover effects.
-
-Change logic for sustain notes. 
-Delete sustain on key press and make a fake sustain that perfectly aligns with the middle of the arrow
-Then, add the hold cover effect over that.
-
-ALSO IMPLEMENT: Give bot strums a state too; it will make it easier to handle animations
-
 Song score, health bar, gameoverstate.
 Create combo popups, combo count.
 COUNTDOWN.
 Then, maybe work on camGame?
 
 ------------------------------------------------------------------------------------------
+done / not considered needed notes : D
+
+TODO: create note splashes, hold cover effects.
+Change logic for sustain notes. 
+Delete sustain on key press and make a fake sustain that perfectly aligns with the middle of the arrow
+Then, add the hold cover effect over that.
+
+ALSO IMPLEMENT: Give bot strums a state too; it will make it easier to handle animations
+
 Create strumline component, implement creating strums --
 Implement user input; what do we do when user tries to play the note? If they miss it? Look into using events for this.
 
