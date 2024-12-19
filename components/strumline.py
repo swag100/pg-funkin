@@ -175,6 +175,9 @@ class Strumline(object):
                             note.can_be_hit = False
                         else:
                             self.notes.remove(note)
+                        #TODO: work on bad notes. 
+                        # If player hits incorrect note at the right time, that note will turn into bad note, and note miss event will fire.
+                        # Make them look pretty.
                         """
                         
                         self.notes.remove(note)
