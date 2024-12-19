@@ -4,7 +4,7 @@ import settings
 from threading import Thread
 from components.spritesheet import Spritesheet
 from components.note import Note, Sustain
-from components.notesplash import NoteSplash
+from components.strum_effects import NoteSplash, HoldCover, ReleaseSplash
 
 #Constants for state detecton.
 PRESSED = 'pressed' #Will enter after a successful hit, no matter the rating
@@ -101,7 +101,10 @@ class Strumline(object):
 
         self.notes = self.load_chart()[0]
         self.sustains = self.load_chart()[1]
-        self.splashes = []
+
+        self.note_splashes = []
+        self.hold_covers = []
+        self.release_splashes = []
 
     def load_chart(self): #Loads all notes for specific strum.
         notes = []
@@ -157,11 +160,11 @@ class Strumline(object):
                         rating = self.get_rating(note)
                         pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
 
-                        def do_splash(strumline, rating):
-                            if rating == 'sick':
-                                strumline.splashes.append(NoteSplash(self))
-                        splash_thread = Thread(target = do_splash, args = (self, rating))
-                        splash_thread.start()
+                        if rating == 'sick':
+                            def do_splash(strumline):
+                                strumline.note_splashes.append(NoteSplash(self))
+
+                            Thread(target = do_splash, args = (self,)).start()
 
                         self.notes.remove(note)
 
@@ -182,8 +185,6 @@ class Strumline(object):
                 if self.bot_strum or self.state == HOLDING:
                     sustain.eat(dt)
 
-                    self.strum_note.anim_time = 0 #for bot strum animation
-
                     if self.strum_note.animation.isFinished() and self.strum_note.anim_prefix != 'confirmHold':
                         self.strum_note.play_animation('confirmHold', False)
 
@@ -194,6 +195,8 @@ class Strumline(object):
                         self.strum_note.play_animation('press')
                         if self.bot_strum: 
                             self.strum_note.play_animation('static')
+
+                    self.strum_note.anim_time = 0 #for bot strum animation
                 else:
                     if self.state == RELEASED:
                         self.sustains.remove(sustain)
@@ -215,13 +218,15 @@ class Strumline(object):
             self.state = RELEASED
             self.strum_note.play_animation('static')
 
-        for splash in self.splashes:
+        for splash in self.note_splashes:
             if splash.animation.isFinished():
-                self.splashes.remove(splash)
+                self.note_splashes.remove(splash)
 
     def draw(self, screen):
         self.strum_note.draw(screen)
         
         for sustain in self.sustains: sustain.draw(screen)
+        for hold_cover in self.hold_covers: hold_cover.draw(screen)
         for note in self.notes: note.draw(screen)
-        for splash in self.splashes: splash.draw(screen)
+        for splash in self.release_splashes: splash.draw(screen)
+        for splash in self.note_splashes: splash.draw(screen)

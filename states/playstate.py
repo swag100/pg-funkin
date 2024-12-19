@@ -11,7 +11,7 @@ class PlayState(BaseState):
         super(PlayState, self).__init__()
 
         #chart reader object
-        self.song = Song('fresh', 'hard')
+        self.song = Song('bopeebo', 'hard')
 
         #popup sprite group
         self.popups = []

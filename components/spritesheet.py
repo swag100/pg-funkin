@@ -1,8 +1,7 @@
 import pygame
 import xmltodict
-import settings
 
-from components.pyganim import Animation
+from components.animation import Animation
 
 class Spritesheet:
     def __init__(self, filename, scale = 1):
