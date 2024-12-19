@@ -1,52 +1,70 @@
 import pygame
 import xmltodict
-import components.pyganim as pyganim
+import settings
+
+from components.pyganim import Animation
 
 class Spritesheet:
     def __init__(self, filename, scale = 1):
         self.filename = filename
+        self.scale = scale
+
+        self.subtexture_list = []
 
         self.sprite_sheet = pygame.image.load(filename).convert_alpha()
 
-        with open(filename.replace('png', 'xml'), 'r') as file:  
+        with open(filename.replace('png', 'xml'), 'r', encoding='utf-8-sig') as file:  
             my_xml = file.read()
-            subtextures = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
-            self.animations = self.load_animations(subtextures, scale)
+            self.subtexture_list = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
+            #self.preload_animations(self.subtexture_data, scale) #job for the people using this class
         file.close()
+    
+    def load_animation(self, anim_name):
+        subtextures = [i for i in self.subtexture_list if anim_name == i['@name'][:-4]]
 
-    def load_animations(self, subtextures, scale):
-        frame_data = {}
-        animations = {}
+        frame_data = []
+        anim_frames = []
         for i in range(len(subtextures)):
             texture = subtextures[i]
-            texture_name = str(texture['@name'][:-4])
-            texture_index = int(texture['@name'][-4:])
-
-            if texture_name not in frame_data: 
-                frame_data[texture_name] = []
-                animations[texture_name] = []
             
             data = {
                 'x': int(texture['@x']),
                 'y': int(texture['@y']),
                 'width': int(texture['@width']),
                 'height': int(texture['@height']),
-                'frameX': int(texture['@frameX']) * scale, 
-                'frameY': int(texture['@frameY']) * scale,
-                'frameWidth': int(texture['@frameWidth']), 
-                'frameHeight': int(texture['@frameHeight'])
+
+                #these mirror x, y, width, height. Will be overwritten if file actually has these
+                'frameX': int(texture['@x']),
+                'frameY': int(texture['@y']),
+                'frameWidth': int(texture['@width']),
+                'frameHeight': int(texture['@height'])
             }
+            
+            if any(anim in texture for anim in ['@frameX', '@frameY', '@frameWidth', '@frameHeight']):
+                data['frameX'] = int(texture['@frameX']) * self.scale
+                data['frameY'] = int(texture['@frameY']) * self.scale
+                data['frameWidth'] = int(texture['@frameWidth'])
+                data['frameHeight'] = int(texture['@frameHeight'])
 
             sprite = pygame.Surface((data['frameWidth'], data['frameHeight']), pygame.SRCALPHA)
             sprite.blit(self.sprite_sheet,(-data['frameX'], -data['frameY']),(data['x'], data['y'], data['width'], data['height']))
-            sprite = pygame.transform.smoothscale_by(sprite, scale)
+            sprite = pygame.transform.smoothscale_by(sprite, self.scale)
 
-            frame_data[texture_name] = data
-            animations[texture_name].insert(texture_index, sprite)
-
-        #Finally, convert animations into a dict of Animation objects
-        animation_objects = {}
-        for key, value in animations.items():
-            animation_objects[key] = pyganim.Animation(value)
+            frame_data.insert(i, data)
+            anim_frames.insert(i, sprite)
         
-        return animation_objects
+        return anim_frames
+    
+    def frames_to_animation(self, anim_frames):
+        return Animation(anim_frames)
+
+    def preload_animations(self):
+        anim_dict = {}
+
+        for i in range(len(self.subtexture_list)):
+            texture_name = str(self.subtexture_list[i]['@name'][:-4])
+
+            if texture_name not in anim_dict:
+                anim_dict[texture_name] = self.frames_to_animation(self.load_animation(texture_name))
+
+        self.animations = anim_dict

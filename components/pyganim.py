@@ -12,7 +12,7 @@
 # bug reports to Al at al@inventwithpython.com
 #
 
-import pygame, time
+import pygame, time, settings
 
 # setting up constants
 PLAYING = 'playing'
@@ -30,12 +30,8 @@ SOUTHWEST = 'southwest'
 SOUTH = 'south'
 SOUTHEAST = 'southeast'
 
-#custom
-FRAMERATE = 1/24
-
-
 class Animation(object):
-    def __init__(self, frames):
+    def __init__(self, frames, framerate = settings.ANIM_FRAMERATE):
         # Constructor function for the animation object. Starts off in the STOPPED state.
         #
         # @param frames
@@ -82,7 +78,7 @@ class Animation(object):
                 if type(frame) == str:
                     frame = pygame.image.load(frame)
                 self._images.append(frame)
-                self._durations.append(FRAMERATE)
+                self._durations.append(framerate)
             self._startTimes = self._getStartTimes()
 
 

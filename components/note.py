@@ -5,8 +5,6 @@ from components.spritesheet import Spritesheet
 
 class Note(object):
     def __init__(self, strumline, time, speed):
-        spritesheet = Spritesheet('assets/images/notes.png', settings.STRUMLINE_SCALE_MULT)
-
         self.strumline = strumline
         self.time = time / 1000 #Time in the song that the note should reach the strums; read from json.
         self.speed = 1 * speed #Scroll speed
@@ -27,7 +25,11 @@ class Note(object):
         self.y_change = (1000 * self.speed) / settings.SCROLL_SPEED_DIVISOR
     
         #animation
-        self.animation = spritesheet.animations['note' + self.name.title()]
+        spritesheet = Spritesheet('assets/images/notes.png', settings.STRUMLINE_SCALE_MULT)
+
+        anim_frames = spritesheet.load_animation('note' + self.name.title())
+        self.animation = spritesheet.frames_to_animation(anim_frames)
+        
         self.animation.play()
 
     def tick(self, dt):

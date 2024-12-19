@@ -19,19 +19,24 @@ class Song:
         self.conductor = Conductor(self, settings.SONG_OFFSET)
 
     def start(self):
-
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
+
+        song_prefix = os.path.join('assets', 'songs', self.song_name)
+
         voices = [
-            pygame.mixer.Sound(self.song_path(self.characters['player'])),
-            pygame.mixer.Sound(self.song_path(self.characters['opponent']))
+            pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['player']))),
+            pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['opponent'])))
         ]
+
         for i in range(len(voices)):
             pygame.mixer.Channel(i).play(voices[i])
             voices[i].set_volume(settings.volume)
+        
+        inst_path = os.path.join(song_prefix, 'Inst.ogg')
 
-        pygame.mixer.music.load('assets/songs/bopeebo/Inst.ogg') 
+        pygame.mixer.music.load(inst_path) 
         pygame.mixer.music.play()
         pygame.mixer.music.set_volume(settings.volume)
     
-    def song_path(self, singer):
-        return os.path.join('assets', 'songs', self.song_name, f'Voices-{singer}.ogg')
+    def voices_name(self, singer):
+        return f'Voices-{singer}.ogg' 

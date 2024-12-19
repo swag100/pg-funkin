@@ -1,8 +1,10 @@
 import pygame
 import settings
 
+from threading import Thread
 from components.spritesheet import Spritesheet
 from components.note import Note, Sustain
+from components.notesplash import NoteSplash
 
 #Constants for state detecton.
 PRESSED = 'pressed' #Will enter after a successful hit, no matter the rating
@@ -15,6 +17,7 @@ class StrumNote(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         strum_spritesheet = Spritesheet('assets/images/noteStrumline.png', settings.STRUMLINE_SCALE_MULT)
+        strum_spritesheet.preload_animations()
 
         #self.strumline = strumline
         self.strumline = strumline
@@ -98,6 +101,7 @@ class Strumline(object):
 
         self.notes = self.load_chart()[0]
         self.sustains = self.load_chart()[1]
+        self.splashes = []
 
     def load_chart(self): #Loads all notes for specific strum.
         notes = []
@@ -153,13 +157,21 @@ class Strumline(object):
                         rating = self.get_rating(note)
                         pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
 
+                        def do_splash(strumline, rating):
+                            if rating == 'sick':
+                                strumline.splashes.append(NoteSplash(self))
+                        splash_thread = Thread(target = do_splash, args = (self, rating))
+                        splash_thread.start()
+
                         self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
 
         if event.type == pygame.KEYUP:
             if event.key in settings.KEYBINDS[self.name]:
-                self.state = RELEASED
+                if self.state != None:
+                    self.state = RELEASED
+
                 self.strum_note.play_animation('static')
 
     def tick(self, dt):
@@ -203,8 +215,13 @@ class Strumline(object):
             self.state = RELEASED
             self.strum_note.play_animation('static')
 
+        for splash in self.splashes:
+            if splash.animation.isFinished():
+                self.splashes.remove(splash)
+
     def draw(self, screen):
         self.strum_note.draw(screen)
         
         for sustain in self.sustains: sustain.draw(screen)
         for note in self.notes: note.draw(screen)
+        for splash in self.splashes: splash.draw(screen)

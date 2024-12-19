@@ -36,9 +36,12 @@ class ChartReader(object):
             chart_dict = json.loads(song_chart.read())
         song_chart.close()
 
-        self.speed = chart_dict['scrollSpeed']['default']
-        if difficulty in chart_dict['scrollSpeed']:
+        self.speed = 1
+        if difficulty in chart_dict['scrollSpeed']: 
             self.speed = chart_dict['scrollSpeed'][difficulty]
+        else:
+            if 'default' in chart_dict['scrollSpeed']: 
+                self.speed = chart_dict['scrollSpeed']['default']
 
         #t: Time; d: direction; l (optional): length
         #direction will be 0-7; 4-7 are opponent strums and 0-3 are player strums

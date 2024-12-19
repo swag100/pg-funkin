@@ -11,7 +11,7 @@ class PlayState(BaseState):
         super(PlayState, self).__init__()
 
         #chart reader object
-        self.song = Song('bopeebo', 'hard')
+        self.song = Song('fresh', 'hard')
 
         #popup sprite group
         self.popups = []
@@ -40,7 +40,7 @@ class PlayState(BaseState):
                         low_beep.play()
             """
             
-            if event.id in settings.HIT_WINDOWS:
+            if event.id in settings.HIT_WINDOWS.keys():
                 rating = Popup(event.id, (500, 500))
                 #Create rating object, add rating to song.ratings list, award score
                 self.popups.append(rating)
