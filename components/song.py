@@ -5,7 +5,7 @@ import settings
 from components.conductor import Conductor
 from components.chart_reader import ChartReader
 
-#Class containing any business to do with the song. Also health, score, accuracy
+#Class containing any business to do with song audio playback.
 
 class Song:
     def __init__(self, song_name, difficulty = 'normal'):
@@ -16,23 +16,23 @@ class Song:
         self.characters = self.chart_reader.metadata['playData']['characters']
         self.bpm = self.chart_reader.bpm
 
-        self.conductor = Conductor(self, settings.SONG_OFFSET)
-
-    def start(self):
-        #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
-
-        song_prefix = os.path.join('assets', 'songs', self.song_name)
+        self.song_prefix = os.path.join('assets', 'songs', self.song_name)
 
         self.voices = [
-            pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['player']))),
-            pygame.mixer.Sound(os.path.join(song_prefix, self.voices_name(self.characters['opponent'])))
+            pygame.mixer.Sound(os.path.join(self.song_prefix, self.voices_name(self.characters['player']))),
+            pygame.mixer.Sound(os.path.join(self.song_prefix, self.voices_name(self.characters['opponent'])))
         ]
+
+        self.conductor = Conductor(self, settings.SONG_OFFSET)
+
+    def play_audio(self):
+        #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
 
         for i in range(len(self.voices)):
             self.voices[i].set_volume(settings.volume)
             pygame.mixer.Channel(i).play(self.voices[i])
         
-        inst_path = os.path.join(song_prefix, 'Inst.ogg')
+        inst_path = os.path.join(self.song_prefix, 'Inst.ogg')
 
         pygame.mixer.music.load(inst_path) 
         pygame.mixer.music.play()

@@ -8,12 +8,10 @@ class Conductor(object):
         self.crochet = 60 / self.bpm #Duration of beat in seconds
 
         self.offset = offset / 1000 #Add default offset: turn into milliseconds
-        self.song_position = -self.offset 
+        self.song_position = -self.crochet * 4
 
-        self.cur_beat_time = 0
-
-        #countdown
-        self.cur_beat = -1 #So it recognizes change on first beat
+        self.cur_beat_time = None
+        self.cur_beat = None #So it recognizes change on first beat
 
     def tick(self, dt):
         if self.offset > 0:
@@ -24,7 +22,7 @@ class Conductor(object):
 
         self.old_beat = self.cur_beat
 
-        self.cur_beat_time = self.song_position / self.crochet
+        self.cur_beat_time = (self.song_position / self.crochet) - self.offset
         self.cur_beat = math.floor(self.cur_beat_time)
 
         if self.old_beat != self.cur_beat: #BEAT HIT

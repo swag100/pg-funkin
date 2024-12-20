@@ -6,7 +6,7 @@ from components.spritesheet import Spritesheet
 class Note(object):
     def __init__(self, strumline, time, speed):
         self.strumline = strumline
-        self.time = time / 1000 #Time in the song that the note should reach the strums; read from json.
+        self.time = time / 1000 + strumline.conductor.song_position #Time in the song that the note should reach the strums; read from json.
         self.speed = 1 * speed #Scroll speed
 
         self.can_be_hit = True

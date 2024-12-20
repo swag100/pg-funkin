@@ -114,9 +114,9 @@ class Strumline(object):
         #generate regular notes
         speed = self.chart_reader.speed
         for note_data in self.chart_reader.chart[self.id]:
-            time = int(note_data['t'])
+            time = int(note_data['t']) - (self.conductor.song_position * 1000)
 
-            note = Note(self, time + settings.SONG_OFFSET, speed)
+            note = Note(self, time, speed)
             notes.append(note)
 
             if 'l' in note_data:
@@ -231,8 +231,8 @@ class Strumline(object):
                         if sustain.length <= ((self.conductor.crochet * 1000) / 4) + 2:
                             self.release_splashes.append(ReleaseSplash(self))
                         else: 
-                            #This is a miss; it was let go prematurely
                             pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss')) #Post rating event
+                            #This is a miss; it was let go prematurely
 
         for note in self.notes: 
             note.tick(dt)

@@ -11,13 +11,14 @@ class PlayState(BaseState):
     def __init__(self):
         super(PlayState, self).__init__()
 
-        #chart reader object
-        self.song = Song('fresh', 'hard')
+        #contains chart reader object
+        #will automatically start countdown
+        self.song = Song('bopeebo', 'hard')
 
         #game variables
-        self.health = 0
         self.combo = 0
-        self.points = 0
+        #self.health = 0
+        #self.points = 0
 
         #popup sprite group
         self.popups = []
@@ -27,14 +28,14 @@ class PlayState(BaseState):
         for i in range(8):
             self.strums.append(Strumline(i, self.song))
 
-        self.song.start()
+        self.game_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
 
         if event.type == pygame.USEREVENT:
             if event.id in settings.HIT_WINDOWS.keys():
-                self.points += 10
                 self.combo += 1 #Increase combo no matter the rating?
 
                 #unmute player voice if it was
@@ -61,8 +62,23 @@ class PlayState(BaseState):
                 #mute player vocals until palyer gets a rating
                 self.song.voices[0].set_volume(0)
 
-            """
+            
             if event.id == settings.BEAT_HIT: #BEAT HIT
+                if -4 <= self.song.conductor.cur_beat < 0:
+                    countdown_noises = [
+                        pygame.mixer.Sound(f'assets/sounds/countdown/introTHREE.ogg'),
+                        pygame.mixer.Sound(f'assets/sounds/countdown/introTWO.ogg'),
+                        pygame.mixer.Sound(f'assets/sounds/countdown/introONE.ogg'),
+                        pygame.mixer.Sound(f'assets/sounds/countdown/introGO.ogg'),
+                    ]
+                    pick = self.song.conductor.cur_beat + 4
+                    countdown_noises[pick].set_volume(settings.volume)
+                    countdown_noises[pick].play()
+
+                if self.song.conductor.cur_beat == 0:
+                    self.song.play_audio()
+
+                """
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
                 high_beep.set_volume(settings.volume)
                 low_beep = pygame.mixer.Sound("assets/sounds/metronome2.ogg")
@@ -72,7 +88,8 @@ class PlayState(BaseState):
                         high_beep.play()
                     else:
                         low_beep.play()
-            """
+                """
+            
 
     def tick(self, dt):
         self.song.conductor.tick(dt)
@@ -85,7 +102,15 @@ class PlayState(BaseState):
     def draw(self, screen):
         screen.fill((255, 255, 255))
 
-        for strumline in self.strums: strumline.draw(screen)
-        for popup in self.popups: popup.draw(screen)
+        self.game_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+
+        for strumline in self.strums: strumline.draw(self.hud_surface)
+        for popup in self.popups: popup.draw(self.hud_surface)
+
+        #cameras
+
+        screen.blit(self.game_surface, (0, 0)) #replace 0,0s with their center positions later
+        screen.blit(self.hud_surface, (0, 0))
         
         #for note in self.song.chart_reader.chart: note.draw(screen)

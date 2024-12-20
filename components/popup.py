@@ -12,13 +12,13 @@ class Popup(pygame.sprite.Sprite):
         self.image = pygame.transform.smoothscale_by(self.image, scale)
         self.rect = self.image.get_rect()
 
-        self.alpha = 255 * 2
+        self.alpha = 255 * 3
 
-        self.rect.centerx = pos[0] + (i * self.rect.w) + 16
-        self.rect.centery = pos[1]
+        self.x = pos[0] + (i * self.rect.w) + 4
+        self.y = pos[1]
 
         self.x_vel = randint(-10, 0)
-        self.y_vel = -randint(1400, 1800)
+        self.y_vel = -randint(1400, 1800) - 200
         self.y_acc = randint(100, 140)
 
     def tick(self, dt):
@@ -26,9 +26,9 @@ class Popup(pygame.sprite.Sprite):
 
         self.alpha -= 20
 
-        self.rect.centerx += self.x_vel * dt
-        self.rect.centery += (self.y_vel / 10) * dt
+        self.x += self.x_vel * dt
+        self.y += (self.y_vel / 10) * dt
 
     def draw(self, screen):
         self.image.set_alpha(self.alpha)
-        screen.blit(self.image, self.rect)
+        screen.blit(self.image, (self.x, self.y))

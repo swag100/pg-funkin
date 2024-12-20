@@ -28,10 +28,10 @@ HIT_WINDOWS = {
 BEAT_HIT = 'beat hit'
 
 ###user changing variables
-volume = 0.5 #Will go from 0 to 1; increments or decrements by 0.1
+volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
 
-ratings_position = [500, 500]
-combo_position = [650, 500]
+ratings_position = [500, 200]
+combo_position = [500, 280]
 
 #keybinds
 keybinds = {
