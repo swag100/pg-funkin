@@ -6,6 +6,7 @@ from .basestate import BaseState
 from components.song import Song
 from components.strumline import Strumline
 from components.popup import Popup
+from components.countdown import Countdown
 
 class PlayState(BaseState):
     def __init__(self):
@@ -13,7 +14,7 @@ class PlayState(BaseState):
 
         #contains chart reader object
         #will automatically start countdown
-        self.song = Song('bopeebo', 'hard')
+        self.song = Song('fresh', 'hard')
 
         #game variables
         self.combo = 0
@@ -28,8 +29,9 @@ class PlayState(BaseState):
         for i in range(8):
             self.strums.append(Strumline(i, self.song))
 
-        self.game_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
-        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        #cam zoom amounts
+        self.cam_zoom = 1
+        self.hud_zoom = 1
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
@@ -64,19 +66,34 @@ class PlayState(BaseState):
 
             
             if event.id == settings.BEAT_HIT: #BEAT HIT
-                if -4 <= self.song.conductor.cur_beat < 0:
+                beat = self.song.conductor.cur_beat #easier to read
+
+                if beat == 0:
+                    self.song.play_audio()
+
+                #Countdown : )
+                if -4 <= beat < 0:
                     countdown_noises = [
                         pygame.mixer.Sound(f'assets/sounds/countdown/introTHREE.ogg'),
                         pygame.mixer.Sound(f'assets/sounds/countdown/introTWO.ogg'),
                         pygame.mixer.Sound(f'assets/sounds/countdown/introONE.ogg'),
                         pygame.mixer.Sound(f'assets/sounds/countdown/introGO.ogg'),
                     ]
-                    pick = self.song.conductor.cur_beat + 4
-                    countdown_noises[pick].set_volume(settings.volume)
-                    countdown_noises[pick].play()
+                    countdown_images = [
+                        'ready',
+                        'set',
+                        'go'
+                    ]
+                    countdown_noises[beat + 4].set_volume(settings.volume)
+                    countdown_noises[beat + 4].play()
 
-                if self.song.conductor.cur_beat == 0:
-                    self.song.play_audio()
+                    #image
+                    if -3 <= beat < 0:
+                        self.popups.append(Countdown(countdown_images[beat + 3], settings.SCREEN_CENTER))
+
+                #Cam zoom on beat hit
+                if beat % 4 == 0:
+                    self.hud_zoom = 1.02
 
                 """
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
@@ -95,22 +112,34 @@ class PlayState(BaseState):
         self.song.conductor.tick(dt)
 
         for strumline in self.strums: strumline.tick(dt)
-        for popup in self.popups: popup.tick(dt)
+        for popup in self.popups: 
+            popup.tick(dt)
+            if popup.alpha <= 0:
+                self.popups.remove(popup)
+
+        #Reset surfaces every tick.
+        self.game_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+
+        self.hud_zoom += (1 - self.hud_zoom) / 8
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
     def draw(self, screen):
         screen.fill((255, 255, 255))
 
-        self.game_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
-        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
-
         for strumline in self.strums: strumline.draw(self.hud_surface)
         for popup in self.popups: popup.draw(self.hud_surface)
 
         #cameras
 
-        screen.blit(self.game_surface, (0, 0)) #replace 0,0s with their center positions later
-        screen.blit(self.hud_surface, (0, 0))
+        scaled_game_surface = pygame.transform.smoothscale_by(self.game_surface, self.cam_zoom) #REPLACE 1 LATER
+        scaled_hud_surface = pygame.transform.smoothscale_by(self.hud_surface, self.hud_zoom) #REPLACE 1 LATER
+
+        game_rect = scaled_game_surface.get_rect(center = settings.SCREEN_CENTER)
+        hud_rect = scaled_hud_surface.get_rect(center = settings.SCREEN_CENTER)
+
+        screen.blit(scaled_game_surface, game_rect) #replace 0,0s with their center positions later
+        screen.blit(scaled_hud_surface, hud_rect)
         
         #for note in self.song.chart_reader.chart: note.draw(screen)

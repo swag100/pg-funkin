@@ -24,7 +24,7 @@ class Popup(pygame.sprite.Sprite):
     def tick(self, dt):
         self.y_vel += self.y_acc
 
-        self.alpha -= 20
+        self.alpha -= 1000 * dt
 
         self.x += self.x_vel * dt
         self.y += (self.y_vel / 10) * dt

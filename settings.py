@@ -4,6 +4,8 @@ import pygame
 WINDOW_TITLE = 'Rhythm'
 WINDOW_SIZE = (1280, 720)
 
+SCREEN_CENTER = (WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2)
+
 DIRECTIONS = ['left','down','up','right']
 SONG_OFFSET = 0
 
@@ -14,7 +16,7 @@ SCROLL_SPEED_DIVISOR = 2
 #strum positions
 STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
 OPPONENT_STRUMLINE_OFFSET = (16, 24)
-PLAYER_STRUMLINE_OFFSET = (700 - 24, 24)
+PLAYER_STRUMLINE_OFFSET = (676, 24)
 
 #hit windows, milliseconds
 HIT_WINDOWS = {
