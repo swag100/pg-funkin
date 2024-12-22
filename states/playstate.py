@@ -117,7 +117,7 @@ class PlayState(BaseState):
 
                 #unmute player voice if it was
                 if self.song.voices[0].get_volume() <= 0:
-                    self.song.voices[0].set_volume(settings.volume)
+                    self.song.voices[0].set_volume(settings.volume / 10)
 
                 if rating in ['perfect', 'killer']: #Shares the same graphic
                     rating = 'sick'
@@ -141,7 +141,7 @@ class PlayState(BaseState):
                 self.remove_health(settings.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(settings.volume * 0.4)
+                miss_noise.set_volume((settings.volume / 10) * 0.4)
                 miss_noise.play()
 
                 #voices[0] is players voice
@@ -167,7 +167,7 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(settings.volume)
+                    countdown_noises[cur_beat + 4].set_volume(settings.volume / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image

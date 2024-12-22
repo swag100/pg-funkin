@@ -75,7 +75,7 @@ SONG_BEGAN = 'SONG_BEGAN' #called when the countdown ends and the song's audio b
 SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater than the length of the instrumental.
 
 ###user changing variables
-volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
+volume = 10 #Will go from 0 to 10; increments or decrements by 1
 song_offset = -120
 
 fps = 120 #Max frames per second.
@@ -91,7 +91,8 @@ keybinds = {
     'right': [pygame.K_d, pygame.K_RIGHT],
 
     'back': [pygame.K_ESCAPE], 
-    'forward': [pygame.K_RETURN]
+    'forward': [pygame.K_RETURN],
+    'volume': [pygame.K_MINUS, pygame.K_EQUALS]
 }
 
 #Fun stuff
