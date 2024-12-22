@@ -44,8 +44,6 @@ class Stage:
         self.opponent_cam_off = self.character_data['dad']['cameraOffsets']
         self.gf_cam_off = self.character_data['gf']['cameraOffsets']
 
-        print(self.character_data)
-
         self.cam_zoom = self.stage_data['cameraZoom']
 
         self.props = []

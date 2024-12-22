@@ -44,5 +44,9 @@ class Song:
     def tick(self, dt):
         self.conductor.tick(dt)
 
+        #Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
+        #for i in range(len(self.voices)):
+
+
         if self.conductor.song_position >= self.song_length:
             pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_ENDED)) #Post rating event

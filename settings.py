@@ -1,5 +1,7 @@
 import pygame
 
+#This is a settings file, but ALSO a constants file... I'm just too lazy to separate it.
+
 ###CONSTANTS
 WINDOW_TITLE = 'Rhythm'
 WINDOW_SIZE = (1280, 720)

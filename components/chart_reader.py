@@ -67,13 +67,6 @@ class ChartReader(object):
 
         event_data = chart_dict['events']
         for event in event_data:
-            event_type = event['e']
-            event_time = event['t']
-
-            event_variable = event['v']
-            if isinstance(event_variable, dict):
-                event_variable = event_variable['char']
-
-            events_list.append({'type': event_type, 'time': event_time, 'variable': event_variable})
+            events_list.append({'type': event['e'], 'time': event['t'], 'variable': event['v']})
 
         return events_list

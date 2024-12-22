@@ -9,6 +9,8 @@ class Game(object):
         self.state_name = initial_state
         self.state = states[initial_state]
 
+        self.state.start({})
+
         self.clock = pygame.time.Clock()
         self.max_fps = settings.fps
 

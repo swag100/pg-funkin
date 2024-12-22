@@ -16,19 +16,45 @@ class PlayState(BaseState):
     def __init__(self):
         super(PlayState, self).__init__()
 
+        self.just_created = False
+
+    def start(self, persistent_data): 
+        self.done = False
+        self.persistent_data = persistent_data
+
+        #THIS IS HARDCODED. FOR NOW, I'M WAY TOO LAZY AND DONT WANNA MAKE A WHOLE WEEKMENU STATE. SORRY!
+        self.song_list = self.persistent_data['songs']
+        #TODO: ^^^ Generate this list DYNAMICALLY with a given week file... And, also give the option TO PICK A DIFFICULTY.
+        #These things require a main menu state, so if I'm really up for it, I'll make one... 
+
+        self.week_progress = self.persistent_data['level progress'] #Current id for the song in the week you're in
+
         #contains chart reader object
         #will automatically start countdown
-        self.song = Song('dadbattle', 'hard')
+        self.song = Song(self.song_list[self.week_progress], 'hard')
 
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
+
+        print(self.song.song_name)
+
+        if not self.just_created:
+            self.just_created = True
+
+            #CAMERA STUFF
+            self.stage = Stage('mainStage')
+
+            #cam zoom amounts
+            self.cam_zoom = self.stage.cam_zoom
+            self.hud_zoom = 1
+
+            self.camera_position = [0, 0]
+            self.camera_position_lerp = self.camera_position
 
         #game variables
         self.combo = 0
         self.health = settings.HEALTH_STARTING
         self.score = 0 #work on this tomorrow
 
-        #CAMERA STUFF
-        self.stage = Stage('mainStage')
         self.characters = [
             Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
             Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
@@ -52,17 +78,10 @@ class PlayState(BaseState):
         #popup sprite group
         self.popups = []
 
-        #create strums
+        #Finally, create strums
         self.strums = []
         for i in range(8):
             self.strums.append(Strumline(i, self.song))
-
-        #cam zoom amounts
-        self.cam_zoom = self.stage.cam_zoom
-        self.hud_zoom = 1
-
-        self.camera_position = [0, 0]
-        self.camera_position_lerp = self.camera_position
 
     def add_health(self, amount):
         if self.health + amount <= settings.HEALTH_MAX:
@@ -173,9 +192,60 @@ class PlayState(BaseState):
                     else:
                         low_beep.play()
                 """
+
+            """
+            if event_type == settings.SONG_BEGAN:
+                print('Hello, song! You just started :)')
+            """
+                
+            if event_type == settings.SONG_ENDED:
+                #print('Song over!')
+
+                self.persistent_data['level progress'] += 1
+                if self.persistent_data['level progress'] > len(self.song_list):
+                    print('Level finished.')
+                    return
+
+                self.next_state = 'PlayState'
+                self.done = True
+
+                
             
+    def handle_chart_events(self, chart_event):
+        event_var = chart_event['variable']
+
+        if chart_event['time'] / 1000 <= self.song.conductor.song_position: #SHOULD BE ACTIVATED
+            #FOCUS CAMERA
+            if chart_event['type'] == 'FocusCamera':
+                if isinstance(event_var, dict):
+                    event_var = event_var['char']
+
+                if bool(event_var):
+                    self.camera_position = [
+                        self.stage.opponent_position[0] + self.stage.opponent_cam_off[0],
+                        self.stage.opponent_position[1] + self.stage.opponent_cam_off[1]
+                    ]
+                else:
+                    self.camera_position = [
+                        self.stage.player_position[0] + self.stage.player_cam_off[0],
+                        self.stage.player_position[1] + self.stage.player_cam_off[1]
+                    ]
+            #PLAY ANIMATION
+            if chart_event['type'] == 'PlayAnimation':
+                target = event_var['target']
+                anim_to_play = event_var['anim']
+
+                for character in self.characters:
+                    if target == character.character:
+                        character.play_animation(anim_to_play)
+
+            #FINALLY, REMOVE EVENT
+            self.events.remove(chart_event)
+
 
     def tick(self, dt):
+        if dt > 1: return
+
         #This also ticks conductor
         self.song.tick(dt)
 
@@ -184,22 +254,7 @@ class PlayState(BaseState):
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * settings.CAMERA_SPEED)
 
         #CHARTING EVENTS
-        for event in self.events:
-            if event['type'] == 'FocusCamera':
-                if event['time'] / 1000 <= self.song.conductor.song_position:
-                    if bool(event['variable']):
-                        self.camera_position = [
-                            self.stage.opponent_position[0] + self.stage.opponent_cam_off[0],
-                            self.stage.opponent_position[1] + self.stage.opponent_cam_off[1]
-                        ]
-                    else:
-                        self.camera_position = [
-                            self.stage.player_position[0] + self.stage.player_cam_off[0],
-                            self.stage.player_position[1] + self.stage.player_cam_off[1]
-                        ]
-                    self.events.remove(event)
-        
-
+        for event in self.events: self.handle_chart_events(event)
 
         #game objects
 
@@ -234,19 +289,19 @@ class PlayState(BaseState):
 
         self.hud_zoom += (1 - self.hud_zoom) / 8
 
-        """
+        
         #TESTING CAMERA CODE:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
         if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
         if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
         if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
-        """
+        
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
     def draw(self, screen):
-        screen.fill((255, 255, 255))
+        #screen.fill((255, 255, 255))
 
         #game
         self.stage.draw(self.cam_surface)
@@ -266,8 +321,9 @@ class PlayState(BaseState):
         #self.hud_surface.blit(text, self.score_text_rect)
 
         #cameras - This code is really ugly, i know.
+        scaled_cam_surface = pygame.transform.smoothscale_by(self.cam_surface, self.cam_zoom)
         scaled_hud_surface = pygame.transform.smoothscale_by(self.hud_surface, self.hud_zoom)
-        screen.blit(self.cam_surface, self.cam_surface.get_rect(center = settings.SCREEN_CENTER))
+        screen.blit(scaled_cam_surface, self.cam_surface.get_rect(center = settings.SCREEN_CENTER))
         screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = settings.SCREEN_CENTER))
         
         #for note in self.song.chart_reader.chart: note.draw(screen)
