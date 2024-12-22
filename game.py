@@ -1,4 +1,5 @@
 import sys
+import settings
 import pygame
 
 class Game(object):
@@ -9,7 +10,7 @@ class Game(object):
         self.state = states[initial_state]
 
         self.clock = pygame.time.Clock()
-        self.max_fps = 60
+        self.max_fps = settings.fps
 
         self.done = False
     def handle_events(self):

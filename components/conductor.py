@@ -27,4 +27,4 @@ class Conductor(object):
 
         if self.old_beat != self.cur_beat: #BEAT HIT
             self.old_beat = self.cur_beat
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.BEAT_HIT)) #Post BEAT HIT event
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{settings.BEAT_HIT}/{self.cur_beat}')) #Post BEAT HIT event

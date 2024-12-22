@@ -9,6 +9,8 @@ from components.popup import Popup
 from components.countdown import Countdown
 from components.healthbar import HealthBar, BarIcon
 from components.outlined_text import OutlinedText
+from components.character import Character
+from components.stage import Stage
 
 class PlayState(BaseState):
     def __init__(self):
@@ -22,6 +24,16 @@ class PlayState(BaseState):
         self.combo = 0
         self.health = settings.HEALTH_STARTING
         self.score = 0 #work on this tomorrow
+
+        #CAMERA STUFF
+        self.stage = Stage('mainStage')
+        self.characters = [
+            Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
+            Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
+            Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
+        ]
+
+        #HUD STUFF
 
         #Health bar
         self.health_bar = HealthBar(self, (settings.SCREEN_CENTER[0], settings.WINDOW_SIZE[1] * 0.9))
@@ -44,8 +56,10 @@ class PlayState(BaseState):
             self.strums.append(Strumline(i, self.song))
 
         #cam zoom amounts
-        self.cam_zoom = 1
+        self.cam_zoom = self.stage.cam_zoom
         self.hud_zoom = 1
+
+        self.camera_position = [0, 0]
 
     def add_health(self, amount):
         if self.health + amount <= settings.HEALTH_MAX:
@@ -61,19 +75,29 @@ class PlayState(BaseState):
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
+        for character in self.characters: character.handle_event(event)
 
         if event.type == pygame.USEREVENT:
-            if event.id in settings.HIT_WINDOWS.keys():
+            event_list = event.id.split('/', 1)
+            event_type = event_list[0]
+            try:
+                event_parameters = event_list[1].split('/')
+            except IndexError:
+                event_parameters = []
+
+            #if event_id in settings.HIT_WINDOWS.keys():
+            if event_type == settings.NOTE_GOOD_HIT:
+                rating = event_parameters[0]
+
                 self.combo += 1 #Increase combo no matter the rating?
 
-                self.add_health(settings.HEALTH_BONUSES[event.id])
+                self.add_health(settings.HEALTH_BONUSES[rating])
 
                 #unmute player voice if it was
                 if self.song.voices[0].get_volume() <= 0:
                     self.song.voices[0].set_volume(settings.volume)
 
-                rating = event.id
-                if event.id in ['perfect', 'killer']: #Shares the same graphic
+                if rating in ['perfect', 'killer']: #Shares the same graphic
                     rating = 'sick'
 
                 self.score += settings.SCORE_BONUSES[rating]
@@ -86,12 +110,13 @@ class PlayState(BaseState):
                     for i in range(len(combo_string)):
                         self.popups.append(Popup(f'num{combo_string[i]}', settings.combo_position, 0.5, i))
 
-            if event.id in settings.HEALTH_PENALTIES.keys():
+            #if event_id in settings.HEALTH_PENALTIES.keys():
+            if event_type == settings.NOTE_MISS:
                 self.combo = 0 # L
                 
                 #decrement health pretty
                 self.score -= settings.SCORE_PENALTY
-                self.remove_health(settings.HEALTH_PENALTIES[event.id])
+                self.remove_health(settings.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
                 miss_noise.set_volume(settings.volume * 0.4)
@@ -100,16 +125,15 @@ class PlayState(BaseState):
                 #voices[0] is players voice
                 #mute player vocals until palyer gets a rating
                 self.song.voices[0].set_volume(0)
-
             
-            if event.id == settings.BEAT_HIT: #BEAT HIT
-                beat = self.song.conductor.cur_beat #easier to read
+            if event_type == settings.BEAT_HIT: #BEAT HIT
+                cur_beat = int(event_parameters[0]) #easier to read
 
-                if beat == 0:
+                if cur_beat == 0:
                     self.song.play_audio()
 
                 #Countdown : )
-                if -4 <= beat < 0:
+                if -4 <= cur_beat < 0:
                     countdown_noises = [
                         pygame.mixer.Sound(f'assets/sounds/countdown/introTHREE.ogg'),
                         pygame.mixer.Sound(f'assets/sounds/countdown/introTWO.ogg'),
@@ -121,15 +145,15 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[beat + 4].set_volume(settings.volume)
-                    countdown_noises[beat + 4].play()
+                    countdown_noises[cur_beat + 4].set_volume(settings.volume)
+                    countdown_noises[cur_beat + 4].play()
 
                     #image
-                    if -3 <= beat < 0:
-                        self.popups.append(Countdown(countdown_images[beat + 3], settings.SCREEN_CENTER))
+                    if -3 <= cur_beat < 0:
+                        self.popups.append(Countdown(countdown_images[cur_beat + 3], settings.SCREEN_CENTER))
 
                 #Cam zoom on beat hit
-                if beat % 4 == 0:
+                if cur_beat % 4 == 0:
                     self.hud_zoom = 1.02
 
                 for icon in self.health_bar_icons:
@@ -149,7 +173,21 @@ class PlayState(BaseState):
             
 
     def tick(self, dt):
-        self.song.conductor.tick(dt)
+        #TESTING CAMERA CODE:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
+        if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
+        if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
+        if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
+
+        #This also ticks conductor
+        self.song.tick(dt)
+
+        #game
+        self.stage.tick(dt, self.camera_position)
+        for character in self.characters: character.tick(dt, self.camera_position)
+
+        #hud
         self.health_bar.tick(dt)
 
         self.score_text_string = f'Score: {int(self.score):,}'
@@ -182,6 +220,11 @@ class PlayState(BaseState):
     def draw(self, screen):
         screen.fill((255, 255, 255))
 
+        #game
+        self.stage.draw(self.cam_surface)
+        for character in self.characters: character.draw(self.cam_surface)
+
+        #hud
         for strumline in self.strums: strumline.draw(self.hud_surface)
         for popup in self.popups: popup.draw(self.hud_surface)
 
@@ -195,11 +238,8 @@ class PlayState(BaseState):
         #self.hud_surface.blit(text, self.score_text_rect)
 
         #cameras - This code is really ugly, i know.
-        scaled_cam_surface = pygame.transform.smoothscale_by(self.cam_surface, self.cam_zoom)
         scaled_hud_surface = pygame.transform.smoothscale_by(self.hud_surface, self.hud_zoom)
-        cam_rect = scaled_cam_surface.get_rect(center = settings.SCREEN_CENTER)
-        hud_rect = scaled_hud_surface.get_rect(center = settings.SCREEN_CENTER)
-        screen.blit(scaled_cam_surface, cam_rect)
-        screen.blit(scaled_hud_surface, hud_rect)
+        screen.blit(self.cam_surface, self.cam_surface.get_rect(center = settings.SCREEN_CENTER))
+        screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = settings.SCREEN_CENTER))
         
         #for note in self.song.chart_reader.chart: note.draw(screen)

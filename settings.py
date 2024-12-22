@@ -62,12 +62,21 @@ STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
 
 SCROLL_SPEED_DIVISOR = 2
 
-#events
-BEAT_HIT = 'beat hit'
+#event TYPES. Will be used BEFORE the slash (/) when posting an event.
+BEAT_HIT = 'BEAT_HIT'
+
+NOTE_GOOD_HIT = 'NOTE_GOOD_HIT'
+NOTE_MISS = 'NOTE_MISS'
+NOTE_BOT_PRESS = 'NOTE_BOT_PRESS'
+
+SONG_BEGAN = 'SONG_BEGAN' #called when the countdown ends and the song's audio begins.
+SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater than the length of the instrumental.
 
 ###user changing variables
 volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
 song_offset = -120
+
+fps = 120 #Max frames per second.
 
 ratings_position = [500, 200]
 combo_position = [500, 280]

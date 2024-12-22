@@ -1,5 +1,4 @@
 import json
-import os
 
 class ChartReader(object):
     def __init__(self, song_name, difficulty):
@@ -24,7 +23,7 @@ class ChartReader(object):
         self.chart = self.load_chart(self.song_name, self.difficulty)
 
     def load_metadata(self):
-        metadata_path = os.path.join('assets', 'data', self.song_name, f'{self.song_name}-metadata.json')
+        metadata_path = f'assets/data/songs/{self.song_name}/{self.song_name}-metadata.json'
         with open(metadata_path) as metadata_file:
             metadata = json.loads(metadata_file.read())
         metadata_file.close()
@@ -32,7 +31,7 @@ class ChartReader(object):
         return metadata
     def load_chart(self, song_name, difficulty): #Returns list of Note objects from given song name and difficulty
         #Read from data file
-        with open(f'assets/data/{song_name}/{song_name}-chart.json') as song_chart:
+        with open(f'assets/data/songs/{song_name}/{song_name}-chart.json') as song_chart:
             chart_dict = json.loads(song_chart.read())
         song_chart.close()
 

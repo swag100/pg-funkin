@@ -1,5 +1,4 @@
 import pygame
-import os
 import settings
 
 from components.conductor import Conductor
@@ -16,27 +15,34 @@ class Song:
         self.characters = self.chart_reader.metadata['playData']['characters']
         self.bpm = self.chart_reader.bpm
 
-        self.song_prefix = os.path.join('assets', 'songs', self.song_name)
-
+        self.song_prefix = f'assets/songs/{self.song_name}'
         self.voices = [
-            pygame.mixer.Sound(os.path.join(self.song_prefix, self.voices_name(self.characters['player']))),
-            pygame.mixer.Sound(os.path.join(self.song_prefix, self.voices_name(self.characters['opponent'])))
+            pygame.mixer.Sound(f'{self.song_prefix}/{self.voices_name(self.characters['player'])}'),
+            pygame.mixer.Sound(f'{self.song_prefix}/{self.voices_name(self.characters['opponent'])}')
         ]
+
+        self.inst_path = f'{self.song_prefix}/Inst.ogg'
+        self.song_length = pygame.mixer.Sound(self.inst_path).get_length()
 
         self.conductor = Conductor(self, settings.song_offset)
 
     def play_audio(self):
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_BEGAN)) #Post rating event
 
         for i in range(len(self.voices)):
             self.voices[i].set_volume(settings.volume)
             pygame.mixer.Channel(i).play(self.voices[i])
-        
-        inst_path = os.path.join(self.song_prefix, 'Inst.ogg')
 
-        pygame.mixer.music.load(inst_path) 
+        pygame.mixer.music.load(self.inst_path) 
         pygame.mixer.music.play()
         pygame.mixer.music.set_volume(settings.volume)
     
     def voices_name(self, singer):
         return f'Voices-{singer}.ogg' 
+    
+    def tick(self, dt):
+        self.conductor.tick(dt)
+
+        if self.conductor.song_position >= self.song_length:
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_ENDED)) #Post rating event
