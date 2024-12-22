@@ -1,10 +1,17 @@
-Song score, health bar, gameoverstate.
-Create combo popups, combo count.
-COUNTDOWN.
+health bar, --
+Health will be a property of playstate. The health bar will just be a visual representation of that for the player.
+
+Song score, 
+
+gameoverstate.
+
 Then, maybe work on camGame?
 
 ------------------------------------------------------------------------------------------
 done / not considered needed notes : D
+
+Create combo popups, combo count.
+COUNTDOWN.
 
 TODO: create note splashes, hold cover effects.
 Change logic for sustain notes. 

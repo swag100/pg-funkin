@@ -48,6 +48,8 @@ class Sustain(object):
 
         self.length = length
 
+        self.being_eaten = False
+
         #Create graphic... Pretty ugly, I know
         
         spritesheet = pygame.image.load('assets/images/NOTE_hold_assets.png').convert_alpha()
@@ -75,6 +77,8 @@ class Sustain(object):
         self.y_change = self.note.y_change
     
     def eat(self, dt): #Stupid name; this handles holding sustains down
+        self.being_eaten = True
+
         self.y += self.y_change * dt
         self.length -= self.y_change * dt * 2
 

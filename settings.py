@@ -6,31 +6,68 @@ WINDOW_SIZE = (1280, 720)
 
 SCREEN_CENTER = (WINDOW_SIZE[0] / 2, WINDOW_SIZE[1] / 2)
 
-DIRECTIONS = ['left','down','up','right']
-SONG_OFFSET = 0
-
 ANIM_FRAMERATE = 1 / 24
 
-SCROLL_SPEED_DIVISOR = 2
-
-#strum positions
-STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
-OPPONENT_STRUMLINE_OFFSET = (16, 24)
-PLAYER_STRUMLINE_OFFSET = (676, 24)
+#gameplay constants
+DIRECTIONS = ['left','down','up','right']
 
 #hit windows, milliseconds
 HIT_WINDOWS = {
+    'perfect': 5,
+    'killer': 12.5,
     'sick': 45,
     'good': 90,
     'bad': 135,
     'shit': 160
 }
 
+#health constants
+HEALTH_MAX = 2
+HEALTH_MIN = 0
+
+HEALTH_STARTING = HEALTH_MAX / 2
+
+HEALTH_BONUSES = {
+    'perfect': 2 / 100 * HEALTH_MAX, #I think perfect and killer are the same
+    'killer': 2 / 100 * HEALTH_MAX,
+    'sick': 1.5 / 100 * HEALTH_MAX,
+    'good': 0.75 / 100 * HEALTH_MAX,
+    'bad': 0 / 100 * HEALTH_MAX,
+    'shit': -1 / 100 * HEALTH_MAX,
+    'holding': 7.5 / 100 * HEALTH_MAX #This one is per second.
+}
+
+HEALTH_PENALTIES = {
+    'miss': 4 / 100 * HEALTH_MAX,
+    'ghost miss': 2 / 100 * HEALTH_MAX, #No note there at all
+    'hold miss': 0 / 100 * HEALTH_MAX #When you let go before the hold note is over.
+}
+
+#score constants
+SCORE_BONUSES = {
+    'sick': 350,
+    'good': 200,
+    'bad': 100,
+    'shit': 50,
+    'holding': 250 #Per second
+}
+
+#points to LOSE when you miss.
+SCORE_PENALTY = 10 
+
+#strum stuff
+OPPONENT_STRUMLINE_OFFSET = (48, 24)
+PLAYER_STRUMLINE_OFFSET = (676, 24)
+STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
+
+SCROLL_SPEED_DIVISOR = 2
+
 #events
 BEAT_HIT = 'beat hit'
 
 ###user changing variables
 volume = 1 #Will go from 0 to 1; increments or decrements by 0.1
+song_offset = -120
 
 ratings_position = [500, 200]
 combo_position = [500, 280]

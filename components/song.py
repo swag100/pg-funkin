@@ -23,7 +23,7 @@ class Song:
             pygame.mixer.Sound(os.path.join(self.song_prefix, self.voices_name(self.characters['opponent'])))
         ]
 
-        self.conductor = Conductor(self, settings.SONG_OFFSET)
+        self.conductor = Conductor(self, settings.song_offset)
 
     def play_audio(self):
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!

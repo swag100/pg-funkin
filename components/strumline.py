@@ -161,7 +161,7 @@ class Strumline(object):
                         rating = self.get_rating(note)
                         pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = rating)) #Post rating event
 
-                        if rating == 'sick':
+                        if rating in ['perfect', 'killer', 'sick']:
                             def do_splash(strumline):
                                 strumline.note_splashes.append(NoteSplash(self))
 
@@ -184,9 +184,10 @@ class Strumline(object):
 
                         self.strum_note.play_animation('confirm') #Override animation
                 
-                #If there was no press detected, it's a miss
+                #If there was no press detected, it's a GHOST miss!
                 if self.state != PRESSED:
-                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'ghost miss')) #feels too slow
+                    #pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
             if event.key in settings.keybinds[self.name]:
@@ -231,8 +232,8 @@ class Strumline(object):
                         if sustain.length <= ((self.conductor.crochet * 1000) / 4) + 2:
                             self.release_splashes.append(ReleaseSplash(self))
                         else: 
-                            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss')) #Post rating event
-                            #This is a miss; it was let go prematurely
+                            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'hold miss')) #Post rating event
+                            #This is a HOLD miss; it was let go prematurely. Will play sound but won't remove health!
 
         for note in self.notes: 
             note.tick(dt)
@@ -243,7 +244,7 @@ class Strumline(object):
                     self.notes.remove(note)
                     self.strum_note.play_animation('confirm')
 
-            #Kill all notes that are missed
+            #Miss all notes that are late by 2 steps or over
             if note.time + (self.conductor.crochet / 2) <= self.conductor.song_position: 
                 pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss')) #Post rating event
                 self.notes.remove(note)
