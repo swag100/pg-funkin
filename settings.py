@@ -91,3 +91,6 @@ keybinds = {
     'back': [pygame.K_ESCAPE], 
     'forward': [pygame.K_RETURN]
 }
+
+#Fun stuff
+CAMERA_SPEED = 1.5

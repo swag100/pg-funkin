@@ -57,3 +57,23 @@ class ChartReader(object):
 
             chart[strumline].append(note)
         return chart
+    def load_chart_events(self, song_name): #returns list of the chart's AWESOME events!
+        #Read from data file
+        with open(f'assets/data/songs/{song_name}/{song_name}-chart.json') as song_chart:
+            chart_dict = json.loads(song_chart.read())
+        song_chart.close()
+
+        events_list = [] #list of EventNote instances for the PlayState to use.
+
+        event_data = chart_dict['events']
+        for event in event_data:
+            event_type = event['e']
+            event_time = event['t']
+
+            event_variable = event['v']
+            if isinstance(event_variable, dict):
+                event_variable = event_variable['char']
+
+            events_list.append({'type': event_type, 'time': event_time, 'variable': event_variable})
+
+        return events_list

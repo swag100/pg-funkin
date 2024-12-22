@@ -35,9 +35,14 @@ class Stage:
         self.prop_data = self.stage_data['props']
         
         self.character_data = self.stage_data['characters']
+
         self.player_position = self.character_data['bf']['position']
         self.opponent_position = self.character_data['dad']['position']
         self.gf_position = self.character_data['gf']['position']
+        
+        self.player_cam_off = self.character_data['bf']['cameraOffsets']
+        self.opponent_cam_off = self.character_data['dad']['cameraOffsets']
+        self.gf_cam_off = self.character_data['gf']['cameraOffsets']
 
         print(self.character_data)
 

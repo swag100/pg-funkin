@@ -18,7 +18,9 @@ class PlayState(BaseState):
 
         #contains chart reader object
         #will automatically start countdown
-        self.song = Song('fresh', 'hard')
+        self.song = Song('dadbattle', 'hard')
+
+        self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
         #game variables
         self.combo = 0
@@ -60,6 +62,7 @@ class PlayState(BaseState):
         self.hud_zoom = 1
 
         self.camera_position = [0, 0]
+        self.camera_position_lerp = self.camera_position
 
     def add_health(self, amount):
         if self.health + amount <= settings.HEALTH_MAX:
@@ -173,19 +176,35 @@ class PlayState(BaseState):
             
 
     def tick(self, dt):
-        #TESTING CAMERA CODE:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
-        if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
-        if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
-        if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
-
         #This also ticks conductor
         self.song.tick(dt)
 
-        #game
-        self.stage.tick(dt, self.camera_position)
-        for character in self.characters: character.tick(dt, self.camera_position)
+        #update cam lerp
+        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * settings.CAMERA_SPEED)
+        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * settings.CAMERA_SPEED)
+
+        #CHARTING EVENTS
+        for event in self.events:
+            if event['type'] == 'FocusCamera':
+                if event['time'] / 1000 <= self.song.conductor.song_position:
+                    if bool(event['variable']):
+                        self.camera_position = [
+                            self.stage.opponent_position[0] + self.stage.opponent_cam_off[0],
+                            self.stage.opponent_position[1] + self.stage.opponent_cam_off[1]
+                        ]
+                    else:
+                        self.camera_position = [
+                            self.stage.player_position[0] + self.stage.player_cam_off[0],
+                            self.stage.player_position[1] + self.stage.player_cam_off[1]
+                        ]
+                    self.events.remove(event)
+        
+
+
+        #game objects
+
+        self.stage.tick(dt, self.camera_position_lerp)
+        for character in self.characters: character.tick(dt, self.camera_position_lerp)
 
         #hud
         self.health_bar.tick(dt)
@@ -214,6 +233,15 @@ class PlayState(BaseState):
         self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
 
         self.hud_zoom += (1 - self.hud_zoom) / 8
+
+        """
+        #TESTING CAMERA CODE:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
+        if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
+        if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
+        if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
+        """
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
