@@ -1,5 +1,5 @@
 import sys
-import settings
+import constants
 import pygame
 
 class Game(object):
@@ -12,12 +12,12 @@ class Game(object):
         self.state.start({})
 
         self.clock = pygame.time.Clock()
-        self.max_fps = settings.fps
+        self.max_fps = constants.fps
 
         self.done = False
 
         #Volume GUI
-        self.volume_rect = pygame.Rect(settings.SCREEN_CENTER[0] - 80, -60, 160, 60)
+        self.volume_rect = pygame.Rect(constants.SCREEN_CENTER[0] - 80, -60, 160, 60)
         self.volume_surface = pygame.Surface((160,60), pygame.SRCALPHA)
         self.volume_visible_time = 0 #Seconds that volume GUI is visible.
         
@@ -32,23 +32,23 @@ class Game(object):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == settings.keybinds['volume']['down']:
-                    if settings.volume - 1 >= 0:
-                        settings.volume -= 1
-                if event.key == settings.keybinds['volume']['up']:
-                    if settings.volume + 1 <= 10:
-                        settings.volume += 1
+                if event.key == constants.keybinds['volume']['down']:
+                    if constants.volume - 1 >= 0:
+                        constants.volume -= 1
+                if event.key == constants.keybinds['volume']['up']:
+                    if constants.volume + 1 <= 10:
+                        constants.volume += 1
                 
-                if event.key in settings.keybinds['volume'].values():
+                if event.key in constants.keybinds['volume'].values():
                     self.volume_visible_time
                     self.volume_rect.y = 0
 
                     volume_noise = pygame.mixer.Sound('assets/sounds/volume.ogg')
-                    volume_noise.set_volume(settings.volume / 10)
+                    volume_noise.set_volume(constants.volume / 10)
                     volume_noise.play()
                     #160,60
                     #8,20
-                    print(settings.volume)
+                    print(constants.volume)
 
             self.state.handle_event(event)
     def set_state(self):
@@ -86,7 +86,7 @@ class Game(object):
             surface = pygame.Surface((rect.w,rect.h), pygame.SRCALPHA)
             surface.fill((255,255,255,128))
             self.screen.blit(surface, (rect.x + self.volume_rect.x, rect.y + self.volume_rect.y))
-        for i in range(settings.volume):
+        for i in range(constants.volume):
             rect = pygame.Rect(i * 12 + 20, 0, 8, (i + 1) * 2)
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))

@@ -1,5 +1,5 @@
 import pygame
-import settings
+import constants
 import random
 from .basestate import BaseState
 
@@ -58,7 +58,7 @@ class PlayState(BaseState):
         self.combo = 0
         self.score = 0 #work on this tomorrow
 
-        self.health = settings.HEALTH_STARTING
+        self.health = constants.HEALTH_STARTING
         self.health_lerp = self.health #The pretty health value we draw the healthbar with.
 
         #For a squeaky clean transition between songs! :D
@@ -68,7 +68,7 @@ class PlayState(BaseState):
         #HUD STUFF
 
         #Health bar
-        self.health_bar = HealthBar(self, (settings.SCREEN_CENTER[0], settings.WINDOW_SIZE[1] * 0.9))
+        self.health_bar = HealthBar(self, (constants.SCREEN_CENTER[0], constants.WINDOW_SIZE[1] * 0.9))
         self.health_bar_icons = [
             BarIcon(self, self.song.characters['player'], True),
             BarIcon(self, self.song.characters['opponent'])
@@ -88,16 +88,16 @@ class PlayState(BaseState):
             self.strums.append(Strumline(i, self.song))
 
     def add_health(self, amount):
-        if self.health + amount <= settings.HEALTH_MAX:
+        if self.health + amount <= constants.HEALTH_MAX:
             self.health += amount
         else:
-            self.health = settings.HEALTH_MAX
+            self.health = constants.HEALTH_MAX
 
     def remove_health(self, amount):
-        if self.health - amount >= settings.HEALTH_MIN:
+        if self.health - amount >= constants.HEALTH_MIN:
             self.health -= amount
         else:
-            self.health = settings.HEALTH_MIN
+            self.health = constants.HEALTH_MIN
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
@@ -112,12 +112,12 @@ class PlayState(BaseState):
                 event_parameters = []
 
             #if event_id in settings.HIT_WINDOWS.keys():
-            if event_type == settings.NOTE_GOOD_HIT:
+            if event_type == constants.NOTE_GOOD_HIT:
                 rating = event_parameters[0]
 
                 self.combo += 1 #Increase combo no matter the rating?
 
-                self.add_health(settings.HEALTH_BONUSES[rating])
+                self.add_health(constants.HEALTH_BONUSES[rating])
 
                 #unmute player voice if it was
                 self.player_voice_track_muted = False
@@ -125,26 +125,26 @@ class PlayState(BaseState):
                 if rating in ['perfect', 'killer']: #Shares the same graphic
                     rating = 'sick'
 
-                self.score += settings.SCORE_BONUSES[rating]
+                self.score += constants.SCORE_BONUSES[rating]
 
                 #Create rating object, add rating to song.ratings list, award score
-                self.popups.append(Popup(rating, settings.ratings_position))
+                self.popups.append(Popup(rating, constants.ratings_position))
 
                 if self.combo >= 10:
                     combo_string = f'{self.combo:03}'
                     for i in range(len(combo_string)):
-                        self.popups.append(Popup(f'num{combo_string[i]}', settings.combo_position, 0.5, i))
+                        self.popups.append(Popup(f'num{combo_string[i]}', constants.combo_position, 0.5, i))
 
             #if event_id in settings.HEALTH_PENALTIES.keys():
-            if event_type == settings.NOTE_MISS:
+            if event_type == constants.NOTE_MISS:
                 self.combo = 0 # L
                 
                 #decrement health pretty
-                self.score -= settings.SCORE_PENALTY
-                self.remove_health(settings.HEALTH_PENALTIES[event_parameters[0]])
+                self.score -= constants.SCORE_PENALTY
+                self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume((settings.volume / 10) * 0.4)
+                miss_noise.set_volume((constants.volume / 10) * 0.4)
                 miss_noise.play()
 
                 #voices[0] is players voice
@@ -152,7 +152,7 @@ class PlayState(BaseState):
                 self.player_voice_track_muted = True
                 self.song.voices[0].set_volume(0)
             
-            if event_type == settings.BEAT_HIT: #BEAT HIT
+            if event_type == constants.BEAT_HIT: #BEAT HIT
                 cur_beat = int(event_parameters[0]) #easier to read
 
                 if cur_beat == 0:
@@ -171,12 +171,12 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(settings.volume / 10)
+                    countdown_noises[cur_beat + 4].set_volume(constants.volume / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image
                     if -3 <= cur_beat < 0:
-                        self.popups.append(Countdown(countdown_images[cur_beat + 3], settings.SCREEN_CENTER))
+                        self.popups.append(Countdown(countdown_images[cur_beat + 3], constants.SCREEN_CENTER))
 
                 #Cam zoom on beat hit
                 if cur_beat % 4 == 0:
@@ -202,7 +202,7 @@ class PlayState(BaseState):
                 print('Hello, song! You just started :)')
             """
                 
-            if event_type == settings.SONG_ENDED:
+            if event_type == constants.SONG_ENDED:
                 self.persistent_data['level progress'] = self.level_progress + 1
 
                 self.persistent_data['old health'] = self.health_lerp
@@ -249,8 +249,8 @@ class PlayState(BaseState):
         self.song.tick(dt, self.player_voice_track_muted)
 
         #update cam lerp
-        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * settings.CAMERA_SPEED)
-        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * settings.CAMERA_SPEED)
+        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.camera_lerp_speed)
+        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.camera_lerp_speed)
 
         #update health lerp
         self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
@@ -276,8 +276,8 @@ class PlayState(BaseState):
             if not strumline.bot_strum:
                 for sustain in strumline.sustains:
                     if sustain.being_eaten:
-                        self.score += settings.SCORE_BONUSES['holding'] * dt
-                        self.add_health(settings.HEALTH_BONUSES['holding'] * dt)
+                        self.score += constants.SCORE_BONUSES['holding'] * dt
+                        self.add_health(constants.HEALTH_BONUSES['holding'] * dt)
             
         for popup in self.popups: 
             popup.tick(dt)
@@ -286,8 +286,8 @@ class PlayState(BaseState):
                 self.popups.remove(popup)
 
         #Reset surfaces every tick.
-        self.cam_surface = pygame.Surface(settings.WINDOW_SIZE)
-        self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        self.cam_surface = pygame.Surface(constants.WINDOW_SIZE)
+        self.hud_surface = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
 
         self.hud_zoom += (1 - self.hud_zoom) / 8
 
@@ -325,7 +325,7 @@ class PlayState(BaseState):
         #cameras - This code is really ugly, i know.
         scaled_cam_surface = pygame.transform.smoothscale_by(self.cam_surface, self.cam_zoom)
         scaled_hud_surface = pygame.transform.smoothscale_by(self.hud_surface, self.hud_zoom)
-        screen.blit(scaled_cam_surface, self.cam_surface.get_rect(center = settings.SCREEN_CENTER))
-        screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = settings.SCREEN_CENTER))
+        screen.blit(scaled_cam_surface, self.cam_surface.get_rect(center = constants.SCREEN_CENTER))
+        screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = constants.SCREEN_CENTER))
         
         #for note in self.song.chart_reader.chart: note.draw(screen)

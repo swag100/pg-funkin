@@ -1,5 +1,5 @@
 import pygame
-import settings
+import constants
 
 from components.conductor import Conductor
 from components.chart_reader import ChartReader
@@ -24,11 +24,11 @@ class Song:
         self.inst_path = f'{self.song_prefix}/Inst.ogg'
         self.song_length = pygame.mixer.Sound(self.inst_path).get_length()
 
-        self.conductor = Conductor(self, settings.song_offset)
+        self.conductor = Conductor(self, constants.song_offset)
 
     def play_audio(self):
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
-        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_BEGAN)) #Post rating event
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = constants.SONG_BEGAN)) #Post rating event
 
         for i in range(len(self.voices)):
             pygame.mixer.Channel(i).play(self.voices[i])
@@ -45,13 +45,13 @@ class Song:
     def tick(self, dt, player_voice_track_muted = False):
         self.conductor.tick(dt)
 
-        pygame.mixer.music.set_volume(settings.volume / 10)
+        pygame.mixer.music.set_volume(constants.volume / 10)
         for i in range(len(self.voices)):
-            self.voices[i].set_volume(settings.volume / 10)
+            self.voices[i].set_volume(constants.volume / 10)
         if player_voice_track_muted:
             self.voices[0].set_volume(0)
 
         #TODO: Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
 
         if self.is_finished():
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{settings.SONG_ENDED}/{dt}')) #Post rating event
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.SONG_ENDED}/{dt}')) #Post rating event

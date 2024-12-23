@@ -101,4 +101,4 @@ keybinds = {
 }
 
 #Fun stuff
-CAMERA_SPEED = 2
+camera_lerp_speed = 2

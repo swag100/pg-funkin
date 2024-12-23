@@ -1,5 +1,5 @@
 import pygame
-import settings
+import constants
 
 from components.spritesheet import Spritesheet
 
@@ -11,10 +11,10 @@ class Note(object):
 
         self.can_be_hit = True
 
-        self.name = settings.DIRECTIONS[strumline.id % 4]
+        self.name = constants.DIRECTIONS[strumline.id % 4]
 
         self.x = self.strumline.pos[0]
-        self.y = (time) * speed / settings.SCROLL_SPEED_DIVISOR
+        self.y = (time) * speed / constants.SCROLL_SPEED_DIVISOR
 
         #offsets
         #Hardcode right note offset.
@@ -24,10 +24,10 @@ class Note(object):
         self.x += self.strumline.strum_note.anim_offsets['note'][0] + note_offset[0]
         self.y += self.strumline.strum_note.pos[1] + note_offset[1] + self.strumline.strum_note.anim_offsets['press'][1]
 
-        self.y_change = (1000 * self.speed) / settings.SCROLL_SPEED_DIVISOR
+        self.y_change = (1000 * self.speed) / constants.SCROLL_SPEED_DIVISOR
     
         #animation
-        spritesheet = Spritesheet('assets/images/notes.png', settings.STRUMLINE_SCALE_MULT)
+        spritesheet = Spritesheet('assets/images/notes.png', constants.STRUMLINE_SCALE_MULT)
 
         anim_frames = spritesheet.load_animation('note' + self.name.title())
         self.animation = spritesheet.frames_to_animation(anim_frames)
@@ -38,7 +38,7 @@ class Note(object):
         self.y -= self.y_change * dt
     
     def draw(self, screen):
-        if -self.animation.getMaxSize()[1] <= self.y <= settings.WINDOW_SIZE[1]: #in frame
+        if -self.animation.getMaxSize()[1] <= self.y <= constants.WINDOW_SIZE[1]: #in frame
             self.animation.blit(screen, (self.x, self.y))
 
 class Sustain(object):
@@ -57,9 +57,9 @@ class Sustain(object):
         sheet_h = spritesheet.get_rect().h
 
         sus_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect(sheet_w / 4 * self.id, 0, sheet_w / 8, 1))
-        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * settings.STRUMLINE_SCALE_MULT, (self.length / settings.SCROLL_SPEED_DIVISOR) - (sheet_h / 2))) #64: height of note end sprite
+        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * constants.STRUMLINE_SCALE_MULT, (self.length / constants.SCROLL_SPEED_DIVISOR) - (sheet_h / 2))) #64: height of note end sprite
         end_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect((sheet_w / 4) * self.id + (sheet_w / 8), 0, sheet_w / 8, sheet_h - 1))
-        end_sprite = pygame.transform.smoothscale_by(end_sprite, settings.STRUMLINE_SCALE_MULT)
+        end_sprite = pygame.transform.smoothscale_by(end_sprite, constants.STRUMLINE_SCALE_MULT)
 
         sus_sprite_rect = sus_sprite.get_rect()
         end_sprite_rect = end_sprite.get_rect()

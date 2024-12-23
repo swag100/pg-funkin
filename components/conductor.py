@@ -1,6 +1,6 @@
 import pygame
 import math
-import settings
+import constants
 
 class Conductor(object): 
     def __init__(self, song, offset = 0): # Replace bpm, offset with song data in file and user offset preferences
@@ -27,4 +27,4 @@ class Conductor(object):
 
         if self.old_beat != self.cur_beat: #BEAT HIT
             self.old_beat = self.cur_beat
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{settings.BEAT_HIT}/{self.cur_beat}')) #Post BEAT HIT event
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.BEAT_HIT}/{self.cur_beat}')) #Post BEAT HIT event

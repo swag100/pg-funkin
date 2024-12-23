@@ -12,7 +12,7 @@
 # bug reports to Al at al@inventwithpython.com
 #
 
-import pygame, time, settings
+import pygame, time, constants
 
 # setting up constants
 PLAYING = 'playing'
@@ -31,7 +31,7 @@ SOUTH = 'south'
 SOUTHEAST = 'southeast'
 
 class Animation(object):
-    def __init__(self, frames, framerate = settings.ANIM_FRAMERATE):
+    def __init__(self, frames, framerate = constants.ANIM_FRAMERATE):
         # Constructor function for the animation object. Starts off in the STOPPED state.
         #
         # @param frames

@@ -1,5 +1,5 @@
 import pygame
-import settings
+import constants
 import json
 
 from components.spritesheet import Spritesheet
@@ -67,7 +67,7 @@ class Character:
             except IndexError:
                 event_parameters = []
 
-            if event_type == settings.BEAT_HIT:
+            if event_type == constants.BEAT_HIT:
                 cur_beat = int(event_parameters[0])
                 
                 if self.character_type != 'girlfriend': #ITS ALMOST 4AM.
@@ -84,18 +84,18 @@ class Character:
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
             if self.character_type == 'player':
-                if event_type == settings.NOTE_GOOD_HIT:
-                    pose = f'sing{settings.DIRECTIONS[int(event_parameters[1])].upper()}'
+                if event_type == constants.NOTE_GOOD_HIT:
+                    pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
                     self.play_animation(pose)
 
-                if event_type == settings.NOTE_MISS:
-                    pose = f'sing{settings.DIRECTIONS[int(event_parameters[1])].upper()}miss'
+                if event_type == constants.NOTE_MISS:
+                    pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}miss'
                     self.play_animation(pose)
 
                 return
             
-            if event_type == settings.NOTE_BOT_PRESS:
-                pose = f'sing{settings.DIRECTIONS[int(event_parameters[1])].upper()}'
+            if event_type == constants.NOTE_BOT_PRESS:
+                pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
                 self.play_animation(pose)
 
                 #THIS SUCKS. WORK ON THIS TOMORROW.
