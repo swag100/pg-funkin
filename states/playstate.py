@@ -128,12 +128,12 @@ class PlayState(BaseState):
                 self.score += constants.SCORE_BONUSES[rating]
 
                 #Create rating object, add rating to song.ratings list, award score
-                self.popups.append(Popup(rating, constants.ratings_position))
+                self.popups.append(Popup(rating, constants.SETTINGS_DEFAULT_RATING_POSITION))
 
                 if self.combo >= 10:
                     combo_string = f'{self.combo:03}'
                     for i in range(len(combo_string)):
-                        self.popups.append(Popup(f'num{combo_string[i]}', constants.combo_position, 0.5, i))
+                        self.popups.append(Popup(f'num{combo_string[i]}', constants.SETTINGS_DEFAULT_COMBO_POSITION, 0.5, i))
 
             #if event_id in settings.HEALTH_PENALTIES.keys():
             if event_type == constants.NOTE_MISS:
@@ -144,13 +144,12 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume((constants.volume / 10) * 0.4)
+                miss_noise.set_volume((constants.SETTINGS_DEFAULT_VOLUME / 10) * 0.4)
                 miss_noise.play()
 
                 #voices[0] is players voice
                 #mute player vocals until palyer gets a rating
                 self.player_voice_track_muted = True
-                self.song.voices[0].set_volume(0)
             
             if event_type == constants.BEAT_HIT: #BEAT HIT
                 cur_beat = int(event_parameters[0]) #easier to read
@@ -171,7 +170,7 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(constants.volume / 10)
+                    countdown_noises[cur_beat + 4].set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image
@@ -249,8 +248,8 @@ class PlayState(BaseState):
         self.song.tick(dt, self.player_voice_track_muted)
 
         #update cam lerp
-        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.camera_lerp_speed)
-        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.camera_lerp_speed)
+        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED)
+        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED)
 
         #update health lerp
         self.health_lerp += (self.health - self.health_lerp) * (dt * 10)

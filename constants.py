@@ -74,17 +74,17 @@ NOTE_BOT_PRESS = 'NOTE_BOT_PRESS'
 SONG_BEGAN = 'SONG_BEGAN' #called when the countdown ends and the song's audio begins.
 SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater than the length of the instrumental.
 
-###user changing variables
-volume = 10 #Will go from 0 to 10; increments or decrements by 1
-song_offset = -120
+###SETTINGS DEFAULT VALUES to the user changing variables
+SETTINGS_DEFAULT_VOLUME = 10 #Will go from 0 to 10; increments or decrements by 1
+SETTINGS_DEFAULT_SONG_OFFSET = -120
 
-fps = 60 #Max frames per second.
+SETTINGS_DEFAULT_FPS = 60 #Max frames per second.
 
-ratings_position = [500, 200]
-combo_position = [500, 280]
+SETTINGS_DEFAULT_RATING_POSITION = [500, 200]
+SETTINGS_DEFAULT_COMBO_POSITION = [500, 280]
 
 #keybinds
-keybinds = {
+SETTINGS_DEFAULT_KEYBINDS = {
     'left': [pygame.K_a, pygame.K_LEFT],
     'down': [pygame.K_s, pygame.K_DOWN],
     'up': [pygame.K_w, pygame.K_UP],
@@ -101,4 +101,4 @@ keybinds = {
 }
 
 #Fun stuff
-camera_lerp_speed = 2
+SETTINGS_DEFAULT_CAMERA_SPEED = 2

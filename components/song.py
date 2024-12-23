@@ -24,7 +24,7 @@ class Song:
         self.inst_path = f'{self.song_prefix}/Inst.ogg'
         self.song_length = pygame.mixer.Sound(self.inst_path).get_length()
 
-        self.conductor = Conductor(self, constants.song_offset)
+        self.conductor = Conductor(self, constants.SETTINGS_DEFAULT_SONG_OFFSET)
 
     def play_audio(self):
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
@@ -45,9 +45,9 @@ class Song:
     def tick(self, dt, player_voice_track_muted = False):
         self.conductor.tick(dt)
 
-        pygame.mixer.music.set_volume(constants.volume / 10)
+        pygame.mixer.music.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         for i in range(len(self.voices)):
-            self.voices[i].set_volume(constants.volume / 10)
+            self.voices[i].set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         if player_voice_track_muted:
             self.voices[0].set_volume(0)
 

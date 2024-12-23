@@ -146,7 +146,7 @@ class Strumline(object):
         if self.bot_strum: return
                 
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.keybinds[self.name]:
+            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:
                 self.strum_note.play_animation('press')
 
                 for note in self.notes:
@@ -186,7 +186,7 @@ class Strumline(object):
                     #pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
-            if event.key in constants.keybinds[self.name]:
+            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:
                 if self.state != None:
                     self.state = RELEASED
 

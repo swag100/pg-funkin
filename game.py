@@ -12,7 +12,7 @@ class Game(object):
         self.state.start({})
 
         self.clock = pygame.time.Clock()
-        self.max_fps = constants.fps
+        self.max_fps = constants.SETTINGS_DEFAULT_FPS
 
         self.done = False
 
@@ -32,14 +32,14 @@ class Game(object):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == constants.keybinds['volume']['down']:
+                if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume']['down']:
                     if constants.volume - 1 >= 0:
                         constants.volume -= 1
-                if event.key == constants.keybinds['volume']['up']:
+                if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume']['up']:
                     if constants.volume + 1 <= 10:
                         constants.volume += 1
                 
-                if event.key in constants.keybinds['volume'].values():
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume'].values():
                     self.volume_visible_time
                     self.volume_rect.y = 0
 
@@ -86,7 +86,7 @@ class Game(object):
             surface = pygame.Surface((rect.w,rect.h), pygame.SRCALPHA)
             surface.fill((255,255,255,128))
             self.screen.blit(surface, (rect.x + self.volume_rect.x, rect.y + self.volume_rect.y))
-        for i in range(constants.volume):
+        for i in range(constants.SETTINGS_DEFAULT_VOLUME):
             rect = pygame.Rect(i * 12 + 20, 0, 8, (i + 1) * 2)
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))
