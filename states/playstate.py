@@ -35,6 +35,8 @@ class PlayState(BaseState):
 
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
+        self.player_voice_track_muted = False
+
         print(self.song.song_name)
 
         if not self.just_created:
@@ -116,8 +118,7 @@ class PlayState(BaseState):
                 self.add_health(settings.HEALTH_BONUSES[rating])
 
                 #unmute player voice if it was
-                if self.song.voices[0].get_volume() <= 0:
-                    self.song.voices[0].set_volume(settings.volume / 10)
+                self.player_voice_track_muted = False
 
                 if rating in ['perfect', 'killer']: #Shares the same graphic
                     rating = 'sick'
@@ -146,6 +147,7 @@ class PlayState(BaseState):
 
                 #voices[0] is players voice
                 #mute player vocals until palyer gets a rating
+                self.player_voice_track_muted = True
                 self.song.voices[0].set_volume(0)
             
             if event_type == settings.BEAT_HIT: #BEAT HIT
@@ -202,14 +204,12 @@ class PlayState(BaseState):
                 #print('Song over!')
 
                 self.persistent_data['level progress'] += 1
-                if self.persistent_data['level progress'] > len(self.song_list):
+                if self.persistent_data['level progress'] - 1 > len(self.song_list):
                     print('Level finished.')
                     return
-
-                self.next_state = 'PlayState'
-                self.done = True
-
-                
+                else:
+                    self.next_state = 'PlayState'
+                    self.done = True
             
     def handle_chart_events(self, chart_event):
         event_var = chart_event['variable']
@@ -247,7 +247,7 @@ class PlayState(BaseState):
         if dt > 1: return
 
         #This also ticks conductor
-        self.song.tick(dt)
+        self.song.tick(dt, self.player_voice_track_muted)
 
         #update cam lerp
         self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * settings.CAMERA_SPEED)

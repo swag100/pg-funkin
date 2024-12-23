@@ -92,7 +92,12 @@ keybinds = {
 
     'back': [pygame.K_ESCAPE], 
     'forward': [pygame.K_RETURN],
-    'volume': [pygame.K_MINUS, pygame.K_EQUALS]
+    'reset': [pygame.K_r],
+
+    'volume': {
+        'up': pygame.K_EQUALS, 
+        'down': pygame.K_MINUS
+    }
 }
 
 #Fun stuff

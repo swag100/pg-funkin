@@ -30,14 +30,14 @@ class Game(object):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == settings.keybinds['volume'][0]:
+                if event.key == settings.keybinds['volume']['down']:
                     if settings.volume - 1 >= 0:
                         settings.volume -= 1
-                if event.key == settings.keybinds['volume'][1]:
+                if event.key == settings.keybinds['volume']['up']:
                     if settings.volume + 1 <= 10:
                         settings.volume += 1
                 
-                if event.key in settings.keybinds['volume']:
+                if event.key in settings.keybinds['volume'].values():
                     self.volume_visible_time
                     self.volume_rect.y = 0
 

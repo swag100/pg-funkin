@@ -40,13 +40,16 @@ class Song:
     def voices_name(self, singer):
         return f'Voices-{singer}.ogg' 
     
-    def tick(self, dt):
+    def tick(self, dt, player_voice_track_muted = False):
         self.conductor.tick(dt)
 
-        #Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
         pygame.mixer.music.set_volume(settings.volume / 10)
         for i in range(len(self.voices)):
             self.voices[i].set_volume(settings.volume / 10)
+        if player_voice_track_muted:
+            self.voices[0].set_volume(0)
+
+        #TODO: Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
 
         if self.conductor.song_position >= self.song_length:
             pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_ENDED)) #Post rating event
