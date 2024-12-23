@@ -1,6 +1,7 @@
 import pygame
 import settings
 import random
+import pytweening
 from .basestate import BaseState
 
 from components.song import Song
@@ -27,17 +28,16 @@ class PlayState(BaseState):
         #TODO: ^^^ Generate this list DYNAMICALLY with a given week file... And, also give the option TO PICK A DIFFICULTY.
         #These things require a main menu state, so if I'm really up for it, I'll make one... 
 
-        self.week_progress = self.persistent_data['level progress'] #Current id for the song in the week you're in
+        self.level_progress = self.persistent_data['level progress'] #Current id for the song in the week you're in
 
         #contains chart reader object
         #will automatically start countdown
-        self.song = Song(self.song_list[self.week_progress], 'hard')
-
+        self.song = Song(self.song_list[self.level_progress], 'hard')
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
-        self.player_voice_track_muted = False
+        self.song_ended_time_elapsed = 0
 
-        print(self.song.song_name)
+        self.player_voice_track_muted = False
 
         if not self.just_created:
             self.just_created = True
@@ -54,8 +54,10 @@ class PlayState(BaseState):
 
         #game variables
         self.combo = 0
-        self.health = settings.HEALTH_STARTING
         self.score = 0 #work on this tomorrow
+
+        self.health = settings.HEALTH_STARTING
+        self.health_lerp = self.health #The pretty health value we draw the healthbar with.
 
         self.characters = [
             Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
@@ -96,6 +98,27 @@ class PlayState(BaseState):
             self.health -= amount
         else:
             self.health = settings.HEALTH_MIN
+
+    def clean_up_hud_and_end_song(self, skip_clean_up = False):
+        #print('Song over!')
+
+        self.persistent_data['level progress'] = self.level_progress + 1
+        self.next_state = 'PlayState'
+
+        if not skip_clean_up:
+            self.health = settings.HEALTH_STARTING
+            
+            tween_change = pytweening.easeInOutCubic(self.song_ended_time_elapsed / 2)
+            self.health_lerp = self.health_lerp + (tween_change * (self.health - self.health_lerp))
+
+            #Dangerous. Change this later when keeping track of scores outside of songs.
+            self.score = self.score + (tween_change * (0 - self.score))
+            ###
+
+            if self.song_ended_time_elapsed / 2 >= 1:
+                self.done = True
+        else:
+            self.done = True
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
@@ -201,15 +224,7 @@ class PlayState(BaseState):
             """
                 
             if event_type == settings.SONG_ENDED:
-                #print('Song over!')
-
-                self.persistent_data['level progress'] += 1
-                if self.persistent_data['level progress'] - 1 > len(self.song_list):
-                    print('Level finished.')
-                    return
-                else:
-                    self.next_state = 'PlayState'
-                    self.done = True
+                self.clean_up_hud_and_end_song()
             
     def handle_chart_events(self, chart_event):
         event_var = chart_event['variable']
@@ -253,6 +268,13 @@ class PlayState(BaseState):
         self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * settings.CAMERA_SPEED)
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * settings.CAMERA_SPEED)
 
+        #update health lerp
+        if self.song.is_finished():
+            self.song_ended_time_elapsed += dt
+
+        else:
+            self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
+
         #CHARTING EVENTS
         for event in self.events: self.handle_chart_events(event)
 
@@ -289,14 +311,14 @@ class PlayState(BaseState):
 
         self.hud_zoom += (1 - self.hud_zoom) / 8
 
-        
+        """
         #TESTING CAMERA CODE:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
         if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
         if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
         if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
-        
+        """
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 

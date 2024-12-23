@@ -35,7 +35,9 @@ class Song:
 
         pygame.mixer.music.load(self.inst_path) 
         pygame.mixer.music.play()
-        
+
+    def is_finished(self):
+        return self.conductor.song_position >= self.song_length
     
     def voices_name(self, singer):
         return f'Voices-{singer}.ogg' 
@@ -51,5 +53,5 @@ class Song:
 
         #TODO: Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
 
-        if self.conductor.song_position >= self.song_length:
-            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = settings.SONG_ENDED)) #Post rating event
+        if self.is_finished():
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{settings.SONG_ENDED}/{dt}')) #Post rating event

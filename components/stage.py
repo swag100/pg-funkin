@@ -3,7 +3,7 @@ import json
 
 class Prop:
     def __init__(self, image_path, position, scroll = (1, 1), scale = (1, 1)):
-        self.image = pygame.image.load(f'assets/images/{image_path}.png')
+        self.image = pygame.image.load(f'assets/images/{image_path}.png').convert_alpha()
         self.position = position
         self.scroll_factor = scroll
 

@@ -10,7 +10,7 @@ pygame.mixer.init()
 pygame.init()
 
 pygame.display.set_caption(settings.WINDOW_TITLE)
-screen = pygame.display.set_mode(settings.WINDOW_SIZE)
+screen = pygame.display.set_mode(settings.WINDOW_SIZE, pygame.DOUBLEBUF, 16)
 
 states = {
     'StoryMenuState': StoryMenuState(),

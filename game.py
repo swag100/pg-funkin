@@ -21,8 +21,10 @@ class Game(object):
         self.volume_surface = pygame.Surface((160,60), pygame.SRCALPHA)
         self.volume_visible_time = 0 #Seconds that volume GUI is visible.
         
-        font = pygame.font.Font('assets/fonts/nokiafc22.ttf', 20)
-        self.volume_text = font.render('VOLUME', True, (255, 255, 255))
+        volume_font = pygame.font.Font('assets/fonts/nokiafc22.ttf', 20)
+        self.volume_text = volume_font.render('VOLUME', True, (255, 255, 255))
+
+        self.fps_font = pygame.font.Font('assets/fonts/arial.ttf', 10)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -68,6 +70,9 @@ class Game(object):
                 self.volume_rect.y -= 20
             else:
                 self.volume_visible_time = 0
+        #fps counter
+        fps = int(self.clock.get_fps())
+        self.fps_text = self.fps_font.render(f'FPS: {fps}', True, (255, 255, 255))
 
     def draw(self):
         self.state.draw(self.screen)
@@ -86,6 +91,7 @@ class Game(object):
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))
         self.screen.blit(self.volume_text, (self.volume_rect.x + 30, self.volume_rect.y + 34))
+        self.screen.blit(self.fps_text, (6, 2))
 
     def run(self):
         while not self.done:
