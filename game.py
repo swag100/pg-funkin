@@ -33,22 +33,19 @@ class Game(object):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume']['down']:
-                    if constants.volume - 1 >= 0:
-                        constants.volume -= 1
+                    if constants.SETTINGS_DEFAULT_VOLUME - 1 >= 0:
+                        constants.SETTINGS_DEFAULT_VOLUME -= 1
                 if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume']['up']:
-                    if constants.volume + 1 <= 10:
-                        constants.volume += 1
+                    if constants.SETTINGS_DEFAULT_VOLUME + 1 <= 10:
+                        constants.SETTINGS_DEFAULT_VOLUME += 1
                 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume'].values():
                     self.volume_visible_time
                     self.volume_rect.y = 0
 
                     volume_noise = pygame.mixer.Sound('assets/sounds/volume.ogg')
-                    volume_noise.set_volume(constants.volume / 10)
+                    volume_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                     volume_noise.play()
-                    #160,60
-                    #8,20
-                    print(constants.volume)
 
             self.state.handle_event(event)
     def set_state(self):

@@ -63,6 +63,7 @@ class PlayState(BaseState):
 
         #For a squeaky clean transition between songs! :D
         if 'old health' in self.persistent_data:
+            print(self.persistent_data['old health'], self.health_lerp)
             self.health_lerp = self.persistent_data['old health']
 
         #HUD STUFF
@@ -144,7 +145,7 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume((constants.SETTINGS_DEFAULT_VOLUME / 10) * 0.4)
+                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 80) #80 is intentional; should be way quieter.
                 miss_noise.play()
 
                 #voices[0] is players voice

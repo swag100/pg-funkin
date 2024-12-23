@@ -1,5 +1,4 @@
 import json
-import time
 from .basestate import BaseState
 
 #EXTREMELY simple state; only meant for transferring week info to the playstate for now.

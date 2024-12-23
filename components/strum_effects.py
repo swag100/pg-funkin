@@ -12,7 +12,7 @@ class NoteSplash:
         peak = note_colors.copy()
         if rand_anim == 1: peak[1] = ' blue'
 
-        spritesheet = Spritesheet('assets/images/noteSplashes.png', 0.9)
+        spritesheet = Spritesheet('assets/images/strumline/noteSplashes.png', 0.9)
         anim_frames = spritesheet.load_animation(f'note impact {rand_anim} {peak[self.direction]}')
 
         self.animation = spritesheet.frames_to_animation(anim_frames)
@@ -34,7 +34,7 @@ class HoldCover:
         self.direction = sustain.id
         self.color = note_colors[self.direction]
 
-        self.spritesheet = Spritesheet(f'assets/images/holdCover{self.color.title()}.png', 0.9)
+        self.spritesheet = Spritesheet(f'assets/images/strumline/holdCover{self.color.title()}.png', 0.9)
         self.spritesheet.preload_animations()
         self.animation = self.spritesheet.animations[f'holdCoverStart{self.color.title()}']
 
@@ -63,7 +63,7 @@ class ReleaseSplash:
         self.direction = self.strumline.id % 4
         self.color = note_colors[self.direction]
 
-        spritesheet = Spritesheet(f'assets/images/holdCover{self.color.title()}.png')
+        spritesheet = Spritesheet(f'assets/images/strumline/holdCover{self.color.title()}.png')
 
         anim_frames = spritesheet.load_animation(f'holdCoverEnd{self.color.title()}')
         self.animation = spritesheet.frames_to_animation(anim_frames)

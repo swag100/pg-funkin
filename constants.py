@@ -90,6 +90,11 @@ SETTINGS_DEFAULT_KEYBINDS = {
     'up': [pygame.K_w, pygame.K_UP],
     'right': [pygame.K_d, pygame.K_RIGHT],
 
+    'menu_left': [pygame.K_a, pygame.K_LEFT],
+    'menu_down': [pygame.K_s, pygame.K_DOWN],
+    'menu_up': [pygame.K_w, pygame.K_UP],
+    'menu_right': [pygame.K_d, pygame.K_RIGHT],
+
     'back': [pygame.K_ESCAPE], 
     'forward': [pygame.K_RETURN],
     'reset': [pygame.K_r],

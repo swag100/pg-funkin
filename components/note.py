@@ -27,7 +27,7 @@ class Note(object):
         self.y_change = (1000 * self.speed) / constants.SCROLL_SPEED_DIVISOR
     
         #animation
-        spritesheet = Spritesheet('assets/images/notes.png', constants.STRUMLINE_SCALE_MULT)
+        spritesheet = Spritesheet('assets/images/strumline/notes.png', constants.STRUMLINE_SCALE_MULT)
 
         anim_frames = spritesheet.load_animation('note' + self.name.title())
         self.animation = spritesheet.frames_to_animation(anim_frames)
@@ -52,7 +52,7 @@ class Sustain(object):
 
         #Create graphic... Pretty ugly, I know
         
-        spritesheet = pygame.image.load('assets/images/NOTE_hold_assets.png').convert_alpha()
+        spritesheet = pygame.image.load('assets/images/strumline/NOTE_hold_assets.png').convert_alpha()
         sheet_w = spritesheet.get_rect().w
         sheet_h = spritesheet.get_rect().h
 

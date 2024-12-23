@@ -16,7 +16,7 @@ class StrumNote(pygame.sprite.Sprite):
     def __init__(self, strumline, id):
         pygame.sprite.Sprite.__init__(self)
 
-        strum_spritesheet = Spritesheet('assets/images/noteStrumline.png', constants.STRUMLINE_SCALE_MULT)
+        strum_spritesheet = Spritesheet('assets/images/strumline/noteStrumline.png', constants.STRUMLINE_SCALE_MULT)
         strum_spritesheet.preload_animations()
 
         #self.strumline = strumline

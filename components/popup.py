@@ -22,7 +22,7 @@ class Popup(pygame.sprite.Sprite):
         self.y_acc = randint(100, 140)
 
     def tick(self, dt):
-        self.y_vel += self.y_acc
+        self.y_vel += 50 * self.y_acc * dt
 
         self.alpha -= 1000 * dt
 

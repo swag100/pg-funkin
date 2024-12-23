@@ -2,7 +2,7 @@ We're pretty much finished with PlayState in its entirety, and this means it's t
 
 Last PlayState related stuff:
 gameoverstate.
-Pause state
+Pause state -- Involves implementing ALPHABET
 
 Then, we move onto MENUS!
 MainMenuState
