@@ -1,7 +1,6 @@
 import pygame
 import settings
 import random
-import pytweening
 from .basestate import BaseState
 
 from components.song import Song
@@ -35,8 +34,6 @@ class PlayState(BaseState):
         self.song = Song(self.song_list[self.level_progress], 'hard')
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
-        self.song_ended_time_elapsed = 0
-
         self.player_voice_track_muted = False
 
         if not self.just_created:
@@ -44,6 +41,11 @@ class PlayState(BaseState):
 
             #CAMERA STUFF
             self.stage = Stage('mainStage')
+            self.characters = [
+                Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
+                Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
+                Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
+            ]
 
             #cam zoom amounts
             self.cam_zoom = self.stage.cam_zoom
@@ -59,11 +61,9 @@ class PlayState(BaseState):
         self.health = settings.HEALTH_STARTING
         self.health_lerp = self.health #The pretty health value we draw the healthbar with.
 
-        self.characters = [
-            Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
-            Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
-            Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
-        ]
+        #For a squeaky clean transition between songs! :D
+        if 'old health' in self.persistent_data:
+            self.health_lerp = self.persistent_data['old health']
 
         #HUD STUFF
 
@@ -98,27 +98,6 @@ class PlayState(BaseState):
             self.health -= amount
         else:
             self.health = settings.HEALTH_MIN
-
-    def clean_up_hud_and_end_song(self, skip_clean_up = False):
-        #print('Song over!')
-
-        self.persistent_data['level progress'] = self.level_progress + 1
-        self.next_state = 'PlayState'
-
-        if not skip_clean_up:
-            self.health = settings.HEALTH_STARTING
-            
-            tween_change = pytweening.easeInOutCubic(self.song_ended_time_elapsed / 2)
-            self.health_lerp = self.health_lerp + (tween_change * (self.health - self.health_lerp))
-
-            #Dangerous. Change this later when keeping track of scores outside of songs.
-            self.score = self.score + (tween_change * (0 - self.score))
-            ###
-
-            if self.song_ended_time_elapsed / 2 >= 1:
-                self.done = True
-        else:
-            self.done = True
         
     def handle_event(self, event): 
         for strumline in self.strums: strumline.handle_event(event)
@@ -224,7 +203,12 @@ class PlayState(BaseState):
             """
                 
             if event_type == settings.SONG_ENDED:
-                self.clean_up_hud_and_end_song()
+                self.persistent_data['level progress'] = self.level_progress + 1
+
+                self.persistent_data['old health'] = self.health_lerp
+
+                self.next_state = 'PlayState'
+                self.done = True
             
     def handle_chart_events(self, chart_event):
         event_var = chart_event['variable']
@@ -269,13 +253,9 @@ class PlayState(BaseState):
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * settings.CAMERA_SPEED)
 
         #update health lerp
-        if self.song.is_finished():
-            self.song_ended_time_elapsed += dt
+        self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
 
-        else:
-            self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
-
-        #CHARTING EVENTS
+        #CHART EVENTS
         for event in self.events: self.handle_chart_events(event)
 
         #game objects
@@ -306,7 +286,7 @@ class PlayState(BaseState):
                 self.popups.remove(popup)
 
         #Reset surfaces every tick.
-        self.cam_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
+        self.cam_surface = pygame.Surface(settings.WINDOW_SIZE)
         self.hud_surface = pygame.Surface(settings.WINDOW_SIZE, pygame.SRCALPHA)
 
         self.hud_zoom += (1 - self.hud_zoom) / 8

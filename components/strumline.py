@@ -114,15 +114,11 @@ class Strumline(object):
         #generate regular notes
         speed = self.chart_reader.speed
         for note_data in self.chart_reader.chart[self.id]:
-            time = int(note_data['t']) - (self.conductor.song_position * 1000)
-
-            note = Note(self, time, speed)
+            note = Note(self, int(note_data['t']) - (self.conductor.song_position * 1000), speed)
             notes.append(note)
 
             if 'l' in note_data:
-                length = int(note_data['l'])
-                
-                sustain = Sustain(note, length)
+                sustain = Sustain(note, int(note_data['l']))
                 sustains.append(sustain)
 
         return notes, sustains
