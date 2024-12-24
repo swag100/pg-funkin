@@ -33,7 +33,7 @@ class BarIcon:
         self.image = self.images[int(self.play_state.health <= 0.4)]
         self.size += (1 - self.size) / 8
 
-        x_offset = (self.play_state.health_lerp / 2) * (self.health_bar.image_rect.w - 8) - (self.health_bar.image_rect.w / 2)
+        x_offset = (round(self.play_state.health_lerp, 3) / 2) * (self.health_bar.image_rect.w - 8) - (self.health_bar.image_rect.w / 2)
         
         self.rect.center = self.health_bar.lower_bar.center
         self.rect.centerx -= x_offset
@@ -80,7 +80,7 @@ class HealthBar:
         ) #This bar goes over lowerbar; it's the green one that shows health.
 
     def tick(self, dt):
-        self.upper_bar.w = (self.image_rect.w - 8) * (self.play_state.health_lerp / 2)
+        self.upper_bar.w = (self.image_rect.w - 8) * (round(self.play_state.health_lerp, 3) / 2)
         self.upper_bar.right = self.lower_bar.right
 
     def draw(self, screen):

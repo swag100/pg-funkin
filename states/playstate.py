@@ -16,7 +16,7 @@ class PlayState(BaseState):
     def __init__(self):
         super(PlayState, self).__init__()
 
-        self.just_created = False
+        self.just_created = True
 
     def start(self, persistent_data): 
         self.done = False
@@ -37,8 +37,8 @@ class PlayState(BaseState):
         self.player_voice_track_muted = False
         self.paused = False
 
-        if not self.just_created:
-            self.just_created = True
+        if self.just_created:
+            self.just_created = False
 
             #CAMERA STUFF
             self.stage = Stage('mainStage')
@@ -152,8 +152,8 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 50) #80 is intentional; should be way quieter.
-                pygame.mixer.Channel(5).play(miss_noise)
+                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 20) #20 is intentional; should be way quieter.
+                pygame.mixer.Channel(2).play(miss_noise)
                 #miss_noise.play()
 
                 #voices[0] is players voice
@@ -213,9 +213,12 @@ class PlayState(BaseState):
             if event_type == constants.SONG_ENDED:
                 self.persistent_data['level progress'] = self.level_progress + 1
 
-                self.persistent_data['old health'] = self.health_lerp
+                if self.persistent_data['level progress'] >= len(self.song_list):
+                    self.next_state = 'MainMenuState'
+                else:
+                    self.persistent_data['old health'] = self.health_lerp
+                    self.next_state = 'PlayState'
 
-                self.next_state = 'PlayState'
                 self.done = True
             
     def handle_chart_events(self, chart_event):

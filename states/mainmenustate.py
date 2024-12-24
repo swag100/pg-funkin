@@ -23,6 +23,8 @@ class MenuOptionSprite:
         self.rect = self.animation.getCurrentFrame().get_rect(centerx = constants.SCREEN_CENTER[0])
         self.rect.y = (self.id * 165) + 32
 
+        self.animation.tickFrameNum()
+
     def draw(self, screen):
         self.animation.blit(screen, self.rect)
 
