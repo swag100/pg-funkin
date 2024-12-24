@@ -35,6 +35,7 @@ class PlayState(BaseState):
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
         self.player_voice_track_muted = False
+        self.paused = False
 
         if not self.just_created:
             self.just_created = True
@@ -101,6 +102,12 @@ class PlayState(BaseState):
             self.health = constants.HEALTH_MIN
         
     def handle_event(self, event): 
+        if event.type == pygame.KEYDOWN:
+            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                self.toggle_pause()
+
+        if self.paused: return
+
         for strumline in self.strums: strumline.handle_event(event)
         for character in self.characters: character.handle_event(event)
 
@@ -145,8 +152,9 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 80) #80 is intentional; should be way quieter.
-                miss_noise.play()
+                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 50) #80 is intentional; should be way quieter.
+                pygame.mixer.Channel(5).play(miss_noise)
+                #miss_noise.play()
 
                 #voices[0] is players voice
                 #mute player vocals until palyer gets a rating
@@ -240,10 +248,14 @@ class PlayState(BaseState):
 
             #FINALLY, REMOVE EVENT
             self.events.remove(chart_event)
+    
+    def toggle_pause(self):
+        self.paused = not self.paused
+        self.song.toggle_pause()
 
 
     def tick(self, dt):
-        if dt > 1: return
+        if dt > 1 or self.paused: return
 
         #This also ticks conductor
         self.song.tick(dt, self.player_voice_track_muted)
@@ -285,10 +297,6 @@ class PlayState(BaseState):
             if popup.alpha <= 0:
                 self.popups.remove(popup)
 
-        #Reset surfaces every tick.
-        self.cam_surface = pygame.Surface(constants.WINDOW_SIZE)
-        self.hud_surface = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
-
         self.hud_zoom += (1 - self.hud_zoom) / 8
 
         """
@@ -305,27 +313,36 @@ class PlayState(BaseState):
     def draw(self, screen):
         #screen.fill((255, 255, 255))
 
+        #Start out by resetting the surfaces completely.
+        cam_surface = pygame.Surface(constants.WINDOW_SIZE)
+        hud_surface = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
+
         #game
-        self.stage.draw(self.cam_surface)
-        for character in self.characters: character.draw(self.cam_surface)
+        self.stage.draw(cam_surface)
+        for character in self.characters: character.draw(cam_surface)
 
         #hud
-        for strumline in self.strums: strumline.draw(self.hud_surface)
-        for popup in self.popups: popup.draw(self.hud_surface)
+        for strumline in self.strums: strumline.draw(hud_surface)
+        for popup in self.popups: popup.draw(hud_surface)
 
         #Draw the healthbar.
-        self.health_bar.draw(self.hud_surface)
-        for icon in self.health_bar_icons: icon.draw(self.hud_surface)
+        self.health_bar.draw(hud_surface)
+        for icon in self.health_bar_icons: icon.draw(hud_surface)
 
         #Draw the outline for the scoretext, then draw the scoretext itself.
-        self.score_text = OutlinedText(self.score_text_string, (self.score_text_x, self.score_text_y), 1, 16, self.hud_surface, self.score_text_font)
-        self.score_text.draw()
-        #self.hud_surface.blit(text, self.score_text_rect)
+        score_text = OutlinedText(self.score_text_string, (self.score_text_x, self.score_text_y), 1, 16, hud_surface, self.score_text_font)
+        score_text.draw()
+        #hud_surface.blit(text, self.score_text_rect)
 
         #cameras - This code is really ugly, i know.
-        scaled_cam_surface = pygame.transform.smoothscale_by(self.cam_surface, self.cam_zoom)
-        scaled_hud_surface = pygame.transform.smoothscale_by(self.hud_surface, self.hud_zoom)
-        screen.blit(scaled_cam_surface, self.cam_surface.get_rect(center = constants.SCREEN_CENTER))
+        scaled_cam_surface = pygame.transform.smoothscale_by(cam_surface, self.cam_zoom)
+        scaled_hud_surface = pygame.transform.smoothscale_by(hud_surface, self.hud_zoom)
+        screen.blit(scaled_cam_surface, cam_surface.get_rect(center = constants.SCREEN_CENTER))
         screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = constants.SCREEN_CENTER))
+
+        if self.paused:
+            cover = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
+            cover.fill((0,0,0,128))
+            screen.blit(cover, (0,0))
         
         #for note in self.song.chart_reader.chart: note.draw(screen)

@@ -57,6 +57,8 @@ class Animation(object):
         self._loop = False # If True, the animation will keep looping. If False, the animation stops after playing once.
         self._startTimes = None
 
+        self.frameNum = 0 #hack
+
         # if the sprites are transformed, the originals are kept in _images
         # and the transformed sprites are kept in _transformedImages.
         self._transformedImages = []
@@ -127,6 +129,8 @@ class Animation(object):
             retval.append(newAnim)
         return retval
 
+    def tickFrameNum(self):
+        self.frameNum = findStartTime(self._startTimes, self.elapsed)
 
     def blit(self, destSurface, dest):
         # Draws the appropriate frame of the animation to the destination Surface
@@ -144,8 +148,7 @@ class Animation(object):
         #if self.isFinished(): self.state = STOPPED
         if not self.visibility:# or self.state == STOPPED:
             return
-        frameNum = findStartTime(self._startTimes, self.elapsed)
-        destSurface.blit(self.getFrame(frameNum), dest)
+        destSurface.blit(self.getFrame(self.frameNum), dest)
 
 
     def getFrame(self, frameNum):

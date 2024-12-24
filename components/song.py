@@ -26,6 +26,8 @@ class Song:
 
         self.conductor = Conductor(self, constants.SETTINGS_DEFAULT_SONG_OFFSET)
 
+        self.paused = False
+
     def play_audio(self):
         #FIGURED IT OUT... THIS IS THE CORRECT ORDER!
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = constants.SONG_BEGAN)) #Post rating event
@@ -35,6 +37,18 @@ class Song:
 
         pygame.mixer.music.load(self.inst_path) 
         pygame.mixer.music.play()
+
+    def toggle_pause(self): 
+        if self.paused:
+            pygame.mixer.music.unpause()
+            for i in range(len(self.voices)):
+                pygame.mixer.Channel(i).unpause()
+        else:
+            pygame.mixer.music.pause()
+            for i in range(len(self.voices)):
+                pygame.mixer.Channel(i).pause()
+
+        self.paused = not self.paused
 
     def is_finished(self):
         return self.conductor.song_position >= self.song_length

@@ -107,6 +107,7 @@ class Character:
             self.screen_pos[0] - self.offsets_dict[self.anim_prefix][0] - camera_position[0],
             self.screen_pos[1] - self.offsets_dict[self.anim_prefix][1] - camera_position[1]
         )
+        self.animation.tickFrameNum()
 
     def draw(self, screen):
         self.animation.blit(screen, self.pos)

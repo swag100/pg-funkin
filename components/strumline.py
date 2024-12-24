@@ -261,13 +261,18 @@ class Strumline(object):
         if self.hold_cover: self.hold_cover.tick(dt)
 
         for splash in self.note_splashes:
+            splash.animation.tickFrameNum()
             if splash.animation.isFinished():
                 self.note_splashes.remove(splash)
         
         for splash in self.release_splashes:
+            splash.animation.tickFrameNum()
             if splash.animation.isFinished():
                 self.release_splashes.remove(splash)
-        
+
+        #so that the strum note's animations update
+        self.strum_note.animation.tickFrameNum()
+        if self.hold_cover: self.hold_cover.animation.tickFrameNum()
                 
     def draw(self, screen):
         self.strum_note.draw(screen)
