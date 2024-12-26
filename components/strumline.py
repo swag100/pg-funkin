@@ -144,6 +144,7 @@ class Strumline(object):
             self.state = None
 
         if self.bot_strum: return
+        if self.conductor.song_position < 0: return
                 
         if event.type == pygame.KEYDOWN:
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:

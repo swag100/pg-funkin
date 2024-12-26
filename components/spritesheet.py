@@ -33,8 +33,8 @@ class Spritesheet:
                 'height': int(texture['@height']),
 
                 #these mirror x, y, width, height. Will be overwritten if file actually has these
-                'frameX': int(texture['@x']),
-                'frameY': int(texture['@y']),
+                'frameX': 0,
+                'frameY': 0,
                 'frameWidth': int(texture['@width']),
                 'frameHeight': int(texture['@height'])
             }

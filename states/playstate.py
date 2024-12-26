@@ -64,7 +64,7 @@ class PlayState(BaseState):
 
         #For a squeaky clean transition between songs! :D
         if 'old health' in self.persistent_data:
-            print(self.persistent_data['old health'], self.health_lerp)
+            #print(self.persistent_data['old health'], self.health_lerp)
             self.health_lerp = self.persistent_data['old health']
 
         #HUD STUFF
