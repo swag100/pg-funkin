@@ -1,3 +1,4 @@
+import xml.etree.ElementTree as ET
 import pygame
 import xmltodict
 
@@ -12,12 +13,12 @@ class Spritesheet:
 
         self.sprite_sheet = pygame.image.load(filename).convert_alpha()
 
-        with open(filename.replace('png', 'xml'), 'r', encoding='utf-8-sig') as file:  
-            my_xml = file.read()
-            self.subtexture_list = xmltodict.parse(my_xml)['TextureAtlas']['SubTexture']
-            #self.preload_animations(self.subtexture_data, scale) #job for the people using this class
-        file.close()
-    
+        xml_path = filename.replace('png', 'xml')
+        xml_data = ET.parse(xml_path).getroot()
+        xmlstr = ET.tostring(xml_data, encoding='utf-8', method='xml')
+
+        self.subtexture_list = dict(xmltodict.parse(xmlstr))['TextureAtlas']['SubTexture']
+        
     def load_animation(self, anim_name):
         subtextures = [i for i in self.subtexture_list if anim_name == i['@name'][:-4]]
 

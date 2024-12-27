@@ -36,7 +36,9 @@ class MenuOptionSprite:
 
 
 class MainMenuState(BaseState):
-    def __init__(self):
+    def start(self, persistent_data):
+        self.persistent_data = persistent_data
+
         super(MainMenuState, self).__init__()
         
         #print('Im in the main menu!!')
@@ -72,6 +74,8 @@ class MainMenuState(BaseState):
 
         self.bg_rect = self.bg_image.get_rect(center = constants.SCREEN_CENTER)
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
+
+        pygame.Sound('assets/sounds/scrollMenu.ogg').play()
     
     def increment_pick(self, increment):
         pygame.Sound('assets/sounds/scrollMenu.ogg').play()
@@ -86,7 +90,12 @@ class MainMenuState(BaseState):
 
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
-            if self.is_flashing: return
+            if self.is_flashing: 
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
+                    pygame.Sound('assets/sounds/cancelMenu.ogg').play()
+                    self.is_flashing = False
+                    self.flash_time = 0
+                return
 
             #Advancing in the menu
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:

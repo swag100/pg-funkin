@@ -11,6 +11,7 @@ from components.healthbar import HealthBar, BarIcon
 from components.outlined_text import OutlinedText
 from components.character import Character
 from components.stage import Stage
+from components.alphabet import Alphabet
 
 class PlayState(BaseState):
     def __init__(self):
@@ -35,7 +36,18 @@ class PlayState(BaseState):
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
         self.player_voice_track_muted = False
+
+        #PAUSE stuff C:
         self.paused = False
+        self.pause_option_objects = []
+        self.pause_options = [
+            'resume',
+            'restart song',
+            'exit to menu'
+        ]
+        for i in range(len(self.pause_options)):
+            self.pause_option_objects.append(Alphabet(self.pause_options[i]))
+        self.pause_selection = 0
 
         if self.just_created:
             self.just_created = False
@@ -100,11 +112,48 @@ class PlayState(BaseState):
             self.health -= amount
         else:
             self.health = constants.HEALTH_MIN
+    
+    def toggle_pause(self):
+        self.paused = not self.paused
+        self.song.toggle_pause()
+    
+    def increment_pause_selection(self, increment):
+        self.pause_selection += increment
+        #lower limit
+        if self.pause_selection < 0:
+            self.pause_selection = len(self.pause_options) - 1
+        #upper limit
+        if self.pause_selection > len(self.pause_options) - 1:
+            self.pause_selection = 0
         
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
-                self.toggle_pause()
+            if self.paused:
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
+                    self.increment_pause_selection(-1)
+                    pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
+                    self.increment_pause_selection(1)
+                    pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                    #SORRY for hardcoding this. Please. Forgive me.
+                    selection = self.pause_options[self.pause_selection]
+                    if selection == 'resume':
+                        self.toggle_pause()
+                    if selection == 'restart song':
+                        self.persistent_data['old health'] = self.health_lerp
+                        self.next_state = 'PlayState'
+                        self.done = True
+                    if selection == 'exit to menu':
+                        self.next_state = 'MainMenuState'
+                        self.done = True
+            else:
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                    self.toggle_pause()
+                    pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+                    for alphabet in self.pause_option_objects: 
+                        alphabet.x = 0
+                        alphabet.y = 0
 
         if self.paused: return
 
@@ -212,12 +261,12 @@ class PlayState(BaseState):
                 
             if event_type == constants.SONG_ENDED:
                 self.persistent_data['level progress'] = self.level_progress + 1
+                
+                self.persistent_data['old health'] = self.health_lerp
+                self.next_state = 'PlayState'
 
                 if self.persistent_data['level progress'] >= len(self.song_list):
                     self.next_state = 'MainMenuState'
-                else:
-                    self.persistent_data['old health'] = self.health_lerp
-                    self.next_state = 'PlayState'
 
                 self.done = True
             
@@ -251,14 +300,23 @@ class PlayState(BaseState):
 
             #FINALLY, REMOVE EVENT
             self.events.remove(chart_event)
-    
-    def toggle_pause(self):
-        self.paused = not self.paused
-        self.song.toggle_pause()
-
 
     def tick(self, dt):
-        if dt > 1 or self.paused: return
+        if self.paused:
+            for alphabet in self.pause_option_objects: 
+                i = self.pause_option_objects.index(alphabet) - self.pause_selection
+
+                #lerp them to the selection position
+                selection_position = (150, constants.SCREEN_CENTER[1])
+                #alphabet.x = i * 50
+                #alphabet.y = i * 80
+                alphabet.x += ((selection_position[0] + (i * 50)) - alphabet.x) * 0.1
+                alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * 0.1
+
+                alphabet.tick(dt)
+            return
+
+        if dt > self.song.conductor.crochet: return
 
         #This also ticks conductor
         self.song.tick(dt, self.player_voice_track_muted)
@@ -347,5 +405,16 @@ class PlayState(BaseState):
             cover = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
             cover.fill((0,0,0,128))
             screen.blit(cover, (0,0))
-        
+
+            for alphabet in self.pause_option_objects: 
+                #Make the selection the only one with full transparency.
+                for character in alphabet.character_list:
+                    character.animation.getCurrentFrame().set_alpha(128)
+
+                    if self.pause_selection == self.pause_option_objects.index(alphabet):
+                        character.animation.getCurrentFrame().set_alpha(255)
+
+                alphabet.draw(screen)
+                
+
         #for note in self.song.chart_reader.chart: note.draw(screen)

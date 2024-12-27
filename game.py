@@ -53,7 +53,10 @@ class Game(object):
         persistent_data = self.state.persistent_data
 
         #Set new state, pass persistent data
-        self.state = self.states[next_state]
+        if next_state in self.states.keys():
+            self.state = self.states[next_state]
+        else:
+            print(f'Failed to find {next_state}. Reloading state')
         self.state.start(persistent_data)
     def tick(self, dt):
         if self.state.done: self.set_state()
