@@ -286,6 +286,7 @@ class PlayState(BaseState):
                 self.persistent_data['level progress'] = self.level_progress + 1
                 
                 self.persistent_data['old health'] = self.health_lerp
+                self.persistent_data['previous state'] = 'PlayState'
                 self.next_state = 'PlayState'
 
                 if self.persistent_data['level progress'] >= len(self.song_list):

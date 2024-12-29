@@ -205,7 +205,7 @@ class Strumline(object):
                         self.hold_cover = HoldCover(sustain)
 
                     if self.strum_note.animation.isFinished() and self.strum_note.anim_prefix != 'confirmHold':
-                        self.strum_note.play_animation('confirmHold', False)
+                        self.strum_note.play_animation('confirmHold')
 
                     if sustain.length <= 0:
                         self.sustains.remove(sustain)
@@ -253,9 +253,13 @@ class Strumline(object):
                 self.notes.remove(note)
         
         self.strum_note.anim_time += dt
-        if self.bot_strum and self.strum_note.anim_time >= (self.conductor.crochet / 2):
-            self.state = RELEASED
-            self.strum_note.play_animation('static')
+        if self.strum_note.anim_time >= (self.conductor.crochet / 2):
+            if self.bot_strum:
+                self.state = RELEASED
+                self.strum_note.play_animation('static')
+            else:
+                if 'confirm' in self.strum_note.anim_prefix:
+                    self.strum_note.play_animation('press')
 
 
         #for hold note effects(Stupid)
