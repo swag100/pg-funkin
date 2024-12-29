@@ -38,6 +38,12 @@ class Song:
         pygame.mixer.music.load(self.inst_path) 
         pygame.mixer.music.play()
 
+    def stop_audio(self):
+        for i in range(len(self.voices)):
+            pygame.mixer.Channel(i).stop()
+
+        pygame.mixer.music.stop()
+
     def toggle_pause(self): 
         if self.paused:
             pygame.mixer.music.unpause()

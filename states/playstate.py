@@ -23,12 +23,17 @@ class PlayState(BaseState):
         self.done = False
         self.persistent_data = persistent_data
 
+        self.previous_state = None
+        if 'previous state' in persistent_data:
+            self.previous_state = persistent_data['previous state']
+        print(self.previous_state)
+
         #THIS IS HARDCODED. FOR NOW, I'M WAY TOO LAZY AND DONT WANNA MAKE A WHOLE WEEKMENU STATE. SORRY!
-        self.song_list = self.persistent_data['songs']
+        self.song_list = persistent_data['songs']
         #TODO: ^^^ Generate this list DYNAMICALLY with a given week file... And, also give the option TO PICK A DIFFICULTY.
         #These things require a main menu state, so if I'm really up for it, I'll make one... 
 
-        self.level_progress = self.persistent_data['level progress'] #Current id for the song in the week you're in
+        self.level_progress = persistent_data['level progress'] #Current id for the song in the week you're in
 
         #contains chart reader object
         #will automatically start countdown
@@ -54,18 +59,22 @@ class PlayState(BaseState):
 
             #CAMERA STUFF
             self.stage = Stage('mainStage')
-            self.characters = [
-                Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
-                Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
-                Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
-            ]
+            self.characters = {
+                'girlfriend': Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
+                'player': Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
+                'opponent': Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
+            }
 
             #cam zoom amounts
             self.cam_zoom = self.stage.cam_zoom
             self.hud_zoom = 1
 
+        if self.previous_state != 'PlayState':
             self.camera_position = [0, 0]
             self.camera_position_lerp = self.camera_position
+        
+        #Make player start with their idle, so you don't see a death sprite when restarting a song.
+        self.characters['player'].play_animation('idle')
 
         #game variables
         self.combo = 0
@@ -100,6 +109,16 @@ class PlayState(BaseState):
         self.strums = []
         for i in range(8):
             self.strums.append(Strumline(i, self.song))
+    
+    def die(self):
+        self.song.stop_audio()
+
+        self.persistent_data['cam position'] = self.camera_position_lerp
+        self.persistent_data['cam zoom'] = self.cam_zoom
+        self.persistent_data['player'] = self.characters['player'] #much easier to just pass the bf object.
+
+        self.next_state = 'GameOverState'
+        self.done = True
 
     def add_health(self, amount):
         if self.health + amount <= constants.HEALTH_MAX:
@@ -111,7 +130,8 @@ class PlayState(BaseState):
         if self.health - amount >= constants.HEALTH_MIN:
             self.health -= amount
         else:
-            self.health = constants.HEALTH_MIN
+            self.die()
+            #self.health = constants.HEALTH_MIN
     
     def toggle_pause(self):
         self.paused = not self.paused
@@ -142,23 +162,26 @@ class PlayState(BaseState):
                         self.toggle_pause()
                     if selection == 'restart song':
                         self.persistent_data['old health'] = self.health_lerp
+                        self.persistent_data['previous state'] = 'PlayState'
                         self.next_state = 'PlayState'
                         self.done = True
                     if selection == 'exit to menu':
                         self.next_state = 'MainMenuState'
                         self.done = True
             else:
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward'] or event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
                     self.toggle_pause()
                     pygame.Sound('assets/sounds/scrollMenu.ogg').play()
                     for alphabet in self.pause_option_objects: 
                         alphabet.x = 0
                         alphabet.y = 0
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['reset']:
+                    self.die()
 
         if self.paused: return
 
         for strumline in self.strums: strumline.handle_event(event)
-        for character in self.characters: character.handle_event(event)
+        for character in self.characters.values(): character.handle_event(event)
 
         if event.type == pygame.USEREVENT:
             event_list = event.id.split('/', 1)
@@ -294,7 +317,7 @@ class PlayState(BaseState):
                 target = event_var['target']
                 anim_to_play = event_var['anim']
 
-                for character in self.characters:
+                for character in self.characters.values():
                     if target == character.character:
                         character.play_animation(anim_to_play)
 
@@ -334,7 +357,7 @@ class PlayState(BaseState):
         #game objects
 
         self.stage.tick(dt, self.camera_position_lerp)
-        for character in self.characters: character.tick(dt, self.camera_position_lerp)
+        for character in self.characters.values(): character.tick(dt, self.camera_position_lerp)
 
         #hud
         self.health_bar.tick(dt)
@@ -380,7 +403,7 @@ class PlayState(BaseState):
 
         #game
         self.stage.draw(cam_surface)
-        for character in self.characters: character.draw(cam_surface)
+        for character in self.characters.values(): character.draw(cam_surface)
 
         #hud
         for strumline in self.strums: strumline.draw(hud_surface)
