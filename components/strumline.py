@@ -228,9 +228,12 @@ class Strumline(object):
 
                         if sustain.length <= ((self.conductor.crochet * 1000) / 4) + 2:
                             self.release_splashes.append(ReleaseSplash(self))
+
+                        """
                         else: 
                             pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/hold miss/{self.id % 4}')) #Post rating event
                             #This is a HOLD miss; it was let go prematurely. Will play sound but won't remove health!
+                        """
 
             #if sustain was not eaten after 2 seconds: Delete it!
             if sustain.note.time + ((sustain.length * 2) / 1000) + 2 <= self.conductor.song_position: 
