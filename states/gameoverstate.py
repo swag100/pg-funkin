@@ -45,6 +45,8 @@ class GameOverState(BaseState):
                 pass #go to main menu
 
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                if self.is_retrying: return
+                
                 if self.player != None: self.player.play_animation('deathConfirm')
                 self.is_retrying = True
 
