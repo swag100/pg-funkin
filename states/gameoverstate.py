@@ -36,7 +36,7 @@ class GameOverState(BaseState):
         self.player_alpha = 255 * 1.7
 
         death_sound = pygame.Sound('assets/sounds/gameplay/fnf_loss_sfx.ogg')
-        death_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME)
+        death_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         death_sound.play()
 
     def handle_event(self, event):
@@ -46,13 +46,13 @@ class GameOverState(BaseState):
 
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
                 if self.is_retrying: return
-                
+
                 if self.player != None: self.player.play_animation('deathConfirm')
                 self.is_retrying = True
 
                 pygame.mixer.music.stop()
                 retry_sound = pygame.Sound('assets/music/gameOverEnd.ogg')
-                retry_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME)
+                retry_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                 retry_sound.play()
 
     def tick(self, dt):
@@ -76,8 +76,8 @@ class GameOverState(BaseState):
             if self.player.animation.isFinished() and self.player.anim_prefix == 'firstDeath':
                 self.player.play_animation('deathLoop', True)
                 pygame.mixer.music.load('assets/music/gameOver.ogg')
-                pygame.mixer.music.set_volume(constants.SETTINGS_DEFAULT_VOLUME)
                 pygame.mixer.music.play()
+                pygame.mixer.music.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
