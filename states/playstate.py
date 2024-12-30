@@ -341,10 +341,10 @@ class PlayState(BaseState):
                 i = self.pause_option_objects.index(alphabet) - self.pause_selection
 
                 #lerp them to the selection position
-                selection_position = (150, constants.SCREEN_CENTER[1])
+                selection_position = (100, constants.SCREEN_CENTER[1])
                 #alphabet.x = i * 50
                 #alphabet.y = i * 80
-                alphabet.x += ((selection_position[0] + (i * 50)) - alphabet.x) * 0.1
+                alphabet.x += ((selection_position[0] + (i * 25)) - alphabet.x) * 0.1
                 alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * 0.1
 
                 alphabet.tick(dt)
@@ -437,7 +437,7 @@ class PlayState(BaseState):
 
         if self.paused:
             cover = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
-            cover.fill((0,0,0,128))
+            cover.fill((0,0,0,255 * 0.6))
             screen.blit(cover, (0,0))
 
             for alphabet in self.pause_option_objects: 
