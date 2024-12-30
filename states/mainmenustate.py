@@ -75,10 +75,13 @@ class MainMenuState(BaseState):
         self.bg_rect = self.bg_image.get_rect(center = constants.SCREEN_CENTER)
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
 
-        pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+        self.scroll_sound = pygame.Sound('assets/sounds/scrollMenu.ogg')
+        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.play()
     
     def increment_pick(self, increment):
-        pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.play()
 
         self.cur_pick += increment
         #lower limit
@@ -92,7 +95,10 @@ class MainMenuState(BaseState):
         if event.type == pygame.KEYDOWN:
             if self.is_flashing: 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
-                    pygame.Sound('assets/sounds/cancelMenu.ogg').play()
+                    cancel_sound = pygame.Sound('assets/sounds/cancelMenu.ogg')
+                    cancel_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    cancel_sound.play()
+
                     self.is_flashing = False
                     self.flash_time = 0
                 return
@@ -105,7 +111,10 @@ class MainMenuState(BaseState):
             
             #entering the picked option
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
-                pygame.Sound('assets/sounds/confirmMenu.ogg').play()
+                confirm_sound = pygame.Sound('assets/sounds/confirmMenu.ogg')
+                confirm_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                confirm_sound.play()
+
                 self.is_flashing = True
 
     def tick(self, dt):
