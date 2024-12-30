@@ -150,11 +150,17 @@ class PlayState(BaseState):
         if event.type == pygame.KEYDOWN:
             if self.paused:
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
+                    self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    self.scroll_sound.play()
+                    
                     self.increment_pause_selection(-1)
-                    pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
+                    self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    self.scroll_sound.play()
+
                     self.increment_pause_selection(1)
-                    pygame.Sound('assets/sounds/scrollMenu.ogg').play()
+
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
                     #SORRY for hardcoding this. Please. Forgive me.
                     selection = self.pause_options[self.pause_selection]
@@ -175,7 +181,7 @@ class PlayState(BaseState):
                     self.scroll_sound = pygame.Sound('assets/sounds/scrollMenu.ogg')
                     self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                     self.scroll_sound.play()
-                    
+
                     for alphabet in self.pause_option_objects: 
                         alphabet.x = 0
                         alphabet.y = 0
