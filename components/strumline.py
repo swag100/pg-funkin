@@ -104,8 +104,7 @@ class Strumline(object):
 
         #lists containing fx for drawing; seperated for convenience
         self.hold_cover = None
-        self.note_splashes = []
-        self.release_splashes = []
+        self.splashes = []
 
     def load_chart(self): #Loads all notes for specific strum.
         notes = []
@@ -144,7 +143,6 @@ class Strumline(object):
             self.state = None
 
         if self.bot_strum: return
-        if self.conductor.song_position < 0: return
                 
         if event.type == pygame.KEYDOWN:
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:
@@ -160,7 +158,7 @@ class Strumline(object):
 
                         if rating in ['perfect', 'killer', 'sick']:
                             def do_splash(strumline):
-                                strumline.note_splashes.append(NoteSplash(self))
+                                strumline.splashes.append(NoteSplash(self))
 
                             Thread(target = do_splash, args = (self,)).start()
                         
@@ -214,7 +212,7 @@ class Strumline(object):
 
                         self.hold_cover = None
                         if not self.bot_strum:
-                            self.release_splashes.append(ReleaseSplash(self))
+                            self.splashes.append(ReleaseSplash(self))
 
                         self.strum_note.play_animation('press')
                         if self.bot_strum: 
@@ -227,7 +225,7 @@ class Strumline(object):
                         self.hold_cover = None
 
                         if sustain.length <= ((self.conductor.crochet * 1000) / 4) + 2:
-                            self.release_splashes.append(ReleaseSplash(self))
+                            self.splashes.append(ReleaseSplash(self))
 
                         """
                         else: 
@@ -260,23 +258,20 @@ class Strumline(object):
             if self.bot_strum:
                 self.state = RELEASED
                 self.strum_note.play_animation('static')
+            """
             else:
                 if 'confirm' in self.strum_note.anim_prefix:
                     self.strum_note.play_animation('press')
+            """
 
 
         #for hold note effects(Stupid)
         if self.hold_cover: self.hold_cover.tick(dt)
 
-        for splash in self.note_splashes:
+        for splash in self.splashes:
             splash.animation.tickFrameNum()
             if splash.animation.isFinished():
-                self.note_splashes.remove(splash)
-        
-        for splash in self.release_splashes:
-            splash.animation.tickFrameNum()
-            if splash.animation.isFinished():
-                self.release_splashes.remove(splash)
+                self.splashes.remove(splash)
 
         #so that the strum note's animations update
         self.strum_note.animation.tickFrameNum()
@@ -288,5 +283,4 @@ class Strumline(object):
         for sustain in self.sustains: sustain.draw(screen)
         if self.hold_cover: self.hold_cover.draw(screen)
         for note in self.notes: note.draw(screen)
-        for splash in self.release_splashes: splash.draw(screen)
-        for splash in self.note_splashes: splash.draw(screen)
+        for splash in self.splashes: splash.draw(screen)

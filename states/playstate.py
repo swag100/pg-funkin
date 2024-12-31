@@ -14,30 +14,24 @@ from components.stage import Stage
 from components.alphabet import Alphabet
 
 class PlayState(BaseState):
-    def __init__(self):
-        super(PlayState, self).__init__()
-
-        self.just_created = True
-
     def start(self, persistent_data): 
-        self.done = False
+        super(PlayState, self).__init__()
         self.persistent_data = persistent_data
+
+        self.song_list = persistent_data['songs']
+        self.difficulty = persistent_data['difficulty']
 
         self.previous_state = None
         if 'previous state' in persistent_data:
             self.previous_state = persistent_data['previous state']
-        print(self.previous_state)
 
-        #THIS IS HARDCODED. FOR NOW, I'M WAY TOO LAZY AND DONT WANNA MAKE A WHOLE WEEKMENU STATE. SORRY!
-        self.song_list = persistent_data['songs']
-        #TODO: ^^^ Generate this list DYNAMICALLY with a given week file... And, also give the option TO PICK A DIFFICULTY.
-        #These things require a main menu state, so if I'm really up for it, I'll make one... 
-
-        self.level_progress = persistent_data['level progress'] #Current id for the song in the week you're in
+        self.level_progress = 0
+        if 'level progress' in persistent_data:
+            self.level_progress = persistent_data['level progress'] #Current id for the song in the week you're in
 
         #contains chart reader object
         #will automatically start countdown
-        self.song = Song(self.song_list[self.level_progress], 'hard')
+        self.song = Song(self.song_list[self.level_progress], self.difficulty)
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
         self.player_voice_track_muted = False
@@ -54,39 +48,42 @@ class PlayState(BaseState):
             self.pause_option_objects.append(Alphabet(self.pause_options[i]))
         self.pause_selection = 0
 
-        if self.just_created:
-            self.just_created = False
+        #TODO: Only create stage if A: There was NO previous stage or B: If the previous stage is != to self.song.stage
 
-            #CAMERA STUFF
-            self.stage = Stage('mainStage')
-            self.characters = {
-                'girlfriend': Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
-                'player': Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
-                'opponent': Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
-            }
+        #STAGE STUFF!
+        self.stage = Stage(self.song.stage)
 
-            #cam zoom amounts
-            self.cam_zoom = self.stage.cam_zoom
-            self.hud_zoom = 1
+        #TODO: Only create characters if A: There was NO previous characters or B: If the previous character is != to self.song.characters['whichever one']
 
-        if self.previous_state != 'PlayState':
-            self.camera_position = [0, 0]
-            self.camera_position_lerp = self.camera_position
+        #create characters
+        self.characters = {
+            'girlfriend': Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend'),
+            'player': Character(self, self.song.characters['player'], self.stage.player_position, 'player'),
+            'opponent': Character(self, self.song.characters['opponent'], self.stage.opponent_position, 'opponent')
+        }
+
+        #cam zoom amount: taken from stage data!
+        self.cam_zoom = self.stage.cam_zoom
+        self.hud_zoom = 1
         
         #Make player start with their idle, so you don't see a death sprite when restarting a song.
         self.characters['player'].play_animation('idle')
 
         #game variables
         self.combo = 0
-        self.score = 0 #work on this tomorrow
+        self.score = 0
 
         self.health = constants.HEALTH_STARTING
         self.health_lerp = self.health #The pretty health value we draw the healthbar with.
 
-        #For a squeaky clean transition between songs! :D
-        if 'old health' in self.persistent_data:
-            #print(self.persistent_data['old health'], self.health_lerp)
-            self.health_lerp = self.persistent_data['old health']
+        #Do not tween cam or healthbar if we weren't previously in PlayState!!
+        if self.previous_state != 'PlayState':
+            self.camera_position = [0, 0]
+            self.camera_position_lerp = self.camera_position
+        else:
+            if 'old health' in self.persistent_data:
+                #For a squeaky clean transition between songs! :D
+                self.health_lerp = self.persistent_data['old health']
 
         #HUD STUFF
 
@@ -164,7 +161,7 @@ class PlayState(BaseState):
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
                     #SORRY for hardcoding this. Please. Forgive me.
                     selection = self.pause_options[self.pause_selection]
-                    if selection == 'resume':
+                    if selection == 'resume' or selection not in self.pause_options:
                         self.toggle_pause()
                     if selection == 'restart song':
                         self.persistent_data['old health'] = self.health_lerp

@@ -22,7 +22,7 @@ class StoryMenuState(BaseState):
         self.persistent_data = persistent_data
 
         self.persistent_data['songs'] = self.level_songs
-        self.persistent_data['level progress'] = 0 #Week will always start at song 0
+        self.persistent_data['difficulty'] = 'hard' #TODO: Please, make this variable later..
         
         self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
         self.done = True

@@ -12,6 +12,7 @@ class Song:
 
         self.chart_reader = ChartReader(song_name, difficulty)
 
+        self.stage = self.chart_reader.metadata['playData']['stage']
         self.characters = self.chart_reader.metadata['playData']['characters']
         self.bpm = self.chart_reader.bpm
 
