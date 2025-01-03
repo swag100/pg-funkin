@@ -341,8 +341,8 @@ class PlayState(BaseState):
                 selection_position = (100, constants.SCREEN_CENTER[1])
                 #alphabet.x = i * 50
                 #alphabet.y = i * 80
-                alphabet.x += ((selection_position[0] + (i * 25)) - alphabet.x) * 0.1
-                alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * 0.1
+                alphabet.x += ((selection_position[0] + (i * 25)) - alphabet.x) * (dt * 6)
+                alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * (dt * 6)
 
                 alphabet.tick(dt)
             return
@@ -446,6 +446,5 @@ class PlayState(BaseState):
                         character.animation.getCurrentFrame().set_alpha(255)
 
                 alphabet.draw(screen)
-                
 
         #for note in self.song.chart_reader.chart: note.draw(screen)
