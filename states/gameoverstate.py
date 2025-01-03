@@ -35,7 +35,7 @@ class GameOverState(BaseState):
 
         self.player_alpha = 255 * 1.7
 
-        death_sound = pygame.Sound('assets/sounds/gameplay/fnf_loss_sfx.ogg')
+        death_sound = pygame.mixer.Sound('assets/sounds/gameplay/fnf_loss_sfx.ogg')
         death_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         death_sound.play()
 
@@ -51,7 +51,7 @@ class GameOverState(BaseState):
                 self.is_retrying = True
 
                 pygame.mixer.music.stop()
-                retry_sound = pygame.Sound('assets/music/gameOverEnd.ogg')
+                retry_sound = pygame.mixer.Sound('assets/music/gameOverEnd.ogg')
                 retry_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                 retry_sound.play()
 

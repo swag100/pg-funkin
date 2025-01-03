@@ -1,17 +1,17 @@
 We're pretty much finished with PlayState in its entirety, and this means it's time to move onto.. Eugh. Menus.
 
-Last PlayState related stuff:
-gameoverstate.
-Pause state -- Involves implementing ALPHABET
-
 Then, we move onto MENUS!
-MainMenuState
+MainMenuState -- FINISHED
 StoryMenuState
 OptionsMenuState
 CreditsMenuState 
 
 ------------------------------------------------------------------------------------------
 done / not considered needed notes : D
+
+Last PlayState related stuff:
+gameoverstate.
+Pause state -- Involves implementing ALPHABET
 
 health bar, --
 Health will be a property of playstate. The health bar will just be a visual representation of that for the player.
