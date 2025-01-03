@@ -75,7 +75,7 @@ class MainMenuState(BaseState):
         self.bg_rect = self.bg_image.get_rect(center = constants.SCREEN_CENTER)
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
 
-        self.scroll_sound = pygame.Sound('assets/sounds/scrollMenu.ogg')
+        self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
         self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         self.scroll_sound.play()
     
@@ -95,7 +95,7 @@ class MainMenuState(BaseState):
         if event.type == pygame.KEYDOWN:
             if self.is_flashing: 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
-                    cancel_sound = pygame.Sound('assets/sounds/cancelMenu.ogg')
+                    cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
                     cancel_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                     cancel_sound.play()
 
@@ -111,7 +111,7 @@ class MainMenuState(BaseState):
             
             #entering the picked option
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
-                confirm_sound = pygame.Sound('assets/sounds/confirmMenu.ogg')
+                confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
                 confirm_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                 confirm_sound.play()
 

@@ -16,10 +16,10 @@ class Song:
         self.characters = self.chart_reader.metadata['playData']['characters']
         self.bpm = self.chart_reader.bpm
 
-        self.song_prefix = f'assets/songs/{self.song_name}'
+        self.song_prefix = f'assets/songs/{self.song_name}/'
         self.voices = [
-            pygame.mixer.Sound(f'{self.song_prefix}/{self.voices_name(self.characters['player'])}'),
-            pygame.mixer.Sound(f'{self.song_prefix}/{self.voices_name(self.characters['opponent'])}')
+            pygame.mixer.Sound(self.song_prefix+self.voices_name(self.characters['player'])),
+            pygame.mixer.Sound(self.song_prefix+self.voices_name(self.characters['opponent']))
         ]
 
         self.inst_path = f'{self.song_prefix}/Inst.ogg'

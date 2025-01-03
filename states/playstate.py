@@ -175,7 +175,7 @@ class PlayState(BaseState):
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward'] or event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
                     self.toggle_pause()
 
-                    self.scroll_sound = pygame.Sound('assets/sounds/scrollMenu.ogg')
+                    self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
                     self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
                     self.scroll_sound.play()
 

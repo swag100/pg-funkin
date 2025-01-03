@@ -23,7 +23,7 @@ class Character:
         #Sort character's metadata into dictionaries.
         #This includes an offset dictionary, and an animation dictionary
         metadata_animations = self.metadata['animations']
-        spritesheet = Spritesheet(f'assets/images/{self.metadata['assetPath']}.png')
+        spritesheet = Spritesheet('assets/images/'+self.metadata['assetPath']+'.png')
 
         self.offsets_dict = {}
         self.animations_dict = {}
