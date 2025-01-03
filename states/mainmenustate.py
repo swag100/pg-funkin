@@ -62,7 +62,7 @@ class MainMenuState(BaseState):
         self.is_flashing = False
         self.flash_time = 0 #How long have we been flashing?
 
-        self.max_flash_time = 1.3 #How long should the flashing last?
+        self.max_flash_time = 1 #How long should the flashing last?
         self.flash_speed = (1 / 4)
 
         #VISUALS
