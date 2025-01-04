@@ -4,7 +4,40 @@ import json
 import os
 from .basestate import BaseState
 
+from components.spritesheet import Spritesheet
+
 #EXTREMELY simple state; only meant for transferring week info to the playstate for now.
+
+class ArrowSelector:
+    def __init__(self, pos, is_left = False):
+        self.pos = pos
+        self.direction = 'left' if is_left else 'right'
+
+        spritesheet = Spritesheet('assets/images/storymenu/ui/arrows.png')
+        spritesheet.preload_animations()
+        self.animations = spritesheet.animations
+
+        self.animation = self.animations[self.direction + 'Idle']
+        self.animation.play()
+
+        #leftIdle, rightIdle, leftConfirm, rightConfirm
+
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_' + self.direction]:
+                scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
+                scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                scroll_sound.play()
+
+                self.animation = self.animations[self.direction + 'Confirm']
+                self.animation.play()
+        if event.type == pygame.KEYUP:
+            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_' + self.direction]:
+                self.animation = self.animations[self.direction + 'Idle']
+                self.animation.play()
+
+    def draw(self, screen):
+        self.animation.blit(screen, self.pos)
 
 class WeekOption:
     def __init__(self, id, path):
@@ -46,15 +79,22 @@ class StoryMenuState(BaseState):
         #Populate week options list, USING SELF DOT LEVEL JSONS!
         self.week_options = []
         i = 0
-        for level_name, level_data in self.level_data_dict.items():
+        for level_data in self.level_data_dict.values():
             self.week_options.append(WeekOption(i, level_data['titleAsset']))
             i += 1
         self.week_option_selection = 0
 
         self.font = pygame.font.Font('assets/fonts/vcr.ttf', 32)
         self.track_text_pos = (136, 500)
+        self.track_text = self.font.render('TRACKS', True, (229, 87, 119))
 
         self.prop_bg = pygame.Rect(0, 56, 1280, 400)
+
+        #Difficulty selector
+        self.difficulty_selector_objects = [
+            ArrowSelector((870,480), True),
+            ArrowSelector((1245,480))
+        ]
 
     def find_track_list(self, level_name): #Find a track list for a given level name.
         return self.level_data_dict[level_name]['songs']
@@ -97,6 +137,8 @@ class StoryMenuState(BaseState):
                 
                 self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
                 self.done = True
+        
+        for object in self.difficulty_selector_objects: object.handle_event(event)
 
     def tick(self, dt):
         for option in self.week_options: option.tick(dt, self.week_option_selection)
@@ -115,10 +157,19 @@ class StoryMenuState(BaseState):
 
         pygame.draw.rect(screen, (249,207,81), self.prop_bg) #Drawn before characters, but after week options!
 
-        screen.blit(self.font.render('TRACKS', True, (229, 87, 119)), self.track_text_pos)
+        
+
+        screen.blit(self.track_text, self.track_text_pos)
 
         track_list = self.find_track_list(self.week_options[self.week_option_selection].name)
-        for track in track_list:
-            track_x = self.track_text_pos[0]
-            track_y = self.track_text_pos[1] + (32 * track_list.index(track)) + 64
-            screen.blit(self.font.render(track.title(), True, (229, 87, 119)), (track_x, track_y))
+        for track_name in track_list:
+            formatted_track_string = track_name.replace('-', ' ').title()
+
+            track_text = self.font.render(formatted_track_string, True, (229, 87, 119))
+            track_pos = (
+                self.track_text_pos[0] - (track_text.get_rect().w / 2) + (self.track_text.get_rect().w / 2),
+                self.track_text_pos[1] + (32 * track_list.index(track_name)) + 64
+            )
+            screen.blit(track_text, track_pos)
+
+        for object in self.difficulty_selector_objects: object.draw(screen)
