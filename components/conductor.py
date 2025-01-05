@@ -22,7 +22,8 @@ class Conductor(object):
 
         self.old_beat = self.cur_beat
 
-        self.cur_beat_time = (self.song_position / self.crochet) - self.offset
+        self.cur_beat_time = (self.song_position / self.crochet) + self.offset
+        
         self.cur_beat = math.floor(self.cur_beat_time)
 
         if self.old_beat != self.cur_beat: #BEAT HIT

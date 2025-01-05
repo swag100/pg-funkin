@@ -42,17 +42,17 @@
   "characters": {
     "bf": {
       "zIndex": 300,
-      "position": [819.5, 355],
-      "cameraOffsets": [-600, -300]
+      "position": [829.5, 420],
+      "cameraOffsets": [-560, -270]
     },
     "dad": {
       "zIndex": 200,
-      "position": [135, 0],
-      "cameraOffsets": [-200, -100]
+      "position": [120, 16],
+      "cameraOffsets": [-100, -40]
     },
     "gf": {
       "zIndex": 100,
-      "cameraOffsets": [0, 0],
+      "cameraOffsets": [-80, -90],
       "position": [401.5, 45]
     }
   },

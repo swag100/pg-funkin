@@ -8,7 +8,7 @@ class Prop:
         self.scroll_factor = scroll
 
         image_rect = self.image.get_rect()
-        self.image = pygame.transform.scale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
+        self.image = pygame.transform.smoothscale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
 
     def tick(self, dt, camera_position): #Update position based on scroll factor
         self.scrolled_position = (

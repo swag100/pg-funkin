@@ -13,7 +13,7 @@ class BarIcon:
         self.image = self.images[0] #0: normal, 1: hurt
         self.rect = self.image.get_rect()
 
-        self.bump_size = 1.15
+        self.bump_size = 1.25
         self.size = self.bump_size
     
     def seperate_images(self, image_path, size, flipped):
@@ -43,9 +43,9 @@ class BarIcon:
         scaled_image = pygame.transform.smoothscale_by(self.image, self.size)
 
         if self.player:
-            scaled_image_rect = scaled_image.get_rect(left = self.rect.centerx - 20, centery = self.rect.centery)
+            scaled_image_rect = scaled_image.get_rect(left = self.rect.centerx - 27, centery = self.rect.centery)
         else:
-            scaled_image_rect = scaled_image.get_rect(right = self.rect.centerx + 20, centery = self.rect.centery)
+            scaled_image_rect = scaled_image.get_rect(right = self.rect.centerx + 27, centery = self.rect.centery)
 
 
 

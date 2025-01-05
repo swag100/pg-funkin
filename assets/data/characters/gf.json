@@ -38,6 +38,11 @@
       "name": "singRIGHT",
       "prefix": "GF Right Note",
       "offsets": [0, -20]
+    },
+    {
+      "name": "cheer",
+      "prefix": "GF Cheer",
+      "offsets": [0, 0]
     }
   ]
 }

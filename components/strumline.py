@@ -254,15 +254,19 @@ class Strumline(object):
                 self.notes.remove(note)
         
         self.strum_note.anim_time += dt
-        if self.strum_note.anim_time >= (self.conductor.crochet / 2):
+
+        strumnote_reset_time = self.conductor.crochet / 2
+        if self.conductor.bpm > 120:
+            strumnote_reset_time = self.conductor.crochet
+
+        if self.strum_note.anim_time >= strumnote_reset_time:
             if self.bot_strum:
                 self.state = RELEASED
                 self.strum_note.play_animation('static')
-            """
             else:
                 if 'confirm' in self.strum_note.anim_prefix:
                     self.strum_note.play_animation('press')
-            """
+            
 
 
         #for hold note effects(Stupid)

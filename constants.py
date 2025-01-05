@@ -76,7 +76,7 @@ SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater 
 
 ###SETTINGS DEFAULT VALUES to the user changing variables
 SETTINGS_DEFAULT_VOLUME = 10 #Will go from 0 to 10; increments or decrements by 1
-SETTINGS_DEFAULT_SONG_OFFSET = -120
+SETTINGS_DEFAULT_SONG_OFFSET = 0
 
 SETTINGS_DEFAULT_FPS = 60 #Max frames per second.
 

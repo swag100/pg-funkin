@@ -70,17 +70,15 @@ class Character:
             if event_type == constants.BEAT_HIT:
                 cur_beat = int(event_parameters[0])
                 
-                if self.character_type != 'girlfriend': #ITS ALMOST 4AM.
+                if 'sing' not in self.anim_prefix or self.animation.isFinished():
                     if cur_beat % 2 == 0:
-                        if self.animation.isFinished():
+                        if 'idle' in self.animations_dict:
                             self.play_animation('idle')
-                else:
-                    if cur_beat % 2 == 0:
-                        self.play_animation('danceLeft')
+                        elif 'danceLeft' in self.animations_dict:
+                            self.play_animation('danceLeft')
                     else:
-                        self.play_animation('danceRight')
-
-            if self.character_type == 'girlfriend': return
+                        if 'danceRight' in self.animations_dict:
+                            self.play_animation('danceRight')
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
             if self.character_type == 'player':
@@ -94,6 +92,8 @@ class Character:
 
                 return
             
+            if self.character_type == 'girlfriend': return
+            
             if event_type == constants.NOTE_BOT_PRESS:
                 pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
                 self.play_animation(pose)
@@ -104,8 +104,8 @@ class Character:
 
     def tick(self, dt, camera_position):
         self.pos = (
-            self.screen_pos[0] - self.offsets_dict[self.anim_prefix][0] - camera_position[0],
-            self.screen_pos[1] - self.offsets_dict[self.anim_prefix][1] - camera_position[1]
+            (self.screen_pos[0] * 0.9) - self.offsets_dict[self.anim_prefix][0] - camera_position[0],
+            (self.screen_pos[1] * 0.9) - self.offsets_dict[self.anim_prefix][1] - camera_position[1]
         )
         self.animation.tickFrameNum()
 
