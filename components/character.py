@@ -77,7 +77,7 @@ class Character:
                         elif 'danceLeft' in self.animations_dict:
                             self.play_animation('danceLeft')
                     else:
-                        if 'danceRight' in self.animations_dict:
+                        if 'danceRight' in self.animations_dict and self.anim_prefix != 'cheer':
                             self.play_animation('danceRight')
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
