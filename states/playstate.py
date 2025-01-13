@@ -335,10 +335,13 @@ class PlayState(BaseState):
                 target = event_var['target']
                 anim_to_play = event_var['anim']
 
-                for character in self.characters.values():
-                    nicknames = {'opponent': 'dad', 'player': 'bf', 'girlfriend': 'gf'}
+                print(target, anim_to_play)
 
-                    if target == nicknames[character.character_type]:
+                for character in self.characters.values():
+                    nicknames = {'opponent': ['dad'], 'player': ['bf', 'boyfriend'], 'girlfriend': ['gf']}
+
+                    if target in nicknames[character.character_type]:
+                        print(target, nicknames[character.character_type])
                         character.play_animation(anim_to_play)
 
             #FINALLY, REMOVE EVENT
