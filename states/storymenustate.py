@@ -23,11 +23,14 @@ class DifficultyImage:
             if file.is_file():
                 self.difficulty_images[file.name.split('.')[0]] = pygame.image.load(f'assets/images/storymenu/difficulties/' + file.name).convert_alpha()
 
+        self.pos = pos
+
         self.image = self.difficulty_images[difficulty_name]
-        self.rect = self.image.get_rect(center = pos)
+        self.rect = self.image.get_rect(centerx = self.pos[0], top = self.pos[1])
 
     def update_image(self, difficulty_name):
         self.image = self.difficulty_images[difficulty_name]
+        self.rect = self.image.get_rect(centerx = self.pos[0], top = self.pos[1])
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -120,6 +123,8 @@ class StoryMenuState(BaseState):
             ArrowSelector((1245,480))
         ]
 
+        self.difficulty_image = DifficultyImage((1080,488),self.difficulty_options[self.difficulty_option_selection])
+
     def find_track_list(self, level_name): #Find a track list for a given level name.
         return self.level_data_dict[level_name]['songs']
 
@@ -146,6 +151,8 @@ class StoryMenuState(BaseState):
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, -1)
                 else:
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, 1)
+
+                self.difficulty_image.update_image(self.difficulty_options[self.difficulty_option_selection])
 
             #Exit menu
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
@@ -202,3 +209,4 @@ class StoryMenuState(BaseState):
             screen.blit(track_text, track_pos)
 
         for object in self.difficulty_selector_objects: object.draw(screen)
+        self.difficulty_image.draw(screen)
