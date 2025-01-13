@@ -13,8 +13,11 @@ class Character:
         self.character_type = character_type
 
         self.metadata = self.load_metadata() #character data read from its json File.
-        self.sing_time = self.metadata['singTime']
         self.name = self.metadata['name']
+
+        self.sing_time = 8 #Afaik, we don't use this.
+        if 'singTime' in self.metadata:
+            self.sing_time = self.metadata['singTime']
 
         self.flip_x = False
         if 'flipX' in self.metadata:

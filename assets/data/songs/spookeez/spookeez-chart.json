@@ -6,17 +6,7 @@
     { "t": 6400, "e": "FocusCamera", "v": 1 },
     { "t": 9600, "e": "FocusCamera", "v": 0 },
     { "t": 12800, "e": "FocusCamera", "v": 1 },
-    {
-      "t": 15600,
-      "e": "PlayAnimation",
-      "v": { "force": true, "anim": "cheer", "target": "dad" }
-    },
     { "t": 16000, "e": "FocusCamera", "v": 0 },
-    {
-      "t": 18800,
-      "e": "PlayAnimation",
-      "v": { "force": true, "anim": "cheer", "target": "boyfriend" }
-    },
     { "t": 19200, "e": "FocusCamera", "v": 1 },
     { "t": 25600, "e": "FocusCamera", "v": 0 },
     { "t": 32000, "e": "FocusCamera", "v": 1 },

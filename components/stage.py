@@ -48,7 +48,10 @@ class Stage:
 
         self.props = []
         for prop in self.prop_data:
-            self.props.insert(prop['zIndex'], Prop(prop['assetPath'], prop['position'], prop['scroll'], prop['scale']))
+            try:
+                self.props.insert(prop['zIndex'], Prop(prop['assetPath'], prop['position'], prop['scroll'], prop['scale']))
+            except FileNotFoundError:
+                pass
 
     def load_stage_data(self):
         stage_data_path = f'assets/data/stages/{self.stage}.json'
