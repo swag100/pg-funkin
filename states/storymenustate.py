@@ -24,13 +24,23 @@ class DifficultyImage:
                 self.difficulty_images[file.name.split('.')[0]] = pygame.image.load(f'assets/images/storymenu/difficulties/' + file.name).convert_alpha()
 
         self.pos = pos
+        self.update_image(difficulty_name)
 
-        self.image = self.difficulty_images[difficulty_name]
-        self.rect = self.image.get_rect(centerx = self.pos[0], top = self.pos[1])
+        self.y_off = 0
+        self.alpha = 255
 
     def update_image(self, difficulty_name):
+        self.y_off = 50
+        self.alpha = 0
+
         self.image = self.difficulty_images[difficulty_name]
-        self.rect = self.image.get_rect(centerx = self.pos[0], top = self.pos[1])
+
+    def tick(self, dt):
+        self.y_off += (0 - self.y_off) * dt * 25
+        self.alpha += (255 - self.alpha) * dt * 25
+
+        self.rect = self.image.get_rect(centerx = self.pos[0], top = self.pos[1] - self.y_off)
+        self.image.set_alpha(self.alpha)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -179,6 +189,7 @@ class StoryMenuState(BaseState):
 
     def tick(self, dt):
         for option in self.week_options: option.tick(dt, self.week_option_selection)
+        self.difficulty_image.tick(dt)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
