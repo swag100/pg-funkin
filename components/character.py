@@ -36,7 +36,11 @@ class Character:
             self.offsets_dict[name] = item['offsets']
 
             anim_frames = spritesheet.load_animation(item['prefix'])
-            self.animations_dict[name] = spritesheet.frames_to_animation(anim_frames)
+
+            animation = spritesheet.frames_to_animation(anim_frames)
+            animation.flip(self.flip_x, False)
+            
+            self.animations_dict[name] = animation
 
         self.anim_prefix = 'idle'
         if 'startingAnimation' in self.metadata:

@@ -1,68 +1,7 @@
 import pygame
 import json
 
-from components.spritesheet import Spritesheet
-
-class Prop:
-    def __init__(self, position, scroll = (1, 1)):
-        self.position = position
-        self.scroll_factor = scroll
-
-    def tick(self, camera_position): #Update position based on scroll factor
-        self.scrolled_position = (
-            (self.position[0] - camera_position[0]) * self.scroll_factor[0],
-            (self.position[1] - camera_position[1]) * self.scroll_factor[1]
-        )
-    
-    def draw(self, screen):
-        screen.blit(self.image, self.scrolled_position)
-
-class ImageProp(Prop):
-    def __init__(self, prop_data):
-        Prop.__init__(self, prop_data['position'], prop_data['scroll'])
-
-        path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
-        print(path)
-
-        self.image = pygame.image.load(path).convert_alpha()
-
-        image_rect = self.image.get_rect()
-        scale = prop_data['scale']
-
-        self.image = pygame.transform.smoothscale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
-
-class AnimatedProp(Prop):
-    def __init__(self, prop_data):
-        Prop.__init__(self, prop_data['position'], prop_data['scroll'])
-
-        path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
-        spritesheet = Spritesheet(path, prop_data['scale'][0])
-        spritesheet.preload_animations()
-        self.animations = spritesheet.animations
-
-        self.animation = self.animations[prop_data['animations'][0]['prefix']]
-        self.animation.play()
-
-    def draw(self, screen):
-        self.animation.blit(screen, self.scrolled_position)
-
-"""
-self.props.insert(prop['zIndex'], Prop(
-        prop['assetPath'], 
-        prop['position'], 
-        prop['animations'], 
-        prop['scroll'], 
-        prop['scale']
-    )
-)
-"""
-
-"""
-"position": [-600, -200],
-"scale": [1, 1],
-"assetPath": "stageback",
-"scroll": [0.9, 0.9],
-"""
+from components.prop import ColorProp, ImageProp, AnimatedProp
 
 class Stage:
     def __init__(self, stage_name):
@@ -86,13 +25,14 @@ class Stage:
 
         self.props = []
         for prop in self.prop_data:
-            try:
-                if 'animations' in prop and len(prop['animations']) > 0:
-                    self.props.insert(prop['zIndex'], AnimatedProp(prop))
+            #self.props.insert(prop['zIndex'], Prop())
+            if 'animations' in prop and len(prop['animations']) > 0:
+                self.props.append(AnimatedProp(prop))
+            else:
+                if '#' in prop['assetPath']:
+                    self.props.append(ColorProp(prop))
                 else:
-                    self.props.insert(prop['zIndex'], ImageProp(prop))
-            except FileNotFoundError:
-                pass
+                    self.props.append(ImageProp(prop))
 
     def load_stage_data(self):
         stage_data_path = f'assets/data/stages/{self.stage}.json'
