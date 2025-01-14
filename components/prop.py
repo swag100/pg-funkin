@@ -43,7 +43,7 @@ class ImageProp(Prop):
         self.image = pygame.transform.smoothscale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
 
 class AnimatedProp(Prop):
-    def __init__(self, prop_data):
+    def __init__(self, prop_data, path_prefix = ''):
         position = [0, 0]
         if 'position' in prop_data:
             position = prop_data['position']
@@ -55,7 +55,7 @@ class AnimatedProp(Prop):
 
         Prop.__init__(self, position, scroll)
 
-        path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
+        path = 'assets/images/'+path_prefix+prop_data['assetPath']+'.png'
 
         if isinstance(prop_data['scale'], float):
             spritesheet = Spritesheet(path, prop_data['scale'])
@@ -68,7 +68,7 @@ class AnimatedProp(Prop):
         self.animation = self.animations[prop_data['animations'][0]['prefix']]
         self.animation.play()
 
-    def tick(self, camera_position): #Update position based on scroll factor
+    def tick(self, camera_position = [0, 0]): #Update position based on scroll factor
         self.scrolled_position = (
             (self.position[0] - camera_position[0]) * self.scroll_factor[0],
             (self.position[1] - camera_position[1]) * self.scroll_factor[1]

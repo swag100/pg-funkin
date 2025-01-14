@@ -10,7 +10,7 @@
       "animations": [
         {
           "name": "idle",
-          "prefix": "idle0",
+          "prefix": "idle",
           "frameRate": 24
         }
       ]
@@ -22,12 +22,12 @@
       "animations": [
         {
           "name": "idle",
-          "prefix": "idle0",
+          "prefix": "idle",
           "frameRate": 24
         },
         {
           "name": "confirm",
-          "prefix": "confirm0",
+          "prefix": "confirm",
           "frameRate": 24
         }
       ]

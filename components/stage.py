@@ -27,9 +27,9 @@ class Stage:
         for prop in self.prop_data:
             #self.props.insert(prop['zIndex'], Prop())
             if 'animations' in prop and len(prop['animations']) > 0:
-                self.props.append(AnimatedProp(prop))
+                self.props.append(AnimatedProp(prop, 'stages/'))
             else:
-                if '#' in prop['assetPath']:
+                if '#' in prop['assetPath']: #Hashtags can be in filenames. Pick a better condition.
                     self.props.append(ColorProp(prop))
                 else:
                     self.props.append(ImageProp(prop))

@@ -5,7 +5,6 @@ import os
 from .basestate import BaseState
 
 from components.spritesheet import Spritesheet
-from components.prop import AnimatedProp
 
 #EXTREMELY simple state; only meant for transferring week info to the playstate for now.
     
@@ -127,9 +126,6 @@ class StoryMenuState(BaseState):
         self.track_text = self.font.render('TRACKS', True, (229, 87, 119))
 
         self.prop_bg = pygame.Rect(0, 56, 1280, 400)
-        self.props = []
-        for prop in self.level_data_dict['tutorial']['props']:
-            self.props.append(AnimatedProp(prop))
 
         #Difficulty selector
         self.difficulty_selector_objects = [

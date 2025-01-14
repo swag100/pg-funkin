@@ -83,7 +83,7 @@ class PlayState(BaseState):
 
         #Do not tween cam or healthbar if we weren't previously in PlayState!!
         if self.previous_state != 'PlayState':
-            self.camera_position = self.stage.gf_cam_off
+            self.camera_position = [200, 0] #self.stage.gf_cam_off
             self.camera_position_lerp = self.camera_position
         else:
             if 'old health' in self.persistent_data:
