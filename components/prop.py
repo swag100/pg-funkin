@@ -33,7 +33,6 @@ class ImageProp(Prop):
         Prop.__init__(self, prop_data['position'], prop_data['scroll'])
 
         path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
-        print(path)
 
         self.image = pygame.image.load(path).convert_alpha()
 
