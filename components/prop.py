@@ -44,10 +44,24 @@ class ImageProp(Prop):
 
 class AnimatedProp(Prop):
     def __init__(self, prop_data):
-        Prop.__init__(self, prop_data['position'], prop_data['scroll'])
+        position = [0, 0]
+        if 'position' in prop_data:
+            position = prop_data['position']
+        elif 'offsets' in prop_data:
+            position = prop_data['offsets']
+        scroll = [1, 1]
+        if 'scroll' in prop_data:
+            scroll = prop_data['scroll']
+
+        Prop.__init__(self, position, scroll)
 
         path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
-        spritesheet = Spritesheet(path, prop_data['scale'][0])
+
+        if isinstance(prop_data['scale'], float):
+            spritesheet = Spritesheet(path, prop_data['scale'])
+        else:
+            spritesheet = Spritesheet(path, prop_data['scale'][0])
+
         spritesheet.preload_animations()
         self.animations = spritesheet.animations
 

@@ -128,7 +128,7 @@ class StoryMenuState(BaseState):
 
         self.prop_bg = pygame.Rect(0, 56, 1280, 400)
         self.props = []
-        for prop in self.level_data_dict['props']:
+        for prop in self.level_data_dict['tutorial']['props']:
             self.props.append(AnimatedProp(prop))
 
         #Difficulty selector
