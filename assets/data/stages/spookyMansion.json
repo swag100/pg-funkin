@@ -24,7 +24,7 @@
           "offsets": [0, 0],
           "flipY": false,
           "frameRate": 24,
-          "prefix": "halloweem bg0",
+          "prefix": "halloweem bg",
           "looped": true,
           "flipX": false,
           "name": "idle"

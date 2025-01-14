@@ -376,7 +376,7 @@ class PlayState(BaseState):
 
         #game objects
 
-        self.stage.tick(dt, self.camera_position_lerp)
+        self.stage.tick(self.camera_position_lerp)
         for character in self.characters.values(): character.tick(dt, self.camera_position_lerp)
 
         #hud

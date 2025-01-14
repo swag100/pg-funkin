@@ -1,16 +1,14 @@
 import pygame
 import json
 
+from components.spritesheet import Spritesheet
+
 class Prop:
-    def __init__(self, image_path, position, scroll = (1, 1), scale = (1, 1)):
-        self.image = pygame.image.load(f'assets/images/{image_path}.png').convert_alpha()
+    def __init__(self, position, scroll = (1, 1)):
         self.position = position
         self.scroll_factor = scroll
 
-        image_rect = self.image.get_rect()
-        self.image = pygame.transform.smoothscale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
-
-    def tick(self, dt, camera_position): #Update position based on scroll factor
+    def tick(self, camera_position): #Update position based on scroll factor
         self.scrolled_position = (
             (self.position[0] - camera_position[0]) * self.scroll_factor[0],
             (self.position[1] - camera_position[1]) * self.scroll_factor[1]
@@ -18,6 +16,46 @@ class Prop:
     
     def draw(self, screen):
         screen.blit(self.image, self.scrolled_position)
+
+class ImageProp(Prop):
+    def __init__(self, prop_data):
+        Prop.__init__(self, prop_data['position'], prop_data['scroll'])
+
+        path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
+        print(path)
+
+        self.image = pygame.image.load(path).convert_alpha()
+
+        image_rect = self.image.get_rect()
+        scale = prop_data['scale']
+
+        self.image = pygame.transform.smoothscale(self.image, (image_rect.w * scale[0], image_rect.h * scale[1]))
+
+class AnimatedProp(Prop):
+    def __init__(self, prop_data):
+        Prop.__init__(self, prop_data['position'], prop_data['scroll'])
+
+        path = 'assets/images/stages/'+prop_data['assetPath']+'.png'
+        spritesheet = Spritesheet(path, prop_data['scale'][0])
+        spritesheet.preload_animations()
+        self.animations = spritesheet.animations
+
+        self.animation = self.animations[prop_data['animations'][0]['prefix']]
+        self.animation.play()
+
+    def draw(self, screen):
+        self.animation.blit(screen, self.scrolled_position)
+
+"""
+self.props.insert(prop['zIndex'], Prop(
+        prop['assetPath'], 
+        prop['position'], 
+        prop['animations'], 
+        prop['scroll'], 
+        prop['scale']
+    )
+)
+"""
 
 """
 "position": [-600, -200],
@@ -49,7 +87,10 @@ class Stage:
         self.props = []
         for prop in self.prop_data:
             try:
-                self.props.insert(prop['zIndex'], Prop(prop['assetPath'], prop['position'], prop['scroll'], prop['scale']))
+                if 'animations' in prop and len(prop['animations']) > 0:
+                    self.props.insert(prop['zIndex'], AnimatedProp(prop))
+                else:
+                    self.props.insert(prop['zIndex'], ImageProp(prop))
             except FileNotFoundError:
                 pass
 
@@ -61,8 +102,8 @@ class Stage:
 
         return stage_data
     
-    def tick(self, dt, camera_position):
-        for prop in self.props: prop.tick(dt, camera_position)
+    def tick(self, camera_position):
+        for prop in self.props: prop.tick(camera_position)
     
     def draw(self, screen):
         for prop in self.props: prop.draw(screen)
