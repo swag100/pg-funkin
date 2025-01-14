@@ -66,13 +66,13 @@ class PlayState(BaseState):
             self.characters['opponent'] = Character(self, self.song.characters['opponent'], pos, 'opponent')
         if 'player' in self.song.characters:
             self.characters['player'] = Character(self, self.song.characters['player'], self.stage.player_position, 'player')
+        
+        #Make player start with their idle, so you don't see a death sprite when restarting a song.
+        self.characters['player'].play_animation('idle')
 
         #cam zoom amount: taken from stage data!
         self.cam_zoom = self.stage.cam_zoom
         self.hud_zoom = 1
-        
-        #Make player start with their idle, so you don't see a death sprite when restarting a song.
-        self.characters['player'].play_animation('idle')
 
         #game variables
         self.combo = 0
