@@ -219,5 +219,12 @@ class StoryMenuState(BaseState):
             )
             screen.blit(track_text, track_pos)
 
+        #Flavor text
+        flavor_text_string = self.level_data_dict[self.week_options[self.week_option_selection].name]['name']
+        flavor_text = self.font.render(flavor_text_string, True, (187, 187, 187))
+        flavor_text_pos = flavor_text.get_rect(topright = (constants.WINDOW_SIZE[0] - 15, 12))
+        screen.blit(flavor_text, flavor_text_pos)
+
+        #Difficulty selectors.
         for object in self.difficulty_selector_objects: object.draw(screen)
         self.difficulty_image.draw(screen)
