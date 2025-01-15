@@ -29,7 +29,7 @@ class OptionsMenuState(BaseState):
 
         self.option_sprites = []
         for i in range(len(self.options)):
-            self.option_sprites.append(Alphabet(self.option_text[i], [100, 0]))
+            self.option_sprites.append(Alphabet(self.option_text[i], [200, 0]))
 
         #Flashing variables.
         self.is_flashing = False
@@ -75,6 +75,8 @@ class OptionsMenuState(BaseState):
                     self.done = True
 
             #Advancing in the menu
+            if self.is_flashing: return
+
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
                 self.increment_pick(-1)
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
@@ -93,9 +95,7 @@ class OptionsMenuState(BaseState):
             i = self.option_sprites.index(alphabet) - self.cur_pick
 
             #lerp them to the selection position
-            selection_position = (100, constants.SCREEN_CENTER[1])
-            alphabet.x += ((selection_position[0] + (i * 0)) - alphabet.x) * (dt * 3)
-            alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * (dt * 3)
+            alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - alphabet.y) * (dt * 3)
 
             alphabet.tick(dt)
 
