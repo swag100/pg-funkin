@@ -4,6 +4,28 @@ from states.basestate import BaseState
 
 from components.alphabet import Alphabet
 
+class Option:
+    def __init__(self, text, position):
+        self.text = text
+        self.alphabet = Alphabet(text, position)
+
+    def tick(self, dt, option_sprites, cur_pick):
+        
+        i = option_sprites.index(self.alphabet) - cur_pick
+
+        #lerp them to the selection position
+        self.alphabet.x += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
+        self.alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
+
+        self.alphabet.tick(dt)
+
+
+class KeyBindOption(Option):
+    pass
+
+class FiniteOption(Option):
+    pass
+
 class OptionsMenuState(BaseState):
     def set_offset(self):
         print('I work')
@@ -92,12 +114,7 @@ class OptionsMenuState(BaseState):
 
     def tick(self, dt):
         for alphabet in self.option_sprites: 
-            i = self.option_sprites.index(alphabet) - self.cur_pick
-
-            #lerp them to the selection position
-            alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - alphabet.y) * (dt * 3)
-
-            alphabet.tick(dt)
+            pass
 
         if self.is_flashing:
             self.flash_time += dt
