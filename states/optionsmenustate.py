@@ -5,19 +5,20 @@ from states.basestate import BaseState
 from components.alphabet import Alphabet
 
 class Option:
-    def __init__(self, text, position):
+    def __init__(self, text, position = [200, 0]):
         self.text = text
         self.alphabet = Alphabet(text, position)
+        self.position = position
 
-    def tick(self, dt, option_sprites, cur_pick):
-        
-        i = option_sprites.index(self.alphabet) - cur_pick
-
+    def tick(self, dt, i):
         #lerp them to the selection position
-        self.alphabet.x += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
+        self.alphabet.x += ((self.position[0]) - self.alphabet.x) * (dt * 3)
         self.alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
 
         self.alphabet.tick(dt)
+
+    def handle_event(self, event):
+        pass
 
 
 class KeyBindOption(Option):
@@ -36,22 +37,12 @@ class OptionsMenuState(BaseState):
 
         self.cur_pick = 0 #The Id of the menu option you're selecting.
 
-        #parallel list containing their text
-        self.option_text = [
-            'offset',
-            'offset',
-            'offset',
-        ]
         #Call a function when you press enter.
         self.options = [
-            self.set_offset,
-            self.set_offset,
-            self.set_offset,
+            Option('offset'),
+            Option('offset'),
+            Option('offset'),
         ]
-
-        self.option_sprites = []
-        for i in range(len(self.options)):
-            self.option_sprites.append(Alphabet(self.option_text[i], [200, 0]))
 
         #Flashing variables.
         self.is_flashing = False
@@ -113,14 +104,14 @@ class OptionsMenuState(BaseState):
                 self.is_flashing = True
 
     def tick(self, dt):
-        for alphabet in self.option_sprites: 
-            pass
+        for option in self.options: 
+            option.tick(dt, self.options.index(option) - self.cur_pick)
 
         if self.is_flashing:
             self.flash_time += dt
 
             if self.flash_time >= self.max_flash_time:
-                self.options[self.cur_pick]()
+                print(self.options[self.cur_pick]) #self.options[self.cur_pick]()
 
                 self.is_flashing = False
                 self.flash_time = 0
@@ -128,13 +119,13 @@ class OptionsMenuState(BaseState):
     def draw(self, screen):
         screen.blit(self.bg_image, (0,0))
 
-        for alphabet in self.option_sprites: 
+        for option in self.options: 
             #Make the selection the only one with full transparency.
-            for character in alphabet.character_list:
+            for character in option.alphabet.character_list:
                 character.animation.getCurrentFrame().set_alpha(128)
 
-                if self.cur_pick == self.option_sprites.index(alphabet):
+                if self.cur_pick == self.options.index(option):
                     character.animation.getCurrentFrame().set_alpha(255)
 
-            alphabet.draw(screen)
+            option.alphabet.draw(screen)
         #if self.is_flashing: #work on this later
