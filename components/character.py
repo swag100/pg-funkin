@@ -88,14 +88,15 @@ class Character:
                             self.play_animation('danceRight')
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
-            if self.character_type == 'player':
+            if self.character_type in ['opponent', 'player']:
                 if event_type == constants.NOTE_GOOD_HIT:
                     pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
                     self.play_animation(pose)
 
                 if event_type == constants.NOTE_MISS:
                     pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}miss'
-                    self.play_animation(pose)
+                    if pose in self.animations_dict:
+                        self.play_animation(pose)
 
                 return
             

@@ -84,12 +84,12 @@ class Strumline(object):
         self.state = None #Strumline state, either PRESSED, HOLDING, or RELEASED, or None.
 
         self.bot_strum = False
-        if self.id > 3:
+        if self.id > 3 and not constants.SETTINGS_DEFAULT_2PLAYER:
             self.bot_strum = True
 
         #Positioning
         strumline_offset = constants.PLAYER_STRUMLINE_OFFSET
-        if self.bot_strum: strumline_offset = constants.OPPONENT_STRUMLINE_OFFSET
+        if self.id > 3: strumline_offset = constants.OPPONENT_STRUMLINE_OFFSET
 
         self.pos = (
             strumline_offset[0] + (110 * (self.id % 4)),
@@ -145,7 +145,14 @@ class Strumline(object):
         if self.bot_strum: return
                 
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:
+            condition = event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]
+            if constants.SETTINGS_DEFAULT_2PLAYER: 
+                if self.id <= 3: 
+                    condition = event.key == constants.SETTINGS_DEFAULT_KEYBINDS[self.name][1]
+                else:
+                    condition = event.key == constants.SETTINGS_DEFAULT_KEYBINDS[self.name][0]
+
+            if condition:
                 self.strum_note.play_animation('press')
 
                 for note in self.notes:
