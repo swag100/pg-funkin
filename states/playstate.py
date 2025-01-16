@@ -34,6 +34,7 @@ class PlayState(BaseState):
         self.song = Song(self.song_list[self.level_progress], self.difficulty)
         self.events = self.song.chart_reader.load_chart_events(self.song.song_name)
 
+        self.opponent_voice_track_muted = False
         self.player_voice_track_muted = False
 
         #PAUSE stuff C:
@@ -123,13 +124,17 @@ class PlayState(BaseState):
         self.done = True
 
     def add_health(self, amount):
-        if self.health + amount <= constants.HEALTH_MAX:
+        if self.health + amount <= constants.HEALTH_MIN:
+            self.health = constants.HEALTH_MIN
+        elif self.health + amount <= constants.HEALTH_MAX:
             self.health += amount
         else:
             self.health = constants.HEALTH_MAX
 
     def remove_health(self, amount):
-        if self.health - amount >= constants.HEALTH_MIN:
+        if self.health - amount >= constants.HEALTH_MAX:
+            self.health = constants.HEALTH_MAX
+        elif self.health - amount >= constants.HEALTH_MIN:
             self.health -= amount
         else:
             self.die()
@@ -209,10 +214,16 @@ class PlayState(BaseState):
 
                 self.combo += 1 #Increase combo no matter the rating?
 
-                self.add_health(constants.HEALTH_BONUSES[rating])
+                opponent = int(event_parameters[1]) > 3
+                opponent_int = (((not opponent) * 2) - 1)
+
+                self.add_health(constants.HEALTH_BONUSES[rating] * opponent_int)
 
                 #unmute player voice if it was
-                self.player_voice_track_muted = False
+                if opponent: 
+                    self.opponent_voice_track_muted = False
+                else:
+                    self.player_voice_track_muted = False
 
                 if rating in ['perfect', 'killer']: #Shares the same graphic
                     rating = 'sick'
@@ -233,7 +244,11 @@ class PlayState(BaseState):
                 
                 #decrement health pretty
                 self.score -= constants.SCORE_PENALTY
-                self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]])
+
+                opponent = int(event_parameters[1]) > 3
+                opponent_int = (((not opponent) * 2) - 1) #forgive me
+
+                self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]] * opponent_int)
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
                 miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 20) #20 is intentional; should be way quieter.
@@ -242,7 +257,10 @@ class PlayState(BaseState):
 
                 #voices[0] is players voice
                 #mute player vocals until palyer gets a rating
-                self.player_voice_track_muted = True
+                if opponent:
+                    self.opponent_voice_track_muted = True
+                else:
+                    self.player_voice_track_muted = True
             
             if event_type == constants.BEAT_HIT: #BEAT HIT
                 cur_beat = int(event_parameters[0]) #easier to read
@@ -362,7 +380,7 @@ class PlayState(BaseState):
         if dt > self.song.conductor.crochet: return
 
         #This also ticks conductor
-        self.song.tick(dt, self.player_voice_track_muted)
+        self.song.tick(dt, self.player_voice_track_muted, self.opponent_voice_track_muted)
 
         #update cam lerp
         self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED)
@@ -392,8 +410,10 @@ class PlayState(BaseState):
             if not strumline.bot_strum:
                 for sustain in strumline.sustains:
                     if sustain.being_eaten:
+                        opponent_int = (((not sustain.true_id > 3) * 2) - 1)
+
                         self.score += constants.SCORE_BONUSES['holding'] * dt
-                        self.add_health(constants.HEALTH_BONUSES['holding'] * dt)
+                        self.add_health(constants.HEALTH_BONUSES['holding'] * dt * opponent_int)
             
         for popup in self.popups: 
             popup.tick(dt)

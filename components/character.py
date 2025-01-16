@@ -50,6 +50,8 @@ class Character:
         self.animation.play()
 
     def play_animation(self, prefix, loop = False, start_time = None):
+        if prefix not in self.animations_dict: return #failsafe
+
         self.animation.stop()
 
         self.anim_prefix = prefix
@@ -88,27 +90,22 @@ class Character:
                             self.play_animation('danceRight')
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
-            if self.character_type in ['opponent', 'player']:
-                if event_type == constants.NOTE_GOOD_HIT:
-                    pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
+            if event_type == constants.NOTE_BOT_PRESS:
+                if not constants.SETTINGS_DEFAULT_2PLAYER and self.character_type == 'opponent':
+                    pose = f'sing{constants.DIRECTIONS[int(event_parameters[1]) % 4].upper()}'
                     self.play_animation(pose)
 
-                if event_type == constants.NOTE_MISS:
-                    pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}miss'
-                    if pose in self.animations_dict:
-                        self.play_animation(pose)
-
-                return
-            
             if self.character_type == 'girlfriend': return
-            
-            if event_type == constants.NOTE_BOT_PRESS:
-                pose = f'sing{constants.DIRECTIONS[int(event_parameters[1])].upper()}'
-                self.play_animation(pose)
 
-                #THIS SUCKS. WORK ON THIS TOMORROW.
-                #Make sure whenever you release your final note, boyfriend snaps back into his idle pose.
-                #For now, poor old boyfriend will not use his idle at all :C
+            if event_type in [constants.NOTE_GOOD_HIT, constants.NOTE_MISS]:
+                pose = f'sing{constants.DIRECTIONS[int(event_parameters[1]) % 4].upper()}'
+                if event_type == constants.NOTE_MISS: pose += 'miss'
+
+                is_opponent = int(event_parameters[1]) > 3 and self.character_type == 'opponent'
+                is_player = int(event_parameters[1]) <= 3 and self.character_type == 'player'
+
+                if is_opponent or is_player: 
+                    self.play_animation(pose)
 
     def tick(self, dt, camera_position):
         self.pos = (

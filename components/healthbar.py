@@ -30,7 +30,7 @@ class BarIcon:
         return images
     
     def tick(self, dt):
-        self.image = self.images[int(self.play_state.health <= 0.4)]
+        self.image = self.images[self.play_state.health <= 0.4 and self.player or self.play_state.health >= 1.6 and not self.player]
         self.size += (1 - self.size) / 8
 
         x_offset = (round(self.play_state.health_lerp, 3) / 2) * (self.health_bar.image_rect.w - 8) - (self.health_bar.image_rect.w / 2)

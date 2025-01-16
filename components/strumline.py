@@ -161,7 +161,7 @@ class Strumline(object):
                         self.state = PRESSED
                         
                         rating = self.get_rating(note)
-                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_GOOD_HIT}/{rating}/{self.id % 4}')) #Post rating event
+                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_GOOD_HIT}/{rating}/{self.id}')) #Post rating event            
 
                         if rating in ['perfect', 'killer', 'sick']:
                             def do_splash(strumline):
@@ -188,7 +188,7 @@ class Strumline(object):
                 
                 #If there was no press detected, it's a GHOST miss!
                 if self.state != PRESSED:
-                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/ghost miss/{self.id % 4}')) #feels too slow
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/ghost miss/{self.id}')) #feels too slow
                     #pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
@@ -257,7 +257,7 @@ class Strumline(object):
 
             #Miss all notes that are late by 2 steps or over
             if note.time + (self.conductor.crochet / 2) <= self.conductor.song_position: 
-                pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/miss/{self.id % 4}')) #Post rating event
+                pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/miss/{self.id}')) #Post rating event
                 self.notes.remove(note)
         
         self.strum_note.anim_time += dt

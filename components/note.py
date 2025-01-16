@@ -43,6 +43,7 @@ class Note(object):
 
 class Sustain(object):
     def __init__(self, note, length):
+        self.true_id = note.strumline.id
         self.id = note.strumline.id % 4
         self.note = note #Note object this sustain will follow
 

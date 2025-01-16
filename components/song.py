@@ -63,7 +63,7 @@ class Song:
     def voices_name(self, singer):
         return f'Voices-{singer}.ogg' 
     
-    def tick(self, dt, player_voice_track_muted = False):
+    def tick(self, dt, player_voice_track_muted = False, opponent_voice_track_muted = False):
         self.conductor.tick(dt)
 
         pygame.mixer.music.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
@@ -71,6 +71,8 @@ class Song:
             self.voices[i].set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
         if player_voice_track_muted:
             self.voices[0].set_volume(0)
+        if opponent_voice_track_muted:
+            self.voices[1].set_volume(0)
 
         #TODO: Check to see if each audio file's audio position is synced with the song. Then, if it isn't, re-sync it!
 
