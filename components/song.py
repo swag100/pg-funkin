@@ -66,9 +66,9 @@ class Song:
     def tick(self, dt, player_voice_track_muted = False, opponent_voice_track_muted = False):
         self.conductor.tick(dt)
 
-        pygame.mixer.music.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        pygame.mixer.music.set_volume(constants.volume / 10)
         for i in range(len(self.voices)):
-            self.voices[i].set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+            self.voices[i].set_volume(constants.volume / 10)
         if player_voice_track_muted:
             self.voices[0].set_volume(0)
         if opponent_voice_track_muted:

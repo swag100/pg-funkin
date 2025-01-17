@@ -157,13 +157,13 @@ class PlayState(BaseState):
         if event.type == pygame.KEYDOWN:
             if self.paused:
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
-                    self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    self.scroll_sound.set_volume(constants.volume / 10)
                     self.scroll_sound.play()
                     
                     self.increment_pause_selection(-1)
 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
-                    self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    self.scroll_sound.set_volume(constants.volume / 10)
                     self.scroll_sound.play()
 
                     self.increment_pause_selection(1)
@@ -186,7 +186,7 @@ class PlayState(BaseState):
                     self.toggle_pause()
 
                     self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-                    self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    self.scroll_sound.set_volume(constants.volume / 10)
                     self.scroll_sound.play()
 
                     for alphabet in self.pause_option_objects: 
@@ -251,7 +251,7 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]] * opponent_int)
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 20) #20 is intentional; should be way quieter.
+                miss_noise.set_volume(constants.volume / 20) #20 is intentional; should be way quieter.
                 pygame.mixer.Channel(2).play(miss_noise)
                 #miss_noise.play()
 
@@ -281,7 +281,7 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    countdown_noises[cur_beat + 4].set_volume(constants.volume / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image

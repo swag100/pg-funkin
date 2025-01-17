@@ -119,7 +119,7 @@ class StoryMenuState(BaseState):
                     self.props[level].append(AnimatedProp(prop))
                 except KeyError:
                     self.props[level] = [AnimatedProp(prop)]
-            print(self.props[level])
+            #print(self.props[level])
 
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
@@ -161,7 +161,7 @@ class StoryMenuState(BaseState):
 
     def set_volume_and_play(self, sound_path):
         sound = pygame.mixer.Sound(sound_path)
-        sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        sound.set_volume(constants.volume / 10)
         sound.play()
 
     def handle_event(self, event):

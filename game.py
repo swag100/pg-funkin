@@ -1,6 +1,7 @@
 import sys
 import constants
 import pygame
+import settings
 
 class Game(object):
     def __init__(self, screen, states, initial_state):
@@ -8,13 +9,6 @@ class Game(object):
         self.states = states
         self.state_name = initial_state
         self.state = states[initial_state]
-
-        self.state.start({})
-
-        self.clock = pygame.time.Clock()
-        self.max_fps = constants.SETTINGS_DEFAULT_FPS
-
-        self.done = False
 
         #Controller vars
         self.joysticks = self.get_joysticks()
@@ -29,6 +23,18 @@ class Game(object):
         self.volume_text = volume_font.render('VOLUME', True, (255, 255, 255))
 
         self.fps_font = pygame.font.Font('assets/fonts/arial.ttf', 10)
+
+        #settings
+        self.settings = settings.load_settings()
+        print(self.settings)
+
+        #Finally, start state!
+        self.state.start({})
+
+        self.clock = pygame.time.Clock()
+        self.max_fps = constants.SETTINGS_DEFAULT_FPS
+
+        self.done = False
 
     def get_joysticks(self):
         return [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
@@ -48,9 +54,8 @@ class Game(object):
 
             #convert button press to key down. Sorry liberals!
             if event.type == pygame.JOYHATMOTION:
+                print(event.joy, event.joy %2)
                 x, y = event.value
-
-                simulated_key = None
 
                 #This took longer than I'd like to admit.
 
@@ -69,8 +74,7 @@ class Game(object):
                 event_type = pygame.KEYDOWN
                 if (x,y) == (0,0): event_type = pygame.KEYUP
 
-                if simulated_key != None:
-                    event = pygame.event.Event(event_type, key = simulated_key)
+                event = pygame.event.Event(event_type, key = simulated_key)
 
             if self.state_name == 'PlayState' and not self.state.paused: #Hardcoded? Sorry!
                 if event.type in [pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP]:
@@ -113,19 +117,17 @@ class Game(object):
             ######### end of controller code
 
             if event.type == pygame.KEYDOWN:
-                if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume_down']:
-                    if constants.SETTINGS_DEFAULT_VOLUME - 1 >= 0:
-                        constants.SETTINGS_DEFAULT_VOLUME -= 1
-                if event.key == constants.SETTINGS_DEFAULT_KEYBINDS['volume_up']:
-                    if constants.SETTINGS_DEFAULT_VOLUME + 1 <= 10:
-                        constants.SETTINGS_DEFAULT_VOLUME += 1
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_down']:
+                    if constants.volume - 1 >= 0: constants.volume -= 1
+                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_up']:
+                    if constants.volume + 1 <= 10: constants.volume += 1
                 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_up'] + constants.SETTINGS_DEFAULT_KEYBINDS['volume_down']:
                     self.volume_visible_time
                     self.volume_rect.y = 0
 
                     volume_noise = pygame.mixer.Sound('assets/sounds/volume.ogg')
-                    volume_noise.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    volume_noise.set_volume(constants.volume / 10)
                     volume_noise.play()
 
             self.state.handle_event(event)
@@ -168,7 +170,7 @@ class Game(object):
             surface = pygame.Surface((rect.w,rect.h), pygame.SRCALPHA)
             surface.fill((255,255,255,128))
             self.screen.blit(surface, (rect.x + self.volume_rect.x, rect.y + self.volume_rect.y))
-        for i in range(constants.SETTINGS_DEFAULT_VOLUME):
+        for i in range(constants.volume):
             rect = pygame.Rect(i * 12 + 20, 0, 8, (i + 1) * 2)
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))

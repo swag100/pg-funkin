@@ -28,9 +28,6 @@ class FiniteOption(Option):
     pass
 
 class OptionsMenuState(BaseState):
-    def set_offset(self):
-        print('I work')
-
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
         super(OptionsMenuState, self).__init__()
@@ -56,11 +53,11 @@ class OptionsMenuState(BaseState):
 
         #audio
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.set_volume(constants.volume / 10)
         self.scroll_sound.play()
     
     def increment_pick(self, increment):
-        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.set_volume(constants.volume / 10)
         self.scroll_sound.play()
 
         self.cur_pick += increment
@@ -76,7 +73,7 @@ class OptionsMenuState(BaseState):
             #Exit menu
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
                 cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
-                cancel_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                cancel_sound.set_volume(constants.volume / 10)
                 cancel_sound.play()
 
                 if self.is_flashing:
@@ -98,7 +95,7 @@ class OptionsMenuState(BaseState):
             #entering the picked option
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                confirm_sound.set_volume(constants.volume / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True

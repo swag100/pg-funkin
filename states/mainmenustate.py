@@ -76,11 +76,11 @@ class MainMenuState(BaseState):
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
 
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.set_volume(constants.volume / 10)
         self.scroll_sound.play()
     
     def increment_pick(self, increment):
-        self.scroll_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+        self.scroll_sound.set_volume(constants.volume / 10)
         self.scroll_sound.play()
 
         self.cur_pick += increment
@@ -96,7 +96,7 @@ class MainMenuState(BaseState):
             if self.is_flashing: 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
                     cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
-                    cancel_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                    cancel_sound.set_volume(constants.volume / 10)
                     cancel_sound.play()
 
                     self.is_flashing = False
@@ -112,7 +112,7 @@ class MainMenuState(BaseState):
             #entering the picked option
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
+                confirm_sound.set_volume(constants.volume / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True

@@ -1,6 +1,7 @@
 import pygame
 
-#This is a settings file, but ALSO a constants file... I'm just too lazy to separate it.
+volume = 10 #Will go from 0 to 10; increments or decrements by 1.
+#It's way easier to have this be here for every script to access, than make it an instance var of game. SORRY!!
 
 ###CONSTANTS
 WINDOW_TITLE = 'Rhythm'
@@ -75,10 +76,6 @@ SONG_BEGAN = 'SONG_BEGAN' #called when the countdown ends and the song's audio b
 SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater than the length of the instrumental.
 
 ###SETTINGS DEFAULT VALUES to the user changing variables
-SETTINGS_DEFAULT_VOLUME = 10 #Will go from 0 to 10; increments or decrements by 1
-SETTINGS_DEFAULT_SONG_OFFSET = 0
-
-SETTINGS_DEFAULT_FPS = 60 #Max frames per second.
 
 SETTINGS_DEFAULT_RATING_POSITION = [500, 200]
 SETTINGS_DEFAULT_COMBO_POSITION = [500, 280]
@@ -103,7 +100,16 @@ SETTINGS_DEFAULT_KEYBINDS = {
     'volume_down': [pygame.K_MINUS]
 }
 
-SETTINGS_DEFAULT_2PLAYER = True
-
 #Fun stuff
-SETTINGS_DEFAULT_CAMERA_SPEED = 2
+SETTINGS_DEFAULT_NAUGHTYNESS = False #I don't know what this will ever do, but i'm adding it!
+SETTINGS_DEFAULT_DOWNSCROLL = False
+SETTINGS_DEFAULT_AUTO_PAUSE = False
+SETTINGS_DEFAULT_2PLAYER = False
+
+SETTINGS_DEFAULT_SONG_OFFSET = 0
+SETTINGS_DEFAULT_FPS = 60 #Max frames per second.
+
+SETTINGS_DEFAULT_CAMERA_SPEED = 2 #I don't know if I want to put this in settings.
+
+#dev stuff
+SETTINGS_DEFAULT_DEBUG_MODE = False
