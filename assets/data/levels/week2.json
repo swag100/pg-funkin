@@ -6,7 +6,7 @@
     {
       "assetPath": "storymenu/props/spooky",
       "scale": 1.0,
-      "offsets": [100, 120],
+      "offsets": [150, 120],
       "animations": [
         {
           "name": "danceLeft",
@@ -21,7 +21,7 @@
     {
       "assetPath": "storymenu/props/bf",
       "scale": 1.0,
-      "offsets": [150, 80],
+      "offsets": [470, 80],
       "animations": [
         {
           "name": "idle",
@@ -38,7 +38,7 @@
     {
       "assetPath": "storymenu/props/gf",
       "scale": 1.0,
-      "offsets": [200, 80],
+      "offsets": [850, 80],
       "animations": [
         {
           "name": "danceLeft",

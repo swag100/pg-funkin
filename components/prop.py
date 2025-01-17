@@ -78,7 +78,7 @@ class AnimatedProp(Prop):
         self.animation.stop()
 
         self.anim_prefix = prefix
-        self.animation = self.animations_dict[prefix]
+        self.animation = self.animations[prefix]
 
         self.animation.play(loop, start_time)
 

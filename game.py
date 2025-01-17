@@ -48,8 +48,9 @@ class Game(object):
 
             #convert button press to key down. Sorry liberals!
             if event.type == pygame.JOYHATMOTION:
-                print(event.joy, event.joy %2)
                 x, y = event.value
+
+                simulated_key = None
 
                 #This took longer than I'd like to admit.
 
@@ -68,7 +69,8 @@ class Game(object):
                 event_type = pygame.KEYDOWN
                 if (x,y) == (0,0): event_type = pygame.KEYUP
 
-                event = pygame.event.Event(event_type, key = simulated_key)
+                if simulated_key != None:
+                    event = pygame.event.Event(event_type, key = simulated_key)
 
             if self.state_name == 'PlayState' and not self.state.paused: #Hardcoded? Sorry!
                 if event.type in [pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP]:

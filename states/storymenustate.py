@@ -5,6 +5,7 @@ import os
 from .basestate import BaseState
 
 from components.spritesheet import Spritesheet
+from components.prop import AnimatedProp
 
 #EXTREMELY simple state; only meant for transferring week info to the playstate for now.
     
@@ -99,15 +100,32 @@ class StoryMenuState(BaseState):
         level_data_file.close()
 
         return level_data
+    
+    def get_data_dict(self):
+        data_dict = {}
+        for file in os.scandir('assets/data/levels/'):
+            if file.is_file():
+                data_dict[file.name.split('.')[0]] = self.load_level_data(file.path)
+        return data_dict
+    
+    def __init__(self):
+        #This will be used for preloading all the props, so loading them doesn't cause any lag.
+        self.level_data_dict = self.get_data_dict()
+
+        self.props = {}
+        for level, data in self.level_data_dict.items():
+            for prop in data['props']:
+                try:
+                    self.props[level].append(AnimatedProp(prop))
+                except KeyError:
+                    self.props[level] = [AnimatedProp(prop)]
+            print(self.props[level])
 
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
         super(StoryMenuState, self).__init__()
 
-        self.level_data_dict = {}
-        for file in os.scandir('assets/data/levels/'):
-            if file.is_file():
-                self.level_data_dict[file.name.split('.')[0]] = self.load_level_data(file.path)
+        self.level_data_dict = self.get_data_dict()
 
         #Populate week options list, USING SELF DOT LEVEL JSONS!
         self.week_options = []
@@ -138,6 +156,9 @@ class StoryMenuState(BaseState):
     def find_track_list(self, level_name): #Find a track list for a given level name.
         return self.level_data_dict[level_name]['songs']
 
+    def get_week_name(self):
+        return self.week_options[self.week_option_selection].name
+
     def set_volume_and_play(self, sound_path):
         sound = pygame.mixer.Sound(sound_path)
         sound.set_volume(constants.SETTINGS_DEFAULT_VOLUME / 10)
@@ -147,6 +168,14 @@ class StoryMenuState(BaseState):
         if event.type == pygame.KEYDOWN:
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up'] + constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
+
+                #play prop anims, change this and make it OnBeatHit event later.
+                for prop_list in self.props.values(): 
+                    for prop in prop_list:
+                        if 'idle' in prop.animations.keys():
+                            prop.play_animation('idle')
+                        else:
+                            prop.play_animation('danceLeft')
 
                 if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, -1)
@@ -173,7 +202,7 @@ class StoryMenuState(BaseState):
 
             #Enter level
             if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
-                week = self.week_options[self.week_option_selection].name
+                week = self.get_week_name()
                 difficulty = self.difficulty_options[self.difficulty_option_selection]
 
                 self.level_data = self.load_level_data(f'assets/data/levels/{week}.json') #I'm WORKING ON IT. And by it, I mean the GUI
@@ -191,6 +220,10 @@ class StoryMenuState(BaseState):
         for option in self.week_options: option.tick(dt, self.week_option_selection)
         self.difficulty_image.tick(dt)
 
+        for prop_list in self.props.values(): 
+            for prop in prop_list:
+                prop.tick()
+
     def draw(self, screen):
         screen.fill((0, 0, 0))
 
@@ -205,10 +238,12 @@ class StoryMenuState(BaseState):
                 option.draw(screen)
 
         pygame.draw.rect(screen, (249,207,81), self.prop_bg) #Drawn before characters, but after week options!
+        #Draw my beloved characters :face_holding_back_tears:
+        for prop in self.props[self.get_week_name()]: prop.draw(screen)
 
         #Draw TRACKS text, + the week's tracklist
         screen.blit(self.track_text, self.track_text_pos)
-        track_list = self.find_track_list(self.week_options[self.week_option_selection].name)
+        track_list = self.find_track_list(self.get_week_name())
         for track_name in track_list:
             formatted_track_string = track_name.replace('-', ' ').title()
 
@@ -220,7 +255,7 @@ class StoryMenuState(BaseState):
             screen.blit(track_text, track_pos)
 
         #Flavor text
-        flavor_text_string = self.level_data_dict[self.week_options[self.week_option_selection].name]['name']
+        flavor_text_string = self.level_data_dict[self.get_week_name()]['name']
         flavor_text = self.font.render(flavor_text_string, True, (187, 187, 187))
         flavor_text_pos = flavor_text.get_rect(topright = (constants.WINDOW_SIZE[0] - 15, 12))
         screen.blit(flavor_text, flavor_text_pos)
