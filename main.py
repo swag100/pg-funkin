@@ -10,6 +10,7 @@ from states.optionsmenustate import OptionsMenuState
 
 pygame.mixer.pre_init(44100, -16, 2, 64)
 pygame.mixer.init()
+pygame.joystick.init()
 pygame.init()
 
 pygame.mixer.set_num_channels(32) #So that spamming miss sounds satisfying

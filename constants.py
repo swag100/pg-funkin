@@ -99,10 +99,8 @@ SETTINGS_DEFAULT_KEYBINDS = {
     'forward': [pygame.K_RETURN],
     'reset': [pygame.K_r],
 
-    'volume': {
-        'up': pygame.K_EQUALS, 
-        'down': pygame.K_MINUS
-    }
+    'volume_up': [pygame.K_EQUALS],
+    'volume_down': [pygame.K_MINUS]
 }
 
 SETTINGS_DEFAULT_2PLAYER = True
