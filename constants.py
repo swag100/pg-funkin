@@ -1,8 +1,5 @@
 import pygame
 
-volume = 10 #Will go from 0 to 10; increments or decrements by 1.
-#It's way easier to have this be here for every script to access, than make it an instance var of game. SORRY!!
-
 ###CONSTANTS
 WINDOW_TITLE = 'Rhythm'
 WINDOW_SIZE = (1280, 720)
@@ -100,11 +97,13 @@ SETTINGS_DEFAULT_KEYBINDS = {
     'volume_down': [pygame.K_MINUS]
 }
 
+SETTINGS_DEFAULT_VOLUME = 10 #Will go from 0 to 10; increments or decrements by 1.
+
 #Fun stuff
 SETTINGS_DEFAULT_NAUGHTYNESS = False #I don't know what this will ever do, but i'm adding it!
 SETTINGS_DEFAULT_DOWNSCROLL = False
 SETTINGS_DEFAULT_AUTO_PAUSE = False
-SETTINGS_DEFAULT_2PLAYER = False
+SETTINGS_DEFAULT_2PLAYER = False #False
 
 SETTINGS_DEFAULT_SONG_OFFSET = 0
 SETTINGS_DEFAULT_FPS = 60 #Max frames per second.

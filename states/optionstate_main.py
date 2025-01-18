@@ -1,31 +1,9 @@
 import pygame
 import constants
+import settings
 from states.basestate import BaseState
 
 from components.alphabet import Alphabet
-
-class Option:
-    def __init__(self, text, position = [200, 0]):
-        self.text = text
-        self.alphabet = Alphabet(text, position)
-        self.position = position
-
-    def tick(self, dt, i):
-        #lerp them to the selection position
-        self.alphabet.x += ((self.position[0]) - self.alphabet.x) * (dt * 3)
-        self.alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
-
-        self.alphabet.tick(dt)
-
-    def handle_event(self, event):
-        pass
-
-
-class KeyBindOption(Option):
-    pass
-
-class FiniteOption(Option):
-    pass
 
 class OptionsMenuState(BaseState):
     def start(self, persistent_data): 
@@ -35,11 +13,15 @@ class OptionsMenuState(BaseState):
         self.cur_pick = 0 #The Id of the menu option you're selecting.
 
         #Call a function when you press enter.
+        #122 + (102 * id
         self.options = [
-            Option('offset'),
-            Option('offset'),
-            Option('offset'),
+            Alphabet('preferences', [0, 122]),
+            Alphabet('controls', [0, 224]),
+            Alphabet('exit', [0, 326])
         ]
+        for i in range(len(self.options)):
+            self.options[i].x = constants.SCREEN_CENTER[0] - (self.options[i].width / 2)
+            self.options[i].y = 177 + (100 * i)
 
         #Flashing variables.
         self.is_flashing = False
@@ -49,15 +31,15 @@ class OptionsMenuState(BaseState):
         self.flash_speed = (1 / 4)
 
         #VISUALS
-        self.bg_image = pygame.image.load('assets/images/menuDesat.png').convert()
+        self.bg_image = pygame.transform.smoothscale_by(pygame.image.load('assets/images/menuDesat.png').convert(), 1.1)
 
         #audio
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(constants.volume / 10)
+        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
         self.scroll_sound.play()
     
     def increment_pick(self, increment):
-        self.scroll_sound.set_volume(constants.volume / 10)
+        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
         self.scroll_sound.play()
 
         self.cur_pick += increment
@@ -71,9 +53,9 @@ class OptionsMenuState(BaseState):
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             #Exit menu
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
+            if event.key in settings.settings['keybinds']['back']:
                 cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
-                cancel_sound.set_volume(constants.volume / 10)
+                cancel_sound.set_volume(settings.settings['volume'] / 10)
                 cancel_sound.play()
 
                 if self.is_flashing:
@@ -87,42 +69,52 @@ class OptionsMenuState(BaseState):
             #Advancing in the menu
             if self.is_flashing: return
 
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
+            if event.key in settings.settings['keybinds']['menu_up']:
                 self.increment_pick(-1)
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
+            if event.key in settings.settings['keybinds']['menu_down']:
                 self.increment_pick(1)
             
             #entering the picked option
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+            if event.key in settings.settings['keybinds']['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(constants.volume / 10)
+                confirm_sound.set_volume(settings.settings['volume'] / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True
 
     def tick(self, dt):
-        for option in self.options: 
-            option.tick(dt, self.options.index(option) - self.cur_pick)
+        for option in self.options: option.tick(dt)
 
         if self.is_flashing:
             self.flash_time += dt
 
             if self.flash_time >= self.max_flash_time:
-                print(self.options[self.cur_pick]) #self.options[self.cur_pick]()
+                cur_option_text = self.options[self.cur_pick].text
+
+                self.next_state = {
+                    'preferences': 'OptionsPreferenceState',
+                    'controls': 'OptionsKeyBindState',
+                    'exit': 'MainMenuState'
+                }[cur_option_text]
 
                 self.is_flashing = False
                 self.flash_time = 0
 
+                self.done = True
+
     def draw(self, screen):
-        screen.blit(self.bg_image, (0,0))
+        screen.blit(self.bg_image, self.bg_image.get_rect(center = constants.SCREEN_CENTER))
 
-        for option in self.options: 
+        for alphabet in self.options: 
             #Make the selection the only one with full transparency.
-            for character in option.alphabet.character_list:
-                character.animation.getCurrentFrame().set_alpha(128)
+            for character in alphabet.character_list:
+                cur_char_frame = character.animation.getCurrentFrame()
+                cur_char_frame.set_alpha(128)
 
-                if self.cur_pick == self.options.index(option):
-                    character.animation.getCurrentFrame().set_alpha(255)
+                if self.cur_pick == self.options.index(alphabet):
+                    cur_char_frame.set_alpha(0)
 
-            option.alphabet.draw(screen)
-        #if self.is_flashing: #work on this later
+                    if self.flash_time % (self.flash_speed / 2) <= self.flash_speed / 4:
+                        cur_char_frame.set_alpha(255)
+
+            alphabet.draw(screen)

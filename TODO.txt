@@ -1,3 +1,5 @@
+When exporting, use this... "pyinstaller --onefile --noconsole main.py"
+
 We're pretty much finished with PlayState in its entirety, and this means it's time to move onto.. Eugh. Menus.
 
 Then, we move onto MENUS!

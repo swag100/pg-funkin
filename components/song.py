@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 
 from components.conductor import Conductor
 from components.chart_reader import ChartReader
@@ -25,7 +26,7 @@ class Song:
         self.inst_path = f'{self.song_prefix}/Inst.ogg'
         self.song_length = pygame.mixer.Sound(self.inst_path).get_length()
 
-        self.conductor = Conductor(self, constants.SETTINGS_DEFAULT_SONG_OFFSET)
+        self.conductor = Conductor(self, settings.settings['preferences']['offset'])
 
         self.paused = False
 
@@ -66,9 +67,9 @@ class Song:
     def tick(self, dt, player_voice_track_muted = False, opponent_voice_track_muted = False):
         self.conductor.tick(dt)
 
-        pygame.mixer.music.set_volume(constants.volume / 10)
+        pygame.mixer.music.set_volume(settings.settings['volume'] / 10)
         for i in range(len(self.voices)):
-            self.voices[i].set_volume(constants.volume / 10)
+            self.voices[i].set_volume(settings.settings['volume'] / 10)
         if player_voice_track_muted:
             self.voices[0].set_volume(0)
         if opponent_voice_track_muted:

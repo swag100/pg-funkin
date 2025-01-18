@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 
 from threading import Thread
 from components.spritesheet import Spritesheet
@@ -84,7 +85,7 @@ class Strumline(object):
         self.state = None #Strumline state, either PRESSED, HOLDING, or RELEASED, or None.
 
         self.bot_strum = False
-        if self.id > 3 and not constants.SETTINGS_DEFAULT_2PLAYER:
+        if self.id > 3 and not settings.settings['preferences']['two player']:
             self.bot_strum = True
 
         #Positioning
@@ -145,12 +146,12 @@ class Strumline(object):
         if self.bot_strum: return
                 
         if event.type == pygame.KEYDOWN:
-            condition = event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]
-            if constants.SETTINGS_DEFAULT_2PLAYER: 
+            condition = event.key in settings.settings['keybinds'][self.name]
+            if settings.settings['preferences']['two player']: 
                 if self.id <= 3: 
-                    condition = event.key == constants.SETTINGS_DEFAULT_KEYBINDS[self.name][1]
+                    condition = event.key == settings.settings['keybinds'][self.name][1]
                 else:
-                    condition = event.key == constants.SETTINGS_DEFAULT_KEYBINDS[self.name][0]
+                    condition = event.key == settings.settings['keybinds'][self.name][0]
 
             if condition:
                 self.strum_note.play_animation('press')
@@ -192,7 +193,7 @@ class Strumline(object):
                     #pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS[self.name]:
+            if event.key in settings.settings['keybinds'][self.name]:
                 if self.state != None:
                     self.state = RELEASED
 

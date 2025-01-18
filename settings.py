@@ -33,15 +33,22 @@ def get_default_settings(): # If we cannot find a save file, use this to get def
 
         #These are all in preferences menu.
 
-        #bools
-        'naughtyness': constants.SETTINGS_DEFAULT_NAUGHTYNESS,
-        'downscroll': constants.SETTINGS_DEFAULT_DOWNSCROLL,
-        'autopause': constants.SETTINGS_DEFAULT_AUTO_PAUSE,
-        '2player': constants.SETTINGS_DEFAULT_2PLAYER,
-        'debug': constants.SETTINGS_DEFAULT_DEBUG_MODE,
+        'preferences': {
+            'naughtyness': constants.SETTINGS_DEFAULT_NAUGHTYNESS,
+            'downscroll': constants.SETTINGS_DEFAULT_DOWNSCROLL,
+            'auto pause': constants.SETTINGS_DEFAULT_AUTO_PAUSE,
+            'two player': constants.SETTINGS_DEFAULT_2PLAYER,
+            'debug': constants.SETTINGS_DEFAULT_DEBUG_MODE,
 
-        #the ones you press a or d on that make the number go bigger or smaller.
-        'offset': constants.SETTINGS_DEFAULT_SONG_OFFSET,
-        'fps': constants.SETTINGS_DEFAULT_FPS
+            #the ones you press a or d on that make the number go bigger or smaller.
+            'offset': constants.SETTINGS_DEFAULT_SONG_OFFSET,
+            'fps': constants.SETTINGS_DEFAULT_FPS
+        },
+            
+        'volume': constants.SETTINGS_DEFAULT_VOLUME
     }
     return settings
+
+#settings
+settings = load_settings()
+#print(settings)

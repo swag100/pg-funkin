@@ -1,7 +1,7 @@
 import sys
 import constants
 import pygame
-import settings
+from settings import *
 
 class Game(object):
     def __init__(self, screen, states, initial_state):
@@ -24,15 +24,10 @@ class Game(object):
 
         self.fps_font = pygame.font.Font('assets/fonts/arial.ttf', 10)
 
-        #settings
-        self.settings = settings.load_settings()
-        print(self.settings)
-
         #Finally, start state!
         self.state.start({})
 
         self.clock = pygame.time.Clock()
-        self.max_fps = constants.SETTINGS_DEFAULT_FPS
 
         self.done = False
 
@@ -60,14 +55,18 @@ class Game(object):
                 #This took longer than I'd like to admit.
 
                 if x != self.hat_pressed[0]:
-                    if self.hat_pressed[0] > 0 or x > 0: simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['right'][event.joy % 2]
-                    elif self.hat_pressed[0] < 0 or x < 0: simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['left'][event.joy % 2]
+                    if self.hat_pressed[0] > 0 or x > 0: 
+                        simulated_key = settings['keybinds']['right'][event.joy % 2]
+                    elif self.hat_pressed[0] < 0 or x < 0: 
+                        simulated_key = settings['keybinds']['left'][event.joy % 2]
                     
                     self.hat_pressed[0] = x
 
                 if y != self.hat_pressed[1]:
-                    if self.hat_pressed[1] > 0 or y > 0: simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['up'][event.joy % 2]
-                    elif self.hat_pressed[1] < 0 or y < 0: simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['down'][event.joy % 2]
+                    if self.hat_pressed[1] > 0 or y > 0: 
+                        simulated_key = settings['keybinds']['up'][event.joy % 2]
+                    elif self.hat_pressed[1] < 0 or y < 0: 
+                        simulated_key = settings['keybinds']['down'][event.joy % 2]
 
                     self.hat_pressed[1] = y
 
@@ -81,13 +80,13 @@ class Game(object):
                     simulated_key = None
 
                     if event.button == pygame.CONTROLLER_BUTTON_A:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['down'][event.joy % 2]
+                        simulated_key = settings['keybinds']['down'][event.joy % 2]
                     if event.button == pygame.CONTROLLER_BUTTON_B:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['right'][event.joy % 2]
+                        simulated_key = settings['keybinds']['right'][event.joy % 2]
                     if event.button == pygame.CONTROLLER_BUTTON_X:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['left'][event.joy % 2]
+                        simulated_key = settings['keybinds']['left'][event.joy % 2]
                     if event.button == pygame.CONTROLLER_BUTTON_Y:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['up'][event.joy % 2]
+                        simulated_key = settings['keybinds']['up'][event.joy % 2]
 
                     event_type = pygame.KEYUP if event.type == pygame.JOYBUTTONUP else pygame.KEYDOWN
 
@@ -98,9 +97,9 @@ class Game(object):
                     simulated_key = None
                     
                     if event.button == pygame.CONTROLLER_BUTTON_A:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['forward'][0]
+                        simulated_key = settings['keybinds']['forward'][0]
                     if event.button == pygame.CONTROLLER_BUTTON_B:
-                        simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['back'][0]
+                        simulated_key = settings['keybinds']['back'][0]
 
                     if simulated_key != None:
                         event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
@@ -108,27 +107,30 @@ class Game(object):
                 simulated_key = None
                 
                 if event.button == 7: #On a dualshock 3, this is start. Might conflict with other controllers.
-                    simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS['forward'][0]
+                    simulated_key = settings['keybinds']['forward'][0]
                 if event.button == pygame.CONTROLLER_BUTTON_START: #select on dualshock3
-                    simulated_key = constants.SETTINGS_DEFAULT_KEYBINDS[0]
+                    simulated_key = settings['keybinds'][0]
 
                 if simulated_key != None:
                     event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
             ######### end of controller code
 
             if event.type == pygame.KEYDOWN:
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_down']:
-                    if constants.volume - 1 >= 0: constants.volume -= 1
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_up']:
-                    if constants.volume + 1 <= 10: constants.volume += 1
+                if event.key in settings['keybinds']['volume_down']:
+                    if settings['volume'] - 1 >= 0: settings['volume'] -= 1
+                if event.key in settings['keybinds']['volume_up']:
+                    if settings['volume'] + 1 <= 10: settings['volume'] += 1
                 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['volume_up'] + constants.SETTINGS_DEFAULT_KEYBINDS['volume_down']:
+                if event.key in settings['keybinds']['volume_up'] + settings['keybinds']['volume_down']:
                     self.volume_visible_time
                     self.volume_rect.y = 0
 
                     volume_noise = pygame.mixer.Sound('assets/sounds/volume.ogg')
-                    volume_noise.set_volume(constants.volume / 10)
+                    volume_noise.set_volume(settings['volume'] / 10)
                     volume_noise.play()
+
+                    #Write this change to 
+                    write_settings(settings)
 
             self.state.handle_event(event)
     def set_state(self):
@@ -170,7 +172,7 @@ class Game(object):
             surface = pygame.Surface((rect.w,rect.h), pygame.SRCALPHA)
             surface.fill((255,255,255,128))
             self.screen.blit(surface, (rect.x + self.volume_rect.x, rect.y + self.volume_rect.y))
-        for i in range(constants.volume):
+        for i in range(settings['volume']):
             rect = pygame.Rect(i * 12 + 20, 0, 8, (i + 1) * 2)
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))
@@ -179,7 +181,7 @@ class Game(object):
 
     def run(self):
         while not self.done:
-            dt = self.clock.tick(self.max_fps) / 1000
+            dt = self.clock.tick(settings['preferences']['fps']) / 1000
 
             self.handle_events()
             self.tick(dt)

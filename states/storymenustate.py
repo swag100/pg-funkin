@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 import json
 import os
 from .basestate import BaseState
@@ -16,6 +17,15 @@ def increment_selection(var, li, increment):
     #upper limit
     if var > len(li) - 1: var = 0
     return var
+
+def fill(surface, color):
+    """Fill all pixels of the surface with color, preserve transparency."""
+    w, h = surface.get_size()
+    r, g, b, _ = color
+    for x in range(w):
+        for y in range(h):
+            a = surface.get_at((x, y))[3]
+            surface.set_at((x, y), pygame.Color(r, g, b, a))
 
 class DifficultyImage:
     def __init__(self, pos, difficulty_name):
@@ -62,11 +72,11 @@ class ArrowSelector:
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_' + self.direction]:
+            if event.key in settings.settings['keybinds']['menu_' + self.direction]:
                 self.animation = self.animations[self.direction + 'Confirm']
                 self.animation.play()
         if event.type == pygame.KEYUP:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_' + self.direction]:
+            if event.key in settings.settings['keybinds']['menu_' + self.direction]:
                 self.animation = self.animations[self.direction + 'Idle']
                 self.animation.play()
                 
@@ -89,9 +99,6 @@ class WeekOption:
 
         i = self.id - selection
         self.y += ((478 + (i * 128)) - self.y) * (dt * 7)
-
-    def draw(self, screen):
-        screen.blit(self.image, (self.rect.x, self.y))
 
 class StoryMenuState(BaseState):
     def load_level_data(self, level_path):
@@ -135,6 +142,13 @@ class StoryMenuState(BaseState):
             i += 1
         self.week_option_selection = 0
 
+        #Flash variables
+        self.is_flashing = False
+        self.flash_time = 0 #How long have we been flashing?
+
+        self.max_flash_time = 1.2 #How long should the flashing last?
+        self.flash_speed = (1 / 4)
+
         #Populate difficulty options list
         self.difficulty_options = ['easy', 'normal', 'hard']
         self.difficulty_option_selection = 1 #Start on normal.
@@ -159,14 +173,42 @@ class StoryMenuState(BaseState):
     def get_week_name(self):
         return self.week_options[self.week_option_selection].name
 
+    def enter_level(self, week_name):
+        difficulty = self.difficulty_options[self.difficulty_option_selection]
+
+        self.level_data = self.load_level_data(f'assets/data/levels/{week_name}.json') #I'm WORKING ON IT. And by it, I mean the GUI
+        self.level_songs = self.level_data['songs']
+
+        self.persistent_data['songs'] = self.level_songs
+        self.persistent_data['difficulty'] = difficulty #Wow, this is variable!
+        
+        self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
+        self.done = True
+
     def set_volume_and_play(self, sound_path):
         sound = pygame.mixer.Sound(sound_path)
-        sound.set_volume(constants.volume / 10)
+        sound.set_volume(settings.settings['volume'] / 10)
         sound.play()
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up'] + constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
+            #Exit menu
+        
+            if self.is_flashing: 
+                if event.key in settings.settings['keybinds']['back']:
+                    self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
+                    self.is_flashing = False
+                    self.flash_time = 0
+
+                return
+            else:
+                if event.key in settings.settings['keybinds']['back']:
+                    self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
+
+                    self.next_state = 'MainMenuState' #Go back! Also start our sweet little cancel menu sound.
+                    self.done = True
+
+            if event.key in settings.settings['keybinds']['menu_up'] + settings.settings['keybinds']['menu_down']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
 
                 #play prop anims, change this and make it OnBeatHit event later.
@@ -177,46 +219,44 @@ class StoryMenuState(BaseState):
                         else:
                             prop.play_animation('danceLeft')
 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
+                if event.key in settings.settings['keybinds']['menu_up']:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, -1)
                 else:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, 1)
 
             #Select difficulty
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_left'] + constants.SETTINGS_DEFAULT_KEYBINDS['menu_right']:
+            if event.key in settings.settings['keybinds']['menu_left'] + settings.settings['keybinds']['menu_right']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_left']:
+                if event.key in settings.settings['keybinds']['menu_left']:
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, -1)
                 else:
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, 1)
 
                 self.difficulty_image.update_image(self.difficulty_options[self.difficulty_option_selection])
 
-            #Exit menu
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
-                self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
-
-                self.next_state = 'MainMenuState' #Go back! Also start our sweet little cancel menu sound.
-                self.done = True
-
             #Enter level
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
-                week = self.get_week_name()
-                difficulty = self.difficulty_options[self.difficulty_option_selection]
+            if event.key in settings.settings['keybinds']['forward']:
+                confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
+                confirm_sound.set_volume(settings.settings['volume'] / 10)
+                confirm_sound.play()
 
-                self.level_data = self.load_level_data(f'assets/data/levels/{week}.json') #I'm WORKING ON IT. And by it, I mean the GUI
-                self.level_songs = self.level_data['songs']
+                self.is_flashing = True
 
-                self.persistent_data['songs'] = self.level_songs
-                self.persistent_data['difficulty'] = difficulty #Wow, this is variable!
-                
-                self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
-                self.done = True
+                for prop_list in self.props.values(): 
+                    for prop in prop_list:
+                        if 'confirm' in prop.animations:
+                            prop.play_animation('confirm')
 
         for object in self.difficulty_selector_objects: object.handle_event(event)
 
     def tick(self, dt):
+        if self.is_flashing:
+            self.flash_time += dt
+
+            if self.flash_time >= self.max_flash_time:
+                self.enter_level(self.get_week_name())
+
         for option in self.week_options: option.tick(dt, self.week_option_selection)
         self.difficulty_image.tick(dt)
 
@@ -228,14 +268,18 @@ class StoryMenuState(BaseState):
         screen.fill((0, 0, 0))
 
         for option in self.week_options: 
-            #Make the selection the only one with full transparency.
-            option.image.set_alpha(128)
+            if option.y >= self.prop_bg.y: #Make sure it's on screen!
 
-            if self.week_option_selection == option.id:
-                option.image.set_alpha(255)
+                #Make the selection the only one with full transparency.
+                option.image.set_alpha(128)
+                if self.week_option_selection == option.id:
+                    option.image.set_alpha(255)
 
-            if option.y >= self.prop_bg.y:
-                option.draw(screen)
+                    fill(option.image, (255, 255, 255, 255))
+                    if self.is_flashing and self.flash_time % (self.flash_speed / 2) <= self.flash_speed / 4:
+                        fill(option.image, (0, 255, 255, 255))
+
+                screen.blit(option.image, (option.rect.x, option.y))
 
         pygame.draw.rect(screen, (249,207,81), self.prop_bg) #Drawn before characters, but after week options!
         #Draw my beloved characters :face_holding_back_tears:

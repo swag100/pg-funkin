@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TextureAtlas imagePath="alphabet.png">
+<TextureAtlas imagePath="bold.png">
 	<!-- Created with Adobe Animate version 22.0.5.191 -->
 	<!-- http://www.adobe.com/products/animate.html -->
 	<SubTexture name="A bold0000" x="0" y="0" width="54" height="67"/>

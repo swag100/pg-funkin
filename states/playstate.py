@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 import random
 from .basestate import BaseState
 
@@ -156,19 +157,19 @@ class PlayState(BaseState):
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             if self.paused:
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
-                    self.scroll_sound.set_volume(constants.volume / 10)
+                if event.key in settings.settings['keybinds']['menu_up']:
+                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
                     self.scroll_sound.play()
                     
                     self.increment_pause_selection(-1)
 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
-                    self.scroll_sound.set_volume(constants.volume / 10)
+                if event.key in settings.settings['keybinds']['menu_down']:
+                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
                     self.scroll_sound.play()
 
                     self.increment_pause_selection(1)
 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+                if event.key in settings.settings['keybinds']['forward']:
                     #SORRY for hardcoding this. Please. Forgive me.
                     selection = self.pause_options[self.pause_selection]
                     if selection == 'resume' or selection not in self.pause_options:
@@ -182,17 +183,17 @@ class PlayState(BaseState):
                         self.next_state = 'MainMenuState'
                         self.done = True
             else:
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward'] or event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
+                if event.key in settings.settings['keybinds']['forward'] or event.key in settings.settings['keybinds']['back']:
                     self.toggle_pause()
 
                     self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-                    self.scroll_sound.set_volume(constants.volume / 10)
+                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
                     self.scroll_sound.play()
 
                     for alphabet in self.pause_option_objects: 
                         alphabet.x = 0
                         alphabet.y = 0
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['reset']:
+                if event.key in settings.settings['keybinds']['reset']:
                     self.die()
 
         if self.paused: return
@@ -251,7 +252,7 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]] * opponent_int)
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(constants.volume / 20) #20 is intentional; should be way quieter.
+                miss_noise.set_volume(settings.settings['volume'] / 20) #20 is intentional; should be way quieter.
                 pygame.mixer.Channel(2).play(miss_noise)
                 #miss_noise.play()
 
@@ -281,7 +282,7 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(constants.volume / 10)
+                    countdown_noises[cur_beat + 4].set_volume(settings.settings['volume'] / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image

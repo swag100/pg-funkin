@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 from states.basestate import BaseState
 
 class GameOverState(BaseState):
@@ -36,7 +37,7 @@ class GameOverState(BaseState):
         self.player_alpha = 255 * 1.7
 
         death_sound = pygame.mixer.Sound('assets/sounds/gameplay/fnf_loss_sfx.ogg')
-        death_sound.set_volume(constants.volume / 10)
+        death_sound.set_volume(settings.settings['volume'] / 10)
         death_sound.play()
 
     def handle_event(self, event):
@@ -52,7 +53,7 @@ class GameOverState(BaseState):
 
                 pygame.mixer.music.stop()
                 retry_sound = pygame.mixer.Sound('assets/music/gameOverEnd.ogg')
-                retry_sound.set_volume(constants.volume / 10)
+                retry_sound.set_volume(settings.settings['volume'] / 10)
                 retry_sound.play()
 
     def tick(self, dt):
@@ -77,7 +78,7 @@ class GameOverState(BaseState):
                 self.player.play_animation('deathLoop', True)
                 pygame.mixer.music.load('assets/music/gameOver.ogg')
                 pygame.mixer.music.play()
-                pygame.mixer.music.set_volume(constants.volume / 10)
+                pygame.mixer.music.set_volume(settings.settings['volume'] / 10)
 
     def draw(self, screen):
         screen.fill((0, 0, 0))

@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 from .basestate import BaseState
 
 from components.spritesheet import Spritesheet
@@ -76,11 +77,10 @@ class MainMenuState(BaseState):
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
 
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(constants.volume / 10)
-        self.scroll_sound.play()
+        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
     
     def increment_pick(self, increment):
-        self.scroll_sound.set_volume(constants.volume / 10)
+        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
         self.scroll_sound.play()
 
         self.cur_pick += increment
@@ -94,9 +94,9 @@ class MainMenuState(BaseState):
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             if self.is_flashing: 
-                if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
+                if event.key in settings.settings['keybinds']['back']:
                     cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
-                    cancel_sound.set_volume(constants.volume / 10)
+                    cancel_sound.set_volume(settings.settings['volume'] / 10)
                     cancel_sound.play()
 
                     self.is_flashing = False
@@ -104,15 +104,15 @@ class MainMenuState(BaseState):
                 return
 
             #Advancing in the menu
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_up']:
+            if event.key in settings.settings['keybinds']['menu_up']:
                 self.increment_pick(-1)
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['menu_down']:
+            if event.key in settings.settings['keybinds']['menu_down']:
                 self.increment_pick(1)
             
             #entering the picked option
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+            if event.key in settings.settings['keybinds']['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(constants.volume / 10)
+                confirm_sound.set_volume(settings.settings['volume'] / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True

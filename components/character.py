@@ -1,5 +1,6 @@
 import pygame
 import constants
+import settings
 import json
 
 from components.spritesheet import Spritesheet
@@ -91,7 +92,7 @@ class Character:
 
             #ITS SO UGLYYYY. Maybe change this later? This might be the fastest way to do it.
             if event_type == constants.NOTE_BOT_PRESS:
-                if not constants.SETTINGS_DEFAULT_2PLAYER and self.character_type == 'opponent':
+                if not settings.settings['preferences']['two player'] and self.character_type == 'opponent':
                     pose = f'sing{constants.DIRECTIONS[int(event_parameters[1]) % 4].upper()}'
                     self.play_animation(pose)
 

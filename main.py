@@ -6,7 +6,9 @@ from states.mainmenustate import MainMenuState
 from states.storymenustate import StoryMenuState
 from states.playstate import PlayState
 from states.gameoverstate import GameOverState
-from states.optionsmenustate import OptionsMenuState
+from states.optionstate_main import OptionsMenuState
+from states.optionstate_preferences import OptionsPreferenceState
+from states.optionstate_keybinds import OptionsKeyBindState
 
 pygame.mixer.pre_init(44100, -16, 2, 64)
 pygame.mixer.init()
@@ -23,7 +25,11 @@ states = {
     'StoryMenuState': StoryMenuState(),
     'PlayState': PlayState(),
     'GameOverState': GameOverState(),
-    'OptionsMenuState': OptionsMenuState()
+
+    #Forgive me
+    'OptionsMenuState': OptionsMenuState(),
+    'OptionsPreferenceState': OptionsPreferenceState(),
+    'OptionsKeyBindState': OptionsKeyBindState(),
 }
 game = Game(screen, states, 'MainMenuState')
 game.run()
