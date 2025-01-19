@@ -2,6 +2,12 @@ import pygame
 
 from components.spritesheet import Spritesheet
 
+Y_OFFSETS = {
+    'regular': {
+        '-': -15
+    }
+}
+
 class Letter:
     def __init__(self, alphabet, i, x_off):
         self.alphabet = alphabet
@@ -29,6 +35,9 @@ class Letter:
         
         self.rect.bottom = self.alphabet.y # + (50 * self.alphabet.scale)
 
+        if self.alphabet.font in Y_OFFSETS and self.character in Y_OFFSETS[self.alphabet.font]:
+            self.rect.y += Y_OFFSETS[self.alphabet.font][self.character] * self.alphabet.scale
+
         self.animation.tickFrameNum()
 
     def draw(self, screen):
@@ -50,7 +59,7 @@ class Alphabet:
         for i in range(len(self.text)):
             if self.text[i] != ' ':
                 letter = Letter(self, i, self.width)
-                self.width += (letter.rect.w + spacing) * scale #add width of letter and 4 extra pixels for spacing.
+                self.width += (letter.rect.w + spacing) #add width of letter and 4 extra pixels for spacing.
                 self.character_list.append(letter)
             else:
                 self.width += 40 * scale

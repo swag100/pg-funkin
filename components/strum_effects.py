@@ -1,4 +1,5 @@
 from random import randint
+from settings import settings
 from components.spritesheet import Spritesheet
 
 note_colors = ['purple', 'blue', 'green', 'red']
@@ -48,6 +49,9 @@ class HoldCover:
         self.rect = self.animation.getCurrentFrame().get_rect()
         self.rect.centerx = self.sustain.note.strumline.strum_note.position('static')[0] + 71
         self.rect.centery = self.sustain.y + 53
+        
+        if settings['preferences']['downscroll']:
+            self.rect.centery +=self.sustain.image.get_rect().h
 
         if self.anim_timer >= 2 / 24:
             self.animation = self.spritesheet.animations[f'holdCover{self.color.title()}']

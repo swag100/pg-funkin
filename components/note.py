@@ -1,12 +1,13 @@
 import pygame
 import constants
+from settings import settings
 
 from components.spritesheet import Spritesheet
 
 class Note(object):
     def __init__(self, strumline, time, speed):
         self.strumline = strumline
-        self.time = time / 1000 + (strumline.conductor.song_position) #Time in the song that the note should reach the strums; read from json.
+        self.time = (time / 1000) + strumline.conductor.song_position #Time in the song that the note should reach the strums; read from json.
         self.speed = 1 * speed #Scroll speed
 
         self.can_be_hit = True
@@ -14,7 +15,7 @@ class Note(object):
         self.name = constants.DIRECTIONS[strumline.id % 4]
 
         self.x = self.strumline.pos[0]
-        self.y = (time) * speed / constants.SCROLL_SPEED_DIVISOR
+        self.y = (time * speed) / constants.SCROLL_SPEED_DIVISOR
 
         #offsets
         #Hardcode right note offset.
@@ -25,6 +26,15 @@ class Note(object):
         self.y += self.strumline.strum_note.pos[1] + note_offset[1] + self.strumline.strum_note.anim_offsets['press'][1]
 
         self.y_change = (1000 * self.speed) / constants.SCROLL_SPEED_DIVISOR
+
+        #downscroll
+        self.downscroll_mult = ((not settings['preferences']['downscroll']) * 2) - 1
+
+        self.y *= self.downscroll_mult
+        self.y_change *= self.downscroll_mult
+        if settings['preferences']['downscroll']:
+            self.y += constants.DOWNSCROLL_STRUMLINE_Y_OFFSET * 2
+            self.y += self.strumline.strum_note.animations['press' + self.strumline.strum_note.direction.title()].getMaxSize()[1]
     
         #animation
         spritesheet = Spritesheet('assets/images/strumline/notes.png', constants.STRUMLINE_SCALE_MULT)
@@ -38,8 +48,7 @@ class Note(object):
         self.y -= self.y_change * dt
     
     def draw(self, screen):
-        if -self.animation.getMaxSize()[1] <= self.y <= constants.WINDOW_SIZE[1]: #in frame
-            self.animation.blit(screen, (self.x, self.y))
+        self.animation.blit(screen, (self.x, self.y))
 
 class Sustain(object):
     def __init__(self, note, length):
@@ -75,13 +84,17 @@ class Sustain(object):
         self.x = note.x + (note_graphic_size[0] / 2) - (self.image.get_rect().w / 2)
         self.y = note.y + (note_graphic_size[1] / 2)
 
+        if settings['preferences']['downscroll']:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.y -= (self.image.get_rect().h)
+
         self.y_change = self.note.y_change
     
     def eat(self, dt): #Stupid name; this handles holding sustains down
         self.being_eaten = True
 
         self.y += self.y_change * dt
-        self.length -= self.y_change * dt * 2
+        self.length -= (self.y_change * dt * 2) * self.note.downscroll_mult
 
         image_rect = self.image.get_rect()
         new_image = pygame.Surface((image_rect.w, image_rect.h), pygame.SRCALPHA)

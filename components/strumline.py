@@ -92,10 +92,14 @@ class Strumline(object):
         strumline_offset = constants.PLAYER_STRUMLINE_OFFSET
         if self.id > 3: strumline_offset = constants.OPPONENT_STRUMLINE_OFFSET
 
-        self.pos = (
+        self.pos = [
             strumline_offset[0] + (110 * (self.id % 4)),
             strumline_offset[1]
-        )
+        ]
+
+        #downscroll
+        if settings.settings['preferences']['downscroll']:
+            self.pos[1] += constants.DOWNSCROLL_STRUMLINE_Y_OFFSET
 
         #Create strum note, load all notes for the strum from chart
         self.strum_note = StrumNote(self, id)

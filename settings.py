@@ -1,7 +1,5 @@
-import os
 import json
-import pygame
-import constants
+from constants import *
 
 #This file is mainly here to separate file saving logic for user settings.
 
@@ -14,7 +12,7 @@ def load_existing_settings():
 
 def write_settings(settings_dict):
     with open('settings.json', 'w') as file:
-        json.dump(settings_dict, file)
+        json.dump(settings_dict, file, indent = 4)
     file.close()
 
 def load_settings():
@@ -29,23 +27,29 @@ def load_settings():
 def get_default_settings(): # If we cannot find a save file, use this to get default save data!
     settings = {
         #Edited in keybinds menu
-        'keybinds': constants.SETTINGS_DEFAULT_KEYBINDS,
+        'keybinds': SETTINGS_DEFAULT_KEYBINDS,
 
         #These are all in preferences menu.
 
         'preferences': {
-            'naughtyness': constants.SETTINGS_DEFAULT_NAUGHTYNESS,
-            'downscroll': constants.SETTINGS_DEFAULT_DOWNSCROLL,
-            'auto pause': constants.SETTINGS_DEFAULT_AUTO_PAUSE,
-            'two player': constants.SETTINGS_DEFAULT_2PLAYER,
-            'debug': constants.SETTINGS_DEFAULT_DEBUG_MODE,
+            #Og game
+            'naughtyness': SETTINGS_DEFAULT_NAUGHTYNESS,
+            'downscroll': SETTINGS_DEFAULT_DOWNSCROLL,
+            'flashing lights': SETTINGS_DEFAULT_FLASHING_LIGHTS,
+            'camera zooming on beat': SETTINGS_DEFAULT_CAMERA_ZOOMING_ON_BEAT,
+            'debug display': SETTINGS_DEFAULT_DEBUG_MODE,
+            'auto pause': SETTINGS_DEFAULT_AUTO_PAUSE,
+            'fps': SETTINGS_DEFAULT_FPS,
 
-            #the ones you press a or d on that make the number go bigger or smaller.
-            'offset': constants.SETTINGS_DEFAULT_SONG_OFFSET,
-            'fps': constants.SETTINGS_DEFAULT_FPS
+            '': None,
+            'Extra': None, #Value of none means it's just a visual object.
+
+            'debug freecam': SETTINGS_DEFAULT_DEBUG_FREECAM,
+            'two player': SETTINGS_DEFAULT_2PLAYER,
+            'offset': SETTINGS_DEFAULT_SONG_OFFSET,
         },
             
-        'volume': constants.SETTINGS_DEFAULT_VOLUME
+        'volume': SETTINGS_DEFAULT_VOLUME
     }
     return settings
 

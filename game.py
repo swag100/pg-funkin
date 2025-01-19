@@ -10,6 +10,9 @@ class Game(object):
         self.state_name = initial_state
         self.state = states[initial_state]
 
+        #window
+        self.focused = True
+
         #Controller vars
         self.joysticks = self.get_joysticks()
         self.hat_pressed = [0, 0] #I hate this "hat" thing.
@@ -39,6 +42,19 @@ class Game(object):
             if event.type == pygame.QUIT:
                 sys.exit()
 
+            #print(event)
+
+            #Window focus events.
+            if settings['preferences']['auto pause']:
+                if event.type == pygame.WINDOWFOCUSGAINED:
+                    pygame.mixer.music.unpause()
+                    pygame.mixer.unpause()
+                    self.focused = True
+                if event.type == pygame.WINDOWFOCUSLOST:
+                    pygame.mixer.music.pause()
+                    pygame.mixer.pause()
+                    self.focused = False
+
             #Controller things :)
             if event.type == pygame.JOYDEVICEADDED:
                 self.joysticks = self.get_joysticks()
@@ -49,7 +65,7 @@ class Game(object):
 
             #convert button press to key down. Sorry liberals!
             if event.type == pygame.JOYHATMOTION:
-                print(event.joy, event.joy %2)
+                #print(event.joy, event.joy %2)
                 x, y = event.value
 
                 #This took longer than I'd like to admit.
@@ -109,7 +125,10 @@ class Game(object):
                 if event.button == 7: #On a dualshock 3, this is start. Might conflict with other controllers.
                     simulated_key = settings['keybinds']['forward'][0]
                 if event.button == pygame.CONTROLLER_BUTTON_START: #select on dualshock3
-                    simulated_key = settings['keybinds'][0]
+                    simulated_key = settings['keybinds']['back'][0]
+
+                if event.button in [pygame.CONTROLLER_BUTTON_LEFTSHOULDER, pygame.CONTROLLER_BUTTON_RIGHTSHOULDER]: #L1
+                    simulated_key = settings['keybinds']['menu_modify'][0]
 
                 if simulated_key != None:
                     event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
@@ -177,14 +196,18 @@ class Game(object):
             rect.bottom = 30
             pygame.draw.rect(self.screen, (255, 255, 255), pygame.Rect(rect.x + self.volume_rect.x, rect.y + self.volume_rect.y, rect.w, rect.h))
         self.screen.blit(self.volume_text, (self.volume_rect.x + 30, self.volume_rect.y + 34))
-        self.screen.blit(self.fps_text, (6, 2))
+
+        if settings['preferences']['debug display']:
+            self.screen.blit(self.fps_text, (6, 2))
 
     def run(self):
         while not self.done:
+
             dt = self.clock.tick(settings['preferences']['fps']) / 1000
 
             self.handle_events()
-            self.tick(dt)
-            self.draw()
+            if self.focused:
+                self.tick(dt)
+                self.draw()
 
             pygame.display.flip()

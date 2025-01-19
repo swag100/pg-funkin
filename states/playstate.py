@@ -93,9 +93,11 @@ class PlayState(BaseState):
                 self.health_lerp = self.persistent_data['old health']
 
         #HUD STUFF
+        #Downscroll
+        health_bar_y_mult = 0.1 if settings.settings['preferences']['downscroll'] else 0.9
 
         #Health bar
-        self.health_bar = HealthBar(self, (constants.SCREEN_CENTER[0], constants.WINDOW_SIZE[1] * 0.9))
+        self.health_bar = HealthBar(self, (constants.SCREEN_CENTER[0], constants.WINDOW_SIZE[1] * health_bar_y_mult))
         self.health_bar_icons = [
             BarIcon(self, self.song.characters['player'], True),
             BarIcon(self, self.song.characters['opponent'])
@@ -291,7 +293,10 @@ class PlayState(BaseState):
 
                 #Cam zoom on beat hit
                 if cur_beat % 4 == 0:
-                    self.hud_zoom = 1.02
+                    self.hud_zoom += 0.025
+
+                    if settings.settings['preferences']['camera zooming on beat']:
+                        self.cam_zoom += 0.015
 
                 for icon in self.health_bar_icons:
                     icon.bump()
@@ -372,8 +377,8 @@ class PlayState(BaseState):
                 selection_position = (100, constants.SCREEN_CENTER[1])
                 #alphabet.x = i * 50
                 #alphabet.y = i * 80
-                alphabet.x += ((selection_position[0] + (i * 25)) - alphabet.x) * (dt * 6)
-                alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * (dt * 6)
+                alphabet.x += ((selection_position[0] + (i * 25)) - alphabet.x) * (dt * 10)
+                alphabet.y += ((selection_position[1] + (i * 150)) - alphabet.y) * (dt * 10)
 
                 alphabet.tick(dt)
             return
@@ -422,16 +427,16 @@ class PlayState(BaseState):
             if popup.alpha <= 0:
                 self.popups.remove(popup)
 
-        self.hud_zoom += (1 - self.hud_zoom) / 8
+        self.hud_zoom += (1 - self.hud_zoom) * dt * 7
+        self.cam_zoom += (self.stage.cam_zoom - self.cam_zoom) * dt * 7
 
-        """
-        #TESTING CAMERA CODE:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
-        if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
-        if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
-        if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
-        """
+        if settings.settings['preferences']['debug freecam']:
+            #TESTING CAMERA CODE:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
+            if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
+            if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
+            if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
@@ -462,7 +467,7 @@ class PlayState(BaseState):
         #cameras - This code is really ugly, i know.
         scaled_cam_surface = pygame.transform.smoothscale_by(cam_surface, self.cam_zoom)
         scaled_hud_surface = pygame.transform.smoothscale_by(hud_surface, self.hud_zoom)
-        screen.blit(scaled_cam_surface, cam_surface.get_rect(center = constants.SCREEN_CENTER))
+        screen.blit(scaled_cam_surface, scaled_cam_surface.get_rect(center = constants.SCREEN_CENTER))
         screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = constants.SCREEN_CENTER))
 
         if self.paused:

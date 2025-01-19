@@ -1,1 +1,70 @@
-{"keybinds": {"left": [97, 1073741904], "down": [115, 1073741905], "up": [119, 1073741906], "right": [100, 1073741903], "menu_left": [97, 1073741904], "menu_down": [115, 1073741905], "menu_up": [119, 1073741906], "menu_right": [100, 1073741903], "back": [27], "forward": [13], "reset": [114], "volume_up": [61], "volume_down": [45]}, "preferences": {"naughtyness": true, "downscroll": false, "auto pause": false, "two player": false, "debug": true, "offset": 10, "fps": 64}, "volume": 3, "offset": -20}
+{
+    "keybinds": {
+        "left": [
+            97,
+            1073741904
+        ],
+        "down": [
+            115,
+            1073741905
+        ],
+        "up": [
+            119,
+            1073741906
+        ],
+        "right": [
+            100,
+            1073741903
+        ],
+        "menu_left": [
+            97,
+            1073741904
+        ],
+        "menu_down": [
+            115,
+            1073741905
+        ],
+        "menu_up": [
+            119,
+            1073741906
+        ],
+        "menu_right": [
+            100,
+            1073741903
+        ],
+        "menu_modify": [
+            1073742049,
+            1073742053
+        ],
+        "back": [
+            27
+        ],
+        "forward": [
+            13
+        ],
+        "reset": [
+            114
+        ],
+        "volume_up": [
+            61
+        ],
+        "volume_down": [
+            45
+        ]
+    },
+    "preferences": {
+        "naughtyness": true,
+        "downscroll": false,
+        "flashing lights": true,
+        "camera zooming on beat": true,
+        "debug display": true,
+        "auto pause": true,
+        "fps": 60,
+        "": null,
+        "Extra": null,
+        "debug freecam": false,
+        "two player": false,
+        "offset": 0
+    },
+    "volume": 10
+}
