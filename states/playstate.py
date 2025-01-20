@@ -336,12 +336,14 @@ class PlayState(BaseState):
         if chart_event['time'] / 1000 <= self.song.conductor.song_position: #SHOULD BE ACTIVATED
             #FOCUS CAMERA
             if chart_event['type'] == 'FocusCamera':
+                if settings['preferences']['debug freecam']: return
+
                 if isinstance(event_var, dict):
                     event_var = event_var['char']
 
                 if bool(event_var):
                     self.camera_position = [
-                        self.stage.opponent_position[0] + self.stage.opponent_cam_off[0],
+                        self.stage.opponent_position[0] + self.stage.opponent_cam_off[0] - (self.characters['opponent'].max_idle_size[0] / 4),
                         self.stage.opponent_position[1] + self.stage.opponent_cam_off[1]
                     ]
                     if 'gf' in self.characters['opponent'].character:
@@ -351,9 +353,16 @@ class PlayState(BaseState):
                         ]
                 else:
                     self.camera_position = [
-                        self.stage.player_position[0] + self.stage.player_cam_off[0],
+                        self.stage.player_position[0] + self.stage.player_cam_off[0] - (self.characters['player'].max_idle_size[0] / 4),
                         self.stage.player_position[1] + self.stage.player_cam_off[1]
                     ]
+
+                self.camera_position[0] *= self.stage.cam_zoom
+                self.camera_position[1] *= self.stage.cam_zoom
+
+                self.camera_position[0] -= constants.SCREEN_CENTER[0] / 2
+                self.camera_position[1] -= constants.SCREEN_CENTER[1] / 2
+
             #PLAY ANIMATION
             if chart_event['type'] == 'PlayAnimation':
                 target = event_var['target']

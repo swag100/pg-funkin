@@ -56,8 +56,8 @@ SCORE_BONUSES = {
 SCORE_PENALTY = 10 
 
 #strum stuff
-OPPONENT_STRUMLINE_OFFSET = (24, 24)
-PLAYER_STRUMLINE_OFFSET = (676, 24)
+OPPONENT_STRUMLINE_OFFSET = (28, 31)
+PLAYER_STRUMLINE_OFFSET = (676, 31)
 DOWNSCROLL_STRUMLINE_Y_OFFSET = 560 - OPPONENT_STRUMLINE_OFFSET[1]
 STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
 
@@ -78,4 +78,4 @@ SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater 
 SETTINGS_DEFAULT_RATING_POSITION = [500, 200]
 SETTINGS_DEFAULT_COMBO_POSITION = [500, 280]
 
-SETTINGS_DEFAULT_CAMERA_SPEED = 2 #I don't know if I want to put this in settings.
+SETTINGS_DEFAULT_CAMERA_SPEED = 1.5 #I don't know if I want to put this in settings.

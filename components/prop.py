@@ -68,10 +68,7 @@ class AnimatedProp(Prop):
         self.animation.play()
 
     def tick(self, camera_position = [0, 0]): #Update position based on scroll factor
-        self.scrolled_position = (
-            (self.position[0] - camera_position[0]) * self.scroll_factor[0],
-            (self.position[1] - camera_position[1]) * self.scroll_factor[1]
-        )
+        super().tick(camera_position)
         self.animation.tickFrameNum()
 
     def play_animation(self, prefix, loop = False, start_time = None):

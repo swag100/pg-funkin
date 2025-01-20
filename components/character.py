@@ -48,6 +48,11 @@ class Character:
             self.anim_prefix = self.metadata['startingAnimation']
 
         self.animation = self.animations_dict[self.anim_prefix]
+
+        self.max_idle_size = self.animation.getMaxSize()
+        self.screen_pos[0] -= self.max_idle_size[0] / 2
+        self.screen_pos[1] -= self.max_idle_size[1]
+
         self.animation.play()
 
     def play_animation(self, prefix, loop = False, start_time = None):
@@ -110,8 +115,8 @@ class Character:
 
     def tick(self, dt, camera_position):
         self.pos = (
-            (self.screen_pos[0] * 0.9) - self.offsets_dict[self.anim_prefix][0] - camera_position[0],
-            (self.screen_pos[1] * 0.9) - self.offsets_dict[self.anim_prefix][1] - camera_position[1]
+            self.screen_pos[0] - self.offsets_dict[self.anim_prefix][0] * 0.9 - camera_position[0],
+            self.screen_pos[1] - self.offsets_dict[self.anim_prefix][1] * 0.9 - camera_position[1]
         )
         self.animation.tickFrameNum()
 

@@ -47,13 +47,15 @@ class Game(object):
             #Window focus events.
             if settings['preferences']['auto pause']:
                 if event.type == pygame.WINDOWFOCUSGAINED:
+                    self.focused = True
+                    if hasattr(self.state, 'paused') and self.state.paused:
+                        return
                     pygame.mixer.music.unpause()
                     pygame.mixer.unpause()
-                    self.focused = True
                 if event.type == pygame.WINDOWFOCUSLOST:
+                    self.focused = False
                     pygame.mixer.music.pause()
                     pygame.mixer.pause()
-                    self.focused = False
 
             #Controller things :)
             if settings['preferences']['controller support']:
