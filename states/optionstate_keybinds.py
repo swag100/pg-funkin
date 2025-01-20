@@ -4,6 +4,7 @@ import constants
 import settings
 from states.basestate import BaseState
 
+from components.alphabet import Alphabet
 from components.option import *
 
 KEYBIND_MENU_NAMES = {
@@ -29,8 +30,6 @@ class OptionsKeyBindState(BaseState):
 
         self.upper_bound = 177 #Height of selection the screen should go up.
         self.lower_bound = 627 #Height of selection the screen should go down.
-
-        self.overlay = pygame.Rect(100, 100, constants.WINDOW_SIZE[0] - 200, constants.WINDOW_SIZE[0] - 200)
 
         #Call a function when you press enter.
         self.options = []
@@ -77,20 +76,50 @@ class OptionsKeyBindState(BaseState):
     
     def get_keybind(self):
         banned_keys = [pygame.K_BACKSPACE]
-
         key = None
 
+        release_times = 0
+
+        game = self.persistent_data['game']
+        text_objects = [
+            Alphabet('press any key to rebind', [110, 254]),
+            Alphabet('backspace to unbind', [110, 485]),
+            Alphabet('escape to cancel', [270, 561])
+        ]
         done = False
         while not done:
+
+            dt = game.clock.tick(settings.settings['preferences']['fps']) / 1000
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
                 
-                if event.type == pygame.KEYDOWN:
-                    key = event.key
-                    if key in banned_keys:
-                        key = None
+                if event.type == pygame.KEYUP:
+                    if release_times == 0:
+                        release_times += 1
+                    else:
+                        key = event.key
+                        if key in banned_keys:
+                            key = None
 
-                    done = True
+                        done = True
+            if game.focused:
+                self.tick(dt)
+
+                for text in text_objects: text.tick(dt)
+
+                self.draw(game.screen)
+
+                cover = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
+                cover.fill((0,0,0,255 * 0.5))
+                game.screen.blit(cover, (0,0))
+
+                overlay = pygame.Rect(100, 100, constants.WINDOW_SIZE[0] - 200, constants.WINDOW_SIZE[1] - 200)
+                pygame.draw.rect(game.screen, (250,253,109), overlay)
+
+                for text in text_objects: text.draw(game.screen)
+
+            pygame.display.flip()
 
         return key
         
@@ -136,6 +165,8 @@ class OptionsKeyBindState(BaseState):
                 option.alphabet.y += ((self.upper_bound + (i * 70)) - option.alphabet.y) * (dt * 3)
 
     def draw(self, screen):
+        self.screen = screen
+
         screen.blit(self.bg_image, self.bg_image.get_rect(center = constants.SCREEN_CENTER))
 
         for option in self.options: 

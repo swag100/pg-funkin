@@ -71,6 +71,7 @@ def get_default_settings(): # If we cannot find a save file, use this to get def
 
             'two player': False,
             'controller support': True,
+            'hide opponent strums': False,
             'debug freecam': False,
             'offset': 0,
         },

@@ -452,7 +452,12 @@ class PlayState(BaseState):
         for character in self.characters.values(): character.draw(cam_surface)
 
         #hud
-        for strumline in self.strums: strumline.draw(hud_surface)
+        for strumline in self.strums: 
+            if settings['preferences']['hide opponent strums']:
+                if strumline.id <= 3:
+                    strumline.draw(hud_surface)
+            else:
+                strumline.draw(hud_surface)
         for popup in self.popups: popup.draw(hud_surface)
 
         #Draw the healthbar.
@@ -472,7 +477,7 @@ class PlayState(BaseState):
 
         if self.paused:
             cover = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
-            cover.fill((0,0,0,255 * 0.6))
+            cover.fill((0,0,0,255 * 0.5))
             screen.blit(cover, (0,0))
 
             for alphabet in self.pause_option_objects: 

@@ -28,7 +28,7 @@ class Game(object):
         self.fps_font = pygame.font.Font('assets/fonts/arial.ttf', 10)
 
         #Finally, start state!
-        self.state.start({})
+        self.state.start({'game': self})
 
         self.clock = pygame.time.Clock()
 

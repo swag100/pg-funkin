@@ -43,6 +43,7 @@ class GameOverState(BaseState):
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key in settings.settings['keybinds']['back']:
+                pygame.mixer.music.stop()
                 self.next_state = 'MainMenuState'
                 self.done = True
 

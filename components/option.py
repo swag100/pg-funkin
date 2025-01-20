@@ -176,7 +176,7 @@ class KeyBindOption(Option):
             else:
                 key.x = 1050
 
-            key.y = self.alphabet.y
+            key.y = self.alphabet.y - 7
 
             key.tick(dt)
 

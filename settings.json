@@ -69,15 +69,16 @@
         "downscroll": false,
         "flashing lights": true,
         "camera zooming on beat": true,
-        "debug display": false,
+        "debug display": true,
         "auto pause": true,
         "fps": 60,
         "": null,
         "Extra": null,
         "two player": false,
         "controller support": true,
+        "hide opponent strums": false,
         "debug freecam": false,
         "offset": 0
     },
-    "volume": 10
+    "volume": 5
 }
