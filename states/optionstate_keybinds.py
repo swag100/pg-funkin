@@ -75,7 +75,7 @@ class OptionsKeyBindState(BaseState):
             do_increment()
     
     def get_keybind(self):
-        banned_keys = [pygame.K_BACKSPACE]
+        old_key = self.options[self.cur_pick].keybinds[self.cur_keybind]
         key = None
 
         release_times = 0
@@ -88,7 +88,6 @@ class OptionsKeyBindState(BaseState):
         ]
         done = False
         while not done:
-
             dt = game.clock.tick(settings.settings['preferences']['fps']) / 1000
 
             for event in pygame.event.get():
@@ -99,8 +98,10 @@ class OptionsKeyBindState(BaseState):
                         release_times += 1
                     else:
                         key = event.key
-                        if key in banned_keys:
+                        if key == pygame.K_BACKSPACE:
                             key = None
+                        if key == pygame.K_ESCAPE:
+                            key = old_key
 
                         done = True
             if game.focused:

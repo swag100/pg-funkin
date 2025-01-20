@@ -72,12 +72,16 @@ class Game(object):
                     x, y = event.value
 
                     #This took longer than I'd like to admit.
+                    event_type = pygame.KEYDOWN
 
                     if x != self.hat_pressed[0]:
                         if self.hat_pressed[0] > 0 or x > 0: 
                             simulated_key = settings['keybinds']['right'][event.joy % 2]
                         elif self.hat_pressed[0] < 0 or x < 0: 
                             simulated_key = settings['keybinds']['left'][event.joy % 2]
+
+                        if x == 0: 
+                            event_type = pygame.KEYUP
                         
                         self.hat_pressed[0] = x
 
@@ -86,11 +90,12 @@ class Game(object):
                             simulated_key = settings['keybinds']['up'][event.joy % 2]
                         elif self.hat_pressed[1] < 0 or y < 0: 
                             simulated_key = settings['keybinds']['down'][event.joy % 2]
+                            
+                        if y == 0: 
+                            event_type = pygame.KEYUP
 
                         self.hat_pressed[1] = y
 
-                    event_type = pygame.KEYDOWN
-                    if (x,y) == (0,0): event_type = pygame.KEYUP
 
                     event = pygame.event.Event(event_type, key = simulated_key)
 
