@@ -1,7 +1,7 @@
 import pygame
 import constants
-import settings
 import random
+from settings import settings
 from .basestate import BaseState
 
 from components.song import Song
@@ -94,7 +94,7 @@ class PlayState(BaseState):
 
         #HUD STUFF
         #Downscroll
-        health_bar_y_mult = 0.1 if settings.settings['preferences']['downscroll'] else 0.9
+        health_bar_y_mult = 0.1 if settings['preferences']['downscroll'] else 0.9
 
         #Health bar
         self.health_bar = HealthBar(self, (constants.SCREEN_CENTER[0], constants.WINDOW_SIZE[1] * health_bar_y_mult))
@@ -159,19 +159,19 @@ class PlayState(BaseState):
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             if self.paused:
-                if event.key in settings.settings['keybinds']['menu_up']:
-                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
+                if event.key in settings['keybinds']['menu_up']:
+                    self.scroll_sound.set_volume(settings['volume'] / 10)
                     self.scroll_sound.play()
                     
                     self.increment_pause_selection(-1)
 
-                if event.key in settings.settings['keybinds']['menu_down']:
-                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
+                if event.key in settings['keybinds']['menu_down']:
+                    self.scroll_sound.set_volume(settings['volume'] / 10)
                     self.scroll_sound.play()
 
                     self.increment_pause_selection(1)
 
-                if event.key in settings.settings['keybinds']['forward']:
+                if event.key in settings['keybinds']['forward'] + settings['keybinds']['pause']:
                     #SORRY for hardcoding this. Please. Forgive me.
                     selection = self.pause_options[self.pause_selection]
                     if selection == 'resume' or selection not in self.pause_options:
@@ -185,17 +185,17 @@ class PlayState(BaseState):
                         self.next_state = 'MainMenuState'
                         self.done = True
             else:
-                if event.key in settings.settings['keybinds']['forward'] or event.key in settings.settings['keybinds']['back']:
+                if event.key in settings['keybinds']['forward'] or event.key in settings['keybinds']['back']:
                     self.toggle_pause()
 
                     self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-                    self.scroll_sound.set_volume(settings.settings['volume'] / 10)
+                    self.scroll_sound.set_volume(settings['volume'] / 10)
                     self.scroll_sound.play()
 
                     for alphabet in self.pause_option_objects: 
                         alphabet.x = 0
                         alphabet.y = 0
-                if event.key in settings.settings['keybinds']['reset']:
+                if event.key in settings['keybinds']['reset']:
                     self.die()
 
         if self.paused: return
@@ -211,7 +211,7 @@ class PlayState(BaseState):
             except IndexError:
                 event_parameters = []
 
-            #if event_id in settings.HIT_WINDOWS.keys():
+            #if event_id in HIT_WINDOWS.keys():
             if event_type == constants.NOTE_GOOD_HIT:
                 rating = event_parameters[0]
 
@@ -241,7 +241,7 @@ class PlayState(BaseState):
                     for i in range(len(combo_string)):
                         self.popups.append(Popup(f'num{combo_string[i]}', constants.SETTINGS_DEFAULT_COMBO_POSITION, 0.5, i))
 
-            #if event_id in settings.HEALTH_PENALTIES.keys():
+            #if event_id in HEALTH_PENALTIES.keys():
             if event_type == constants.NOTE_MISS:
                 self.combo = 0 # L
                 
@@ -254,7 +254,7 @@ class PlayState(BaseState):
                 self.remove_health(constants.HEALTH_PENALTIES[event_parameters[0]] * opponent_int)
 
                 miss_noise = pygame.mixer.Sound(f'assets/sounds/gameplay/missnote{random.randint(1, 3)}.ogg')
-                miss_noise.set_volume(settings.settings['volume'] / 20) #20 is intentional; should be way quieter.
+                miss_noise.set_volume(settings['volume'] / 20) #20 is intentional; should be way quieter.
                 pygame.mixer.Channel(2).play(miss_noise)
                 #miss_noise.play()
 
@@ -284,7 +284,7 @@ class PlayState(BaseState):
                         'set',
                         'go'
                     ]
-                    countdown_noises[cur_beat + 4].set_volume(settings.settings['volume'] / 10)
+                    countdown_noises[cur_beat + 4].set_volume(settings['volume'] / 10)
                     countdown_noises[cur_beat + 4].play()
 
                     #image
@@ -295,7 +295,7 @@ class PlayState(BaseState):
                 if cur_beat % 4 == 0:
                     self.hud_zoom += 0.025
 
-                    if settings.settings['preferences']['camera zooming on beat']:
+                    if settings['preferences']['camera zooming on beat']:
                         self.cam_zoom += 0.015
 
                 for icon in self.health_bar_icons:
@@ -303,9 +303,9 @@ class PlayState(BaseState):
 
                 """
                 high_beep = pygame.mixer.Sound("assets/sounds/metronome1.ogg")
-                high_beep.set_volume(settings.volume)
+                high_beep.set_volume(volume)
                 low_beep = pygame.mixer.Sound("assets/sounds/metronome2.ogg")
-                low_beep.set_volume(settings.volume)
+                low_beep.set_volume(volume)
                 if self.song.conductor.cur_beat >= 0: 
                     if self.song.conductor.cur_beat % 4 == 0:
                         high_beep.play()
@@ -314,7 +314,7 @@ class PlayState(BaseState):
                 """
 
             """
-            if event_type == settings.SONG_BEGAN:
+            if event_type == SONG_BEGAN:
                 print('Hello, song! You just started :)')
             """
                 
@@ -430,7 +430,7 @@ class PlayState(BaseState):
         self.hud_zoom += (1 - self.hud_zoom) * dt * 7
         self.cam_zoom += (self.stage.cam_zoom - self.cam_zoom) * dt * 7
 
-        if settings.settings['preferences']['debug freecam']:
+        if settings['preferences']['debug freecam']:
             #TESTING CAMERA CODE:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt

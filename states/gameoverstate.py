@@ -42,10 +42,11 @@ class GameOverState(BaseState):
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['back']:
-                pass #go to main menu
+            if event.key in settings.settings['keybinds']['back']:
+                self.next_state = 'MainMenuState'
+                self.done = True
 
-            if event.key in constants.SETTINGS_DEFAULT_KEYBINDS['forward']:
+            if event.key in settings.settings['keybinds']['forward']:
                 if self.is_retrying: return
 
                 if self.player != None: self.player.play_animation('deathConfirm')

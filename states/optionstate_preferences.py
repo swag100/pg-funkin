@@ -17,12 +17,14 @@ class OptionsPreferenceState(BaseState):
         option_index = 0
         for option_name, option_value in settings.settings['preferences'].items():
             if option_value == None:
-                option = Option(option_name, option_index, option_value, option_font = 'regular')
+                option = Option(option_name, option_index, option_value, x = 21, option_font = 'regular')
 
             elif isinstance(option_value, bool):
                 option = CheckboxOption(option_name, option_index, option_value)
             else:
                 option = NumberOption(option_name, option_index, option_value)
+
+            option.alphabet.y = 207 + (option.i * 119)
 
             #print(option_name)
             self.options.append(option)
@@ -90,6 +92,13 @@ class OptionsPreferenceState(BaseState):
 
     def tick(self, dt):
         for option in self.options:
+            i = option.i - self.cur_pick
+
+            #lerp y to the selection position
+            option.alphabet.y += ((207 + (i * 119)) - option.alphabet.y) * (dt * 3)
+            #cap y position. This took me SO LONG
+            option.alphabet.y = min(option.alphabet.y, 107 + (option.i * 119))
+
             option.tick(dt, self)
 
         if self.is_flashing:

@@ -78,40 +78,4 @@ SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater 
 SETTINGS_DEFAULT_RATING_POSITION = [500, 200]
 SETTINGS_DEFAULT_COMBO_POSITION = [500, 280]
 
-#keybinds
-SETTINGS_DEFAULT_KEYBINDS = {
-    'left': [pygame.K_a, pygame.K_LEFT],
-    'down': [pygame.K_s, pygame.K_DOWN],
-    'up': [pygame.K_w, pygame.K_UP],
-    'right': [pygame.K_d, pygame.K_RIGHT],
-
-    'menu_left': [pygame.K_a, pygame.K_LEFT],
-    'menu_down': [pygame.K_s, pygame.K_DOWN],
-    'menu_up': [pygame.K_w, pygame.K_UP],
-    'menu_right': [pygame.K_d, pygame.K_RIGHT],
-    'menu_modify': [pygame.K_LSHIFT, pygame.K_RSHIFT], #
-
-    'back': [pygame.K_ESCAPE], 
-    'forward': [pygame.K_RETURN],
-    'reset': [pygame.K_r],
-
-    'volume_up': [pygame.K_EQUALS],
-    'volume_down': [pygame.K_MINUS]
-}
-
-SETTINGS_DEFAULT_VOLUME = 10 #Will go from 0 to 10; increments or decrements by 1.
-
-#Fun stuff
-SETTINGS_DEFAULT_NAUGHTYNESS = True #I don't know what this will ever do, but i'm adding it!
-SETTINGS_DEFAULT_DOWNSCROLL = False
-SETTINGS_DEFAULT_FLASHING_LIGHTS = True
-SETTINGS_DEFAULT_CAMERA_ZOOMING_ON_BEAT = True
-SETTINGS_DEFAULT_DEBUG_MODE = False
-SETTINGS_DEFAULT_DEBUG_FREECAM = False
-SETTINGS_DEFAULT_AUTO_PAUSE = True
-SETTINGS_DEFAULT_2PLAYER = False #False
-
-SETTINGS_DEFAULT_SONG_OFFSET = 0
-SETTINGS_DEFAULT_FPS = 60 #Max frames per second.
-
 SETTINGS_DEFAULT_CAMERA_SPEED = 2 #I don't know if I want to put this in settings.

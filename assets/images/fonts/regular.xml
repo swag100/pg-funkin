@@ -34,6 +34,10 @@
 	<SubTexture name="- regular0001" x="44" y="66" width="37" height="13"/>
 	<SubTexture name="- regular0002" x="83" y="66" width="37" height="13"/>
 	<SubTexture name="- regular0003" x="83" y="66" width="37" height="13"/>
+	<SubTexture name="_ regular0000" x="44" y="66" width="37" height="13"/>
+	<SubTexture name="_ regular0001" x="44" y="66" width="37" height="13"/>
+	<SubTexture name="_ regular0002" x="83" y="66" width="37" height="13"/>
+	<SubTexture name="_ regular0003" x="83" y="66" width="37" height="13"/>
 	<SubTexture name="0 regular0000" x="122" y="66" width="34" height="54" frameX="0" frameY="0" frameWidth="35" frameHeight="54"/>
 	<SubTexture name="0 regular0001" x="122" y="66" width="34" height="54" frameX="0" frameY="0" frameWidth="35" frameHeight="54"/>
 	<SubTexture name="0 regular0002" x="158" y="66" width="35" height="54"/>
@@ -218,10 +222,10 @@
 	<SubTexture name="^ regular0001" x="143" y="481" width="32" height="27"/>
 	<SubTexture name="^ regular0002" x="177" y="481" width="32" height="27"/>
 	<SubTexture name="^ regular0003" x="177" y="481" width="32" height="27"/>
-	<SubTexture name="_ regular0000" x="211" y="481" width="53" height="13"/>
-	<SubTexture name="_ regular0001" x="211" y="481" width="53" height="13"/>
-	<SubTexture name="_ regular0002" x="266" y="481" width="53" height="13"/>
-	<SubTexture name="_ regular0003" x="266" y="481" width="53" height="13"/>
+	<SubTexture name="underscore regular0000" x="211" y="481" width="53" height="13"/>
+	<SubTexture name="underscore regular0001" x="211" y="481" width="53" height="13"/>
+	<SubTexture name="underscore regular0002" x="266" y="481" width="53" height="13"/>
+	<SubTexture name="underscore regular0003" x="266" y="481" width="53" height="13"/>
 	<SubTexture name="a regular0000" x="321" y="481" width="36" height="38"/>
 	<SubTexture name="a regular0001" x="321" y="481" width="36" height="38"/>
 	<SubTexture name="a regular0002" x="359" y="481" width="36" height="38"/>
@@ -234,10 +238,10 @@
 	<SubTexture name="angry faic regular0001" x="0" y="546" width="54" height="54"/>
 	<SubTexture name="angry faic regular0002" x="56" y="546" width="54" height="54"/>
 	<SubTexture name="angry faic regular0003" x="56" y="546" width="54" height="54"/>
-	<SubTexture name="apostraphie regular0000" x="112" y="546" width="17" height="27"/>
-	<SubTexture name="apostraphie regular0001" x="112" y="546" width="17" height="27"/>
-	<SubTexture name="apostraphie regular0002" x="131" y="546" width="17" height="27"/>
-	<SubTexture name="apostraphie regular0003" x="131" y="546" width="17" height="27"/>
+	<SubTexture name="' regular0000" x="112" y="546" width="17" height="27"/>
+	<SubTexture name="' regular0001" x="112" y="546" width="17" height="27"/>
+	<SubTexture name="' regular0002" x="131" y="546" width="17" height="27"/>
+	<SubTexture name="' regular0003" x="131" y="546" width="17" height="27"/>
 	<SubTexture name="b regular0000" x="150" y="546" width="31" height="50"/>
 	<SubTexture name="b regular0001" x="150" y="546" width="31" height="50"/>
 	<SubTexture name="b regular0002" x="183" y="546" width="31" height="50"/>
@@ -246,10 +250,10 @@
 	<SubTexture name="c regular0001" x="216" y="546" width="33" height="33"/>
 	<SubTexture name="c regular0002" x="251" y="546" width="32" height="33" frameX="0" frameY="0" frameWidth="33" frameHeight="33"/>
 	<SubTexture name="c regular0003" x="251" y="546" width="32" height="33" frameX="0" frameY="0" frameWidth="33" frameHeight="33"/>
-	<SubTexture name="comma regular0000" x="285" y="546" width="19" height="23"/>
-	<SubTexture name="comma regular0001" x="285" y="546" width="19" height="23"/>
-	<SubTexture name="comma regular0002" x="306" y="546" width="19" height="23"/>
-	<SubTexture name="comma regular0003" x="306" y="546" width="19" height="23"/>
+	<SubTexture name=", regular0000" x="285" y="546" width="19" height="23"/>
+	<SubTexture name=", regular0001" x="285" y="546" width="19" height="23"/>
+	<SubTexture name=", regular0002" x="306" y="546" width="19" height="23"/>
+	<SubTexture name=", regular0003" x="306" y="546" width="19" height="23"/>
 	<SubTexture name="d regular0000" x="327" y="546" width="32" height="53"/>
 	<SubTexture name="d regular0001" x="327" y="546" width="32" height="53"/>
 	<SubTexture name="d regular0002" x="361" y="546" width="32" height="53"/>
@@ -274,10 +278,10 @@
 	<SubTexture name="f regular0001" x="132" y="602" width="27" height="48"/>
 	<SubTexture name="f regular0002" x="161" y="602" width="27" height="48"/>
 	<SubTexture name="f regular0003" x="161" y="602" width="27" height="48"/>
-	<SubTexture name="forward slash regular0000" x="190" y="602" width="46" height="58"/>
-	<SubTexture name="forward slash regular0001" x="190" y="602" width="46" height="58"/>
-	<SubTexture name="forward slash regular0002" x="238" y="602" width="46" height="58"/>
-	<SubTexture name="forward slash regular0003" x="238" y="602" width="46" height="58"/>
+	<SubTexture name="/ regular0000" x="190" y="602" width="46" height="58"/>
+	<SubTexture name="/ regular0001" x="190" y="602" width="46" height="58"/>
+	<SubTexture name="/ regular0002" x="238" y="602" width="46" height="58"/>
+	<SubTexture name="/ regular0003" x="238" y="602" width="46" height="58"/>
 	<SubTexture name="g regular0000" x="286" y="602" width="33" height="41"/>
 	<SubTexture name="g regular0001" x="286" y="602" width="33" height="41"/>
 	<SubTexture name="g regular0002" x="321" y="602" width="33" height="41"/>
@@ -330,10 +334,10 @@
 	<SubTexture name="p regular0001" x="64" y="718" width="28" height="43"/>
 	<SubTexture name="p regular0002" x="94" y="718" width="28" height="43"/>
 	<SubTexture name="p regular0003" x="94" y="718" width="28" height="43"/>
-	<SubTexture name="period regular0000" x="124" y="718" width="14" height="14"/>
-	<SubTexture name="period regular0001" x="124" y="718" width="14" height="14"/>
-	<SubTexture name="period regular0002" x="140" y="718" width="14" height="14"/>
-	<SubTexture name="period regular0003" x="140" y="718" width="14" height="14"/>
+	<SubTexture name=". regular0000" x="124" y="718" width="14" height="14"/>
+	<SubTexture name=". regular0001" x="124" y="718" width="14" height="14"/>
+	<SubTexture name=". regular0002" x="140" y="718" width="14" height="14"/>
+	<SubTexture name=". regular0003" x="140" y="718" width="14" height="14"/>
 	<SubTexture name="q regular0000" x="156" y="718" width="36" height="43"/>
 	<SubTexture name="q regular0001" x="156" y="718" width="36" height="43"/>
 	<SubTexture name="q regular0002" x="194" y="718" width="36" height="43"/>
@@ -394,6 +398,10 @@
 	<SubTexture name="| regular0001" x="153" y="835" width="11" height="70"/>
 	<SubTexture name="| regular0002" x="166" y="835" width="11" height="69" frameX="0" frameY="0" frameWidth="11" frameHeight="70"/>
 	<SubTexture name="| regular0003" x="166" y="835" width="11" height="69" frameX="0" frameY="0" frameWidth="11" frameHeight="70"/>
+	<SubTexture name="` regular0000" x="179" y="835" width="43" height="21"/>
+	<SubTexture name="` regular0001" x="179" y="835" width="43" height="21"/>
+	<SubTexture name="` regular0002" x="224" y="835" width="43" height="21"/>
+	<SubTexture name="` regular0003" x="224" y="835" width="43" height="21"/>
 	<SubTexture name="~ regular0000" x="179" y="835" width="43" height="21"/>
 	<SubTexture name="~ regular0001" x="179" y="835" width="43" height="21"/>
 	<SubTexture name="~ regular0002" x="224" y="835" width="43" height="21"/>

@@ -1,43 +1,35 @@
 import pygame
+import constants
 import settings
 
 from components.spritesheet import Spritesheet
 from components.alphabet import Alphabet
 
 class Option:
-    def __init__(self, text, i, start_value, option_font = 'bold'):
+    def __init__(self, text, i, start_value, x = 0, y = 0, option_font = 'bold', centered = False):
         self.text = text
-        self.alphabet = Alphabet(text, [21, 0], font = option_font)
         self.i = i
+        self.alphabet = Alphabet(text, [x, y], font = option_font)
 
         self.value = start_value
 
         self.activate_keys = settings.settings['keybinds']['forward']
 
-        self.alphabet.y = 207 + (i * 120)
+        if centered:
+            self.alphabet.x = constants.SCREEN_CENTER[0] - (self.alphabet.width / 2)
 
     def handle_event(self, event, state):
         pass
 
     def tick(self, dt, state):
-        i = self.i - state.cur_pick
-
-        #lerp y to the selection position
-        self.alphabet.y += ((207 + (i * 119)) - self.alphabet.y) * (dt * 3)
-
-        #cap y position. This took me SO LONG
-        self.alphabet.y = min(self.alphabet.y, 107 + (self.i * 120))
-
         self.alphabet.tick(dt)
 
     def draw(self, screen):
         self.alphabet.draw(screen)
 
-
 class CheckboxOption(Option): #An option with a checkmark.
-    def __init__(self, text, i, start_value, x = 0):
-        Option.__init__(self, text, i, x)
-        self.value = start_value
+    def __init__(self, text, i, start_value):
+        super().__init__(text, i, start_value)
 
         sheet = Spritesheet('assets/images/ui/checkboxThingie.png', 0.71)
         sheet.preload_animations()
@@ -99,8 +91,8 @@ class CheckboxOption(Option): #An option with a checkmark.
         self.animation.blit(screen, position)
 
 class NumberOption(Option): #An option that is a number, can be any type.
-    def __init__(self, text, i, start_value, position = [120, 0]):
-        Option.__init__(self, text, i, position)
+    def __init__(self, text, i, start_value):
+        super().__init__(text, i, start_value)
 
         self.value = start_value
         self.value_text = self.update_value_text(self.value)
@@ -115,12 +107,10 @@ class NumberOption(Option): #An option that is a number, can be any type.
         if event.type != pygame.KEYDOWN: return
         
         if self.i == state.cur_pick and event.key in self.activate_keys:
-            keys = pygame.key.get_pressed()
-
-            modifier = any(keys[key] for key in settings.settings['keybinds']['menu_modify'])
-
-            if event.key in settings.settings['keybinds']['menu_left']: self.value -= 1 if modifier else 5
-            if event.key in settings.settings['keybinds']['menu_right']: self.value += 1 if modifier else 5
+            if event.key in settings.settings['keybinds']['menu_left']: 
+                self.value -= 5
+            if event.key in settings.settings['keybinds']['menu_right']: 
+                self.value += 5
 
             self.value_text = self.update_value_text(self.value)
 
@@ -128,7 +118,6 @@ class NumberOption(Option): #An option that is a number, can be any type.
             settings.write_settings(settings.settings)
 
     def tick(self, dt, state):
-        #Putting this before calling tick on super works??? I don't know why, but okay!
         self.alphabet.x = self.value_text.width + self.value_text.x + 60
 
         super().tick(dt, state)
@@ -140,3 +129,59 @@ class NumberOption(Option): #An option that is a number, can be any type.
         super().draw(screen)
         
         self.value_text.draw(screen)
+
+###
+
+class KeyBindOption(Option):
+    def __init__(self, text, i, start_value, visual_text):
+        super().__init__(visual_text, i, start_value)
+
+        self.text = text
+
+        self.keybinds = start_value #List of keybinds with a length of 2.
+        self.keybind_text_list = self.update_keybind_text_list(self.keybinds)
+
+    def update_keybind_text_list(self, keybinds):
+        keybind_text_list = []
+        for key in keybinds:
+            try:
+                key_str = pygame.key.name(int(key)).title()
+            except:
+                key_str = '___'
+
+            keybind_text_list.append(Alphabet(key_str, [15, 0], font = 'regular'))
+
+        return keybind_text_list
+
+    def handle_event(self, event, state):
+        if event.type == pygame.KEYDOWN: 
+            if self.i == state.cur_pick and event.key in self.activate_keys:
+                value = state.get_keybind()
+
+                self.keybinds[state.cur_keybind] = value
+
+                self.keybind_text_list = self.update_keybind_text_list(self.keybinds)
+
+                settings.settings['keybinds'][self.text] = self.keybinds
+                settings.write_settings(settings.settings)
+
+    def tick(self, dt, state):
+        self.alphabet.x = 100
+
+        super().tick(dt, state)
+
+        for key in self.keybind_text_list:
+            if self.keybind_text_list.index(key) == 0:
+                key.x = 650
+            else:
+                key.x = 1050
+
+            key.y = self.alphabet.y
+
+            key.tick(dt)
+
+    def draw(self, screen):
+        super().draw(screen)
+        
+        for key in self.keybind_text_list:
+            key.draw(screen)

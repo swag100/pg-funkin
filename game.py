@@ -56,82 +56,80 @@ class Game(object):
                     self.focused = False
 
             #Controller things :)
-            if event.type == pygame.JOYDEVICEADDED:
-                self.joysticks = self.get_joysticks()
-                for joystick in self.joysticks:
-                    print(joystick.get_name())
-            if event.type == pygame.JOYDEVICEREMOVED:
-                self.joysticks = self.get_joysticks()
+            if settings['preferences']['controller support']:
+                if event.type == pygame.JOYDEVICEADDED:
+                    self.joysticks = self.get_joysticks()
+                    for joystick in self.joysticks:
+                        print(joystick.get_name())
+                if event.type == pygame.JOYDEVICEREMOVED:
+                    self.joysticks = self.get_joysticks()
 
-            #convert button press to key down. Sorry liberals!
-            if event.type == pygame.JOYHATMOTION:
-                #print(event.joy, event.joy %2)
-                x, y = event.value
+                #convert button press to key down. Sorry liberals!
+                if event.type == pygame.JOYHATMOTION:
+                    #print(event.joy, event.joy %2)
+                    x, y = event.value
 
-                #This took longer than I'd like to admit.
+                    #This took longer than I'd like to admit.
 
-                if x != self.hat_pressed[0]:
-                    if self.hat_pressed[0] > 0 or x > 0: 
-                        simulated_key = settings['keybinds']['right'][event.joy % 2]
-                    elif self.hat_pressed[0] < 0 or x < 0: 
-                        simulated_key = settings['keybinds']['left'][event.joy % 2]
-                    
-                    self.hat_pressed[0] = x
+                    if x != self.hat_pressed[0]:
+                        if self.hat_pressed[0] > 0 or x > 0: 
+                            simulated_key = settings['keybinds']['right'][event.joy % 2]
+                        elif self.hat_pressed[0] < 0 or x < 0: 
+                            simulated_key = settings['keybinds']['left'][event.joy % 2]
+                        
+                        self.hat_pressed[0] = x
 
-                if y != self.hat_pressed[1]:
-                    if self.hat_pressed[1] > 0 or y > 0: 
-                        simulated_key = settings['keybinds']['up'][event.joy % 2]
-                    elif self.hat_pressed[1] < 0 or y < 0: 
-                        simulated_key = settings['keybinds']['down'][event.joy % 2]
+                    if y != self.hat_pressed[1]:
+                        if self.hat_pressed[1] > 0 or y > 0: 
+                            simulated_key = settings['keybinds']['up'][event.joy % 2]
+                        elif self.hat_pressed[1] < 0 or y < 0: 
+                            simulated_key = settings['keybinds']['down'][event.joy % 2]
 
-                    self.hat_pressed[1] = y
+                        self.hat_pressed[1] = y
 
-                event_type = pygame.KEYDOWN
-                if (x,y) == (0,0): event_type = pygame.KEYUP
+                    event_type = pygame.KEYDOWN
+                    if (x,y) == (0,0): event_type = pygame.KEYUP
 
-                event = pygame.event.Event(event_type, key = simulated_key)
+                    event = pygame.event.Event(event_type, key = simulated_key)
 
-            if self.state_name == 'PlayState' and not self.state.paused: #Hardcoded? Sorry!
-                if event.type in [pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP]:
-                    simulated_key = None
+                if self.state_name == 'PlayState' and not self.state.paused: #Hardcoded? Sorry!
+                    if event.type in [pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP]:
+                        simulated_key = None
 
-                    if event.button == pygame.CONTROLLER_BUTTON_A:
-                        simulated_key = settings['keybinds']['down'][event.joy % 2]
-                    if event.button == pygame.CONTROLLER_BUTTON_B:
-                        simulated_key = settings['keybinds']['right'][event.joy % 2]
-                    if event.button == pygame.CONTROLLER_BUTTON_X:
-                        simulated_key = settings['keybinds']['left'][event.joy % 2]
-                    if event.button == pygame.CONTROLLER_BUTTON_Y:
-                        simulated_key = settings['keybinds']['up'][event.joy % 2]
+                        if event.button == pygame.CONTROLLER_BUTTON_A:
+                            simulated_key = settings['keybinds']['down'][event.joy % 2]
+                        if event.button == pygame.CONTROLLER_BUTTON_B:
+                            simulated_key = settings['keybinds']['right'][event.joy % 2]
+                        if event.button == pygame.CONTROLLER_BUTTON_X:
+                            simulated_key = settings['keybinds']['left'][event.joy % 2]
+                        if event.button == pygame.CONTROLLER_BUTTON_Y:
+                            simulated_key = settings['keybinds']['up'][event.joy % 2]
 
-                    event_type = pygame.KEYUP if event.type == pygame.JOYBUTTONUP else pygame.KEYDOWN
+                        event_type = pygame.KEYUP if event.type == pygame.JOYBUTTONUP else pygame.KEYDOWN
 
-                    if simulated_key != None:
-                        event = pygame.event.Event(event_type, key=simulated_key)
-            else:
+                        if simulated_key != None:
+                            event = pygame.event.Event(event_type, key=simulated_key)
+                else:
+                    if event.type == pygame.JOYBUTTONDOWN:
+                        simulated_key = None
+                        
+                        if event.button == pygame.CONTROLLER_BUTTON_A:
+                            simulated_key = settings['keybinds']['forward'][0]
+                        if event.button == pygame.CONTROLLER_BUTTON_B:
+                            simulated_key = settings['keybinds']['back'][0]
+
+                        if simulated_key != None:
+                            event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
                 if event.type == pygame.JOYBUTTONDOWN:
                     simulated_key = None
                     
-                    if event.button == pygame.CONTROLLER_BUTTON_A:
+                    if event.button == 7: #On a dualshock 3, this is start. Might conflict with other controllers.
                         simulated_key = settings['keybinds']['forward'][0]
-                    if event.button == pygame.CONTROLLER_BUTTON_B:
+                    if event.button == pygame.CONTROLLER_BUTTON_START: #select on dualshock3
                         simulated_key = settings['keybinds']['back'][0]
 
                     if simulated_key != None:
                         event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
-            if event.type == pygame.JOYBUTTONDOWN:
-                simulated_key = None
-                
-                if event.button == 7: #On a dualshock 3, this is start. Might conflict with other controllers.
-                    simulated_key = settings['keybinds']['forward'][0]
-                if event.button == pygame.CONTROLLER_BUTTON_START: #select on dualshock3
-                    simulated_key = settings['keybinds']['back'][0]
-
-                if event.button in [pygame.CONTROLLER_BUTTON_LEFTSHOULDER, pygame.CONTROLLER_BUTTON_RIGHTSHOULDER]: #L1
-                    simulated_key = settings['keybinds']['menu_modify'][0]
-
-                if simulated_key != None:
-                    event = pygame.event.Event(pygame.KEYDOWN, key=simulated_key)
             ######### end of controller code
 
             if event.type == pygame.KEYDOWN:

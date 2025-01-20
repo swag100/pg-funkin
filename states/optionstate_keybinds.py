@@ -1,107 +1,139 @@
+import sys
 import pygame
 import constants
 import settings
 from states.basestate import BaseState
 
-from components.alphabet import Alphabet
+from components.option import *
 
-class Option:
-    def __init__(self, text, position = [200, 0]):
-        self.text = text
-        self.alphabet = Alphabet(text, position)
-        self.position = position
+KEYBIND_MENU_NAMES = {
+    'menu_left': 'left',
+    'menu_down': 'down',
+    'menu_up': 'up',
+    'menu_right': 'right',
 
-    def tick(self, dt, i):
-        #lerp them to the selection position
-        self.alphabet.x += ((self.position[0]) - self.alphabet.x) * (dt * 3)
-        self.alphabet.y += ((constants.SCREEN_CENTER[1] + (i * 150)) - self.alphabet.y) * (dt * 3)
+    'forward': 'accept',
 
-        self.alphabet.tick(dt)
-
-    def handle_event(self, event):
-        pass
+    'volume_up': 'up',
+    'volume_down': 'down',
+    'volume_mute': 'mute'
+}
 
 class OptionsKeyBindState(BaseState):
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
         super(OptionsKeyBindState, self).__init__()
 
-        self.cur_pick = 0 #The Id of the menu option you're selecting.
+        self.cur_pick = 1 #The Id of the menu option you're selecting.
+        self.cur_keybind = 0 #Can be either 0 or 1, the item in the keybind you are trying to edit.
+
+        self.upper_bound = 177 #Height of selection the screen should go up.
+        self.lower_bound = 627 #Height of selection the screen should go down.
+
+        self.overlay = pygame.Rect(100, 100, constants.WINDOW_SIZE[0] - 200, constants.WINDOW_SIZE[0] - 200)
 
         #Call a function when you press enter.
-        self.options = [
-            Option('offset'),
-            Option('offset'),
-            Option('offset'),
-        ]
+        self.options = []
+        option_index = 0
+        for option_name, option_value in settings.settings['keybinds'].items():
+            visual_text = KEYBIND_MENU_NAMES[option_name] if option_name in KEYBIND_MENU_NAMES else option_name
 
-        #Flashing variables.
-        self.is_flashing = False
-        self.flash_time = 0 #How long have we been flashing?
+            if option_value == None:
+                option = Option(option_name, option_index, option_value, centered = True)
 
-        self.max_flash_time = 1 #How long should the flashing last?
-        self.flash_speed = (1 / 4)
+            else:
+                option = KeyBindOption(option_name, option_index, option_value, visual_text)
+
+            option.alphabet.y = 107 + (option.i * 70)
+
+            #print(option_name)
+            self.options.append(option)
+            option_index += 1
 
         #VISUALS
         self.bg_image = pygame.transform.smoothscale_by(pygame.image.load('assets/images/menuDesat.png').convert(), 1.1)
 
         #audio
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
-        self.scroll_sound.play()
+        self.set_volume_and_play()
     
-    def increment_pick(self, increment):
+    def set_volume_and_play(self):
         self.scroll_sound.set_volume(settings.settings['volume'] / 10)
         self.scroll_sound.play()
 
-        self.cur_pick += increment
-        #lower limit
-        if self.cur_pick < 0:
-            self.cur_pick = len(self.options) - 1
-        #upper limit
-        if self.cur_pick > len(self.options) - 1:
-            self.cur_pick = 0
+    def increment_pick(self, increment):
+        def do_increment():
+            self.cur_pick += increment
+            #lower limit
+            if self.cur_pick < 0:
+                self.cur_pick = len(self.options) - 1
+            #upper limit
+            if self.cur_pick > len(self.options) - 1:
+                self.cur_pick = 0
+        
+        do_increment()
+        while self.options[self.cur_pick].value == None:
+            do_increment()
+    
+    def get_keybind(self):
+        banned_keys = [pygame.K_BACKSPACE]
 
+        key = None
+
+        done = False
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: sys.exit()
+                
+                if event.type == pygame.KEYDOWN:
+                    key = event.key
+                    if key in banned_keys:
+                        key = None
+
+                    done = True
+
+        return key
+        
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             #Exit menu
             if event.key in settings.settings['keybinds']['back']:
-                if self.is_flashing:
-                    #Cancel picking an option!
-                    self.is_flashing = False
-                    self.flash_time = 0
-                else:
-                    self.next_state = 'OptionsMenuState' #Go back! Also start our sweet little cancel menu sound.
-                    self.done = True
-
-            #Advancing in the menu
-            if self.is_flashing: return
+                self.next_state = 'OptionsMenuState' #Go back! Also start our sweet little cancel menu sound.
+                self.done = True
 
             if event.key in settings.settings['keybinds']['menu_up']:
+                self.set_volume_and_play()
                 self.increment_pick(-1)
             if event.key in settings.settings['keybinds']['menu_down']:
+                self.set_volume_and_play()
                 self.increment_pick(1)
+
+            if self.cur_keybind == 1:
+                if event.key in settings.settings['keybinds']['menu_left']:
+                    self.set_volume_and_play()
+                    self.cur_keybind = 0
+            else:
+                if event.key in settings.settings['keybinds']['menu_right']:
+                    self.set_volume_and_play()
+                    self.cur_keybind = 1
             
             #entering the picked option
-            if event.key in settings.settings['keybinds']['forward']:
-                confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(settings.settings['volume'] / 10)
-                confirm_sound.play()
-
-                self.is_flashing = True
+            for option in self.options:
+                option.handle_event(event, self)
 
     def tick(self, dt):
-        for option in self.options: 
-            option.tick(dt, self.options.index(option) - self.cur_pick)
+        for option in self.options:
+            option.tick(dt, self)
 
-        if self.is_flashing:
-            self.flash_time += dt
+            i = option.i - self.cur_pick
 
-            if self.flash_time >= self.max_flash_time:
-                print(self.options[self.cur_pick]) #self.options[self.cur_pick]()
+            if self.options[self.cur_pick].alphabet.y > self.lower_bound:
+                #lerp y to the selection position
+                option.alphabet.y += ((self.lower_bound + (i * 70)) - option.alphabet.y) * (dt * 3)
 
-                self.is_flashing = False
-                self.flash_time = 0
+            elif self.options[self.cur_pick].alphabet.y < self.upper_bound:
+                #lerp y to the selection position
+                option.alphabet.y += ((self.upper_bound + (i * 70)) - option.alphabet.y) * (dt * 3)
 
     def draw(self, screen):
         screen.blit(self.bg_image, self.bg_image.get_rect(center = constants.SCREEN_CENTER))
@@ -109,10 +141,23 @@ class OptionsKeyBindState(BaseState):
         for option in self.options: 
             #Make the selection the only one with full transparency.
             for character in option.alphabet.character_list:
-                character.animation.getCurrentFrame().set_alpha(128)
+                if option.value == None: continue
 
-                if self.cur_pick == self.options.index(option):
-                    character.animation.getCurrentFrame().set_alpha(255)
+                cur_char_frame = character.animation.getCurrentFrame()
 
-            option.alphabet.draw(screen)
-        #if self.is_flashing: #work on this later
+                cur_char_frame.set_alpha(128)
+                if self.cur_pick == option.i:
+                    cur_char_frame.set_alpha(255)
+
+            if hasattr(option, 'keybind_text_list'):
+                for key in option.keybind_text_list:
+                    for character in key.character_list:
+                        if option.value == None: continue
+
+                        cur_char_frame = character.animation.getCurrentFrame()
+
+                        cur_char_frame.set_alpha(128)
+                        if self.cur_pick == option.i and self.cur_keybind == option.keybind_text_list.index(key):
+                            cur_char_frame.set_alpha(255)
+
+            option.draw(screen)
