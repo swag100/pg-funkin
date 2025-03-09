@@ -3,12 +3,12 @@ import math
 import constants
 
 class Conductor(object): 
-    def __init__(self, song, offset = 0): # Replace bpm, offset with song data in file and user offset preferences
-        self.bpm = song.chart_reader.bpm
+    def __init__(self, bpm, offset = 0): # Replace bpm, offset with song data in file and user offset preferences
+        self.bpm = bpm
         self.crochet = 60 / self.bpm #Duration of beat in seconds
 
         self.offset = offset / 1000 #Add default offset: turn into milliseconds
-        self.song_position = -self.crochet * 4
+        self.song_position = 0
 
         self.cur_beat_time = None
         self.cur_beat = None #So it recognizes change on first beat

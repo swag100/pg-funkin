@@ -1,7 +1,7 @@
 import pygame
 import constants
 import settings
-from .basestate import BaseState
+from .musicbeatstate import MusicBeatState
 
 from components.spritesheet import Spritesheet
 
@@ -36,11 +36,12 @@ class MenuOptionSprite:
         self.animation.blit(screen, self.rect)
 
 
-class MainMenuState(BaseState):
+class MainMenuState(MusicBeatState):
     def start(self, persistent_data):
         self.persistent_data = persistent_data
 
-        super(MainMenuState, self).__init__()
+        super().__init__()
+        super().start(self.persistent_data)
         
         #print('Im in the main menu!!')
 
@@ -118,11 +119,14 @@ class MainMenuState(BaseState):
                 self.is_flashing = True
 
     def tick(self, dt):
+        super().tick(dt)
+
         if self.is_flashing:
             self.flash_time += dt
 
             if self.flash_time >= self.max_flash_time:
                 self.next_state = self.options[self.cur_pick]
+                self.persistent_data['song position'] = self.conductor.song_position
                 self.done = True
 
         self.bg_y_float += (-(self.cur_pick * 100) - self.bg_y_float) * dt

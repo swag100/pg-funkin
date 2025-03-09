@@ -26,7 +26,10 @@ class Song:
         self.inst_path = f'{self.song_prefix}/Inst.ogg'
         self.song_length = pygame.mixer.Sound(self.inst_path).get_length()
 
-        self.conductor = Conductor(self, settings.settings['preferences']['offset'])
+        self.conductor = Conductor(self.chart_reader.bpm, settings.settings['preferences']['offset'])
+
+        #Make the conductor 4 beats behind. for countdown.
+        self.conductor.song_position -= self.conductor.crochet * 4
 
         self.paused = False
 

@@ -3,7 +3,7 @@ import constants
 import settings
 import json
 import os
-from .basestate import BaseState
+from .musicbeatstate import MusicBeatState
 
 from components.spritesheet import Spritesheet
 from components.prop import AnimatedProp
@@ -100,7 +100,7 @@ class WeekOption:
         i = self.id - selection
         self.y += ((478 + (i * 128)) - self.y) * (dt * 7)
 
-class StoryMenuState(BaseState):
+class StoryMenuState(MusicBeatState):
     def load_level_data(self, level_path):
         with open(level_path) as level_data_file:
             level_data = json.loads(level_data_file.read())
@@ -130,7 +130,9 @@ class StoryMenuState(BaseState):
 
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
-        super(StoryMenuState, self).__init__()
+
+        super().__init__()
+        super().start(self.persistent_data)
 
         self.level_data_dict = self.get_data_dict()
 
@@ -183,6 +185,7 @@ class StoryMenuState(BaseState):
         self.persistent_data['difficulty'] = difficulty #Wow, this is variable!
         
         self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
+        self.persistent_data['song position'] = self.conductor.song_position
         self.done = True
 
     def set_volume_and_play(self, sound_path):
@@ -206,18 +209,11 @@ class StoryMenuState(BaseState):
                     self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
 
                     self.next_state = 'MainMenuState' #Go back! Also start our sweet little cancel menu sound.
+                    self.persistent_data['song position'] = self.conductor.song_position
                     self.done = True
 
             if event.key in settings.settings['keybinds']['menu_up'] + settings.settings['keybinds']['menu_down']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
-
-                #play prop anims, change this and make it OnBeatHit event later.
-                for prop_list in self.props.values(): 
-                    for prop in prop_list:
-                        if 'idle' in prop.animations.keys():
-                            prop.play_animation('idle')
-                        else:
-                            prop.play_animation('danceLeft')
 
                 if event.key in settings.settings['keybinds']['menu_up']:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, -1)
@@ -243,14 +239,44 @@ class StoryMenuState(BaseState):
 
                 self.is_flashing = True
 
+                pygame.mixer.music.stop()
+
                 for prop_list in self.props.values(): 
                     for prop in prop_list:
                         if 'confirm' in prop.animations:
                             prop.play_animation('confirm')
+        
+
+        if event.type == pygame.USEREVENT:
+            event_list = event.id.split('/', 1)
+            event_type = event_list[0]
+            try:
+                event_parameters = event_list[1].split('/')
+            except IndexError:
+                event_parameters = []
+
+            if event_type == constants.BEAT_HIT: #BEAT HIT
+                cur_beat = int(event_parameters[0]) #easier to read
+
+                #play prop anims.
+                for prop_list in self.props.values(): 
+                    for prop in prop_list:
+                        if self.is_flashing(): return
+                        
+                        if 'idle' in prop.animations.keys():
+                            prop.play_animation('idle')
+                        else:
+                            if cur_beat % 2 == 0:
+                                prop.play_animation('danceLeft')
+                            else:
+                                prop.play_animation('danceRight')
+
 
         for object in self.difficulty_selector_objects: object.handle_event(event)
 
     def tick(self, dt):
+        super().tick(dt)
+
         if self.is_flashing:
             self.flash_time += dt
 

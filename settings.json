@@ -69,7 +69,7 @@
         "downscroll": false,
         "flashing lights": true,
         "camera zooming on beat": true,
-        "debug display": false,
+        "debug display": true,
         "auto pause": true,
         "fps": 60,
         "": null,
@@ -80,5 +80,5 @@
         "debug freecam": false,
         "offset": 0
     },
-    "volume": 10
+    "volume": 6
 }
