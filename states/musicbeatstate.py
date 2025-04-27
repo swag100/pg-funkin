@@ -10,13 +10,11 @@ class MusicBeatState(BaseState):
         self.next_state = None
         self.done = False
 
-        self.conductor = Conductor(102)
 
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
         
-        if 'song offset' in self.persistent_data:
-            self.conductor.offset = self.persistent_data['song offset']
+        self.conductor = Conductor(102)
             
     def handle_event(self, event): 
         pass
