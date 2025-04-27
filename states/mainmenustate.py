@@ -1,6 +1,6 @@
 import pygame
 import constants
-import settings
+from settings import settings
 from .musicbeatstate import MusicBeatState
 
 from components.spritesheet import Spritesheet
@@ -78,10 +78,20 @@ class MainMenuState(MusicBeatState):
         self.bg_y_float = self.bg_rect.y #Just so that it looks smooth
 
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
-        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
+        self.scroll_sound.set_volume(settings['volume'] / 10)
+
+        
+        #if im not playing already
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load('assets/music/freakyMenu.ogg')
+
+            pygame.mixer.music.set_volume(settings['volume'] / 30)
+            
+            #this WILL be put in titleState eventually... 
+            pygame.mixer.music.play()
     
     def increment_pick(self, increment):
-        self.scroll_sound.set_volume(settings.settings['volume'] / 10)
+        self.scroll_sound.set_volume(settings['volume'] / 10)
         self.scroll_sound.play()
 
         self.cur_pick += increment
@@ -95,9 +105,9 @@ class MainMenuState(MusicBeatState):
     def handle_event(self, event): 
         if event.type == pygame.KEYDOWN:
             if self.is_flashing: 
-                if event.key in settings.settings['keybinds']['back']:
+                if event.key in settings['keybinds']['back']:
                     cancel_sound = pygame.mixer.Sound('assets/sounds/cancelMenu.ogg')
-                    cancel_sound.set_volume(settings.settings['volume'] / 10)
+                    cancel_sound.set_volume(settings['volume'] / 10)
                     cancel_sound.play()
 
                     self.is_flashing = False
@@ -105,15 +115,15 @@ class MainMenuState(MusicBeatState):
                 return
 
             #Advancing in the menu
-            if event.key in settings.settings['keybinds']['menu_up']:
+            if event.key in settings['keybinds']['menu_up']:
                 self.increment_pick(-1)
-            if event.key in settings.settings['keybinds']['menu_down']:
+            if event.key in settings['keybinds']['menu_down']:
                 self.increment_pick(1)
             
             #entering the picked option
-            if event.key in settings.settings['keybinds']['forward']:
+            if event.key in settings['keybinds']['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(settings.settings['volume'] / 10)
+                confirm_sound.set_volume(settings['volume'] / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True
@@ -126,7 +136,6 @@ class MainMenuState(MusicBeatState):
 
             if self.flash_time >= self.max_flash_time:
                 self.next_state = self.options[self.cur_pick]
-                self.persistent_data['song position'] = self.conductor.song_position
                 self.done = True
 
         self.bg_y_float += (-(self.cur_pick * 100) - self.bg_y_float) * dt

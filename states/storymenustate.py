@@ -1,6 +1,6 @@
 import pygame
 import constants
-import settings
+from settings import settings
 import json
 import os
 from .musicbeatstate import MusicBeatState
@@ -72,11 +72,11 @@ class ArrowSelector:
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key in settings.settings['keybinds']['menu_' + self.direction]:
+            if event.key in settings['keybinds']['menu_' + self.direction]:
                 self.animation = self.animations[self.direction + 'Confirm']
                 self.animation.play()
         if event.type == pygame.KEYUP:
-            if event.key in settings.settings['keybinds']['menu_' + self.direction]:
+            if event.key in settings['keybinds']['menu_' + self.direction]:
                 self.animation = self.animations[self.direction + 'Idle']
                 self.animation.play()
                 
@@ -190,7 +190,7 @@ class StoryMenuState(MusicBeatState):
 
     def set_volume_and_play(self, sound_path):
         sound = pygame.mixer.Sound(sound_path)
-        sound.set_volume(settings.settings['volume'] / 10)
+        sound.set_volume(settings['volume'] / 10)
         sound.play()
 
     def handle_event(self, event):
@@ -198,33 +198,33 @@ class StoryMenuState(MusicBeatState):
             #Exit menu
         
             if self.is_flashing: 
-                if event.key in settings.settings['keybinds']['back']:
+                if event.key in settings['keybinds']['back']:
                     self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
                     self.is_flashing = False
                     self.flash_time = 0
 
                 return
             else:
-                if event.key in settings.settings['keybinds']['back']:
+                if event.key in settings['keybinds']['back']:
                     self.set_volume_and_play('assets/sounds/cancelMenu.ogg')
 
                     self.next_state = 'MainMenuState' #Go back! Also start our sweet little cancel menu sound.
-                    self.persistent_data['song position'] = self.conductor.song_position
+
                     self.done = True
 
-            if event.key in settings.settings['keybinds']['menu_up'] + settings.settings['keybinds']['menu_down']:
+            if event.key in settings['keybinds']['menu_up'] + settings['keybinds']['menu_down']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
 
-                if event.key in settings.settings['keybinds']['menu_up']:
+                if event.key in settings['keybinds']['menu_up']:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, -1)
                 else:
                     self.week_option_selection = increment_selection(self.week_option_selection, self.week_options, 1)
 
             #Select difficulty
-            if event.key in settings.settings['keybinds']['menu_left'] + settings.settings['keybinds']['menu_right']:
+            if event.key in settings['keybinds']['menu_left'] + settings['keybinds']['menu_right']:
                 self.set_volume_and_play('assets/sounds/scrollMenu.ogg')
 
-                if event.key in settings.settings['keybinds']['menu_left']:
+                if event.key in settings['keybinds']['menu_left']:
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, -1)
                 else:
                     self.difficulty_option_selection = increment_selection(self.difficulty_option_selection, self.difficulty_options, 1)
@@ -232,9 +232,9 @@ class StoryMenuState(MusicBeatState):
                 self.difficulty_image.update_image(self.difficulty_options[self.difficulty_option_selection])
 
             #Enter level
-            if event.key in settings.settings['keybinds']['forward']:
+            if event.key in settings['keybinds']['forward']:
                 confirm_sound = pygame.mixer.Sound('assets/sounds/confirmMenu.ogg')
-                confirm_sound.set_volume(settings.settings['volume'] / 10)
+                confirm_sound.set_volume(settings['volume'] / 10)
                 confirm_sound.play()
 
                 self.is_flashing = True
@@ -261,7 +261,7 @@ class StoryMenuState(MusicBeatState):
                 #play prop anims.
                 for prop_list in self.props.values(): 
                     for prop in prop_list:
-                        if self.is_flashing(): return
+                        if self.is_flashing: return
                         
                         if 'idle' in prop.animations.keys():
                             prop.play_animation('idle')

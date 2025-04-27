@@ -11,20 +11,13 @@ class MusicBeatState(BaseState):
         self.done = False
 
         self.conductor = Conductor(102)
-        
-        pygame.mixer.music.load('assets/music/freakyMenu.ogg')
-
-        pygame.mixer.music.set_volume(settings['volume'] / 30)
 
     def start(self, persistent_data): 
         self.persistent_data = persistent_data
-
-        song_position = 0
-        if 'song position' in self.persistent_data:
-            song_position = self.persistent_data['song position']
-
-        pygame.mixer.music.play(start=song_position)
-
+        
+        if 'song offset' in self.persistent_data:
+            self.conductor.offset = self.persistent_data['song offset']
+            
     def handle_event(self, event): 
         pass
 
