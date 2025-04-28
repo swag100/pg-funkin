@@ -7,7 +7,7 @@ class BarIcon:
         self.health_bar = play_state.health_bar
         self.player = player
 
-        #hardcoded cause im lazy
+        #hardcoded cause im lazy, later create a "character_suffix" thing 
         if character.endswith('-car'):
             character = character.removesuffix('-car')
 
