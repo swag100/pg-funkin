@@ -64,6 +64,8 @@ class AnimatedProp(Prop):
         spritesheet.preload_animations()
         self.animations = spritesheet.animations
 
+        print(path, prop_data['animations'][0])
+
         self.animation = self.animations[prop_data['animations'][0]['prefix']]
         self.animation.play()
 
