@@ -29,6 +29,10 @@
 	<SubTexture name="Mom Idle0011" x="0" y="824" width="475" height="812" frameX="-4" frameY="-2" frameWidth="479" frameHeight="814" />
 	<SubTexture name="Mom Idle0012" x="485" y="824" width="460" height="814" frameX="-4" frameY="0" frameWidth="479" frameHeight="814" />
 	<SubTexture name="Mom Idle0013" x="955" y="824" width="471" height="812" frameX="-4" frameY="-2" frameWidth="479" frameHeight="814" />
+	<SubTexture name="Mom IdleLoop0000" x="7513" y="0" width="471" height="814" frameX="-4" frameY="0" frameWidth="479" frameHeight="814" />
+	<SubTexture name="Mom IdleLoop0001" x="0" y="824" width="475" height="812" frameX="-4" frameY="-2" frameWidth="479" frameHeight="814" />
+	<SubTexture name="Mom IdleLoop0002" x="485" y="824" width="460" height="814" frameX="-4" frameY="0" frameWidth="479" frameHeight="814" />
+	<SubTexture name="Mom IdleLoop0003" x="955" y="824" width="471" height="812" frameX="-4" frameY="-2" frameWidth="479" frameHeight="814" />
 	<SubTexture name="Mom Left Pose0000" x="1436" y="824" width="564" height="803" frameX="-1" frameY="-7" frameWidth="570" frameHeight="810" />
 	<SubTexture name="Mom Left Pose0001" x="2010" y="824" width="561" height="800" frameX="-4" frameY="-10" frameWidth="570" frameHeight="810" />
 	<SubTexture name="Mom Left Pose0002" x="2581" y="824" width="558" height="810" frameX="-12" frameY="0" frameWidth="570" frameHeight="810" />

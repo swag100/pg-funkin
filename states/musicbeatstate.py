@@ -15,6 +15,15 @@ class MusicBeatState(BaseState):
         self.persistent_data = persistent_data
         
         self.conductor = Conductor(102)
+        
+        #if im not playing already
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load('assets/music/freakyMenu.ogg')
+
+            pygame.mixer.music.set_volume(settings['volume'] / 30)
+            
+            #this WILL be put in titleState eventually... 
+            pygame.mixer.music.play()
             
     def handle_event(self, event): 
         pass

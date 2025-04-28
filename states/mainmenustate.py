@@ -79,16 +79,6 @@ class MainMenuState(MusicBeatState):
 
         self.scroll_sound = pygame.mixer.Sound('assets/sounds/scrollMenu.ogg')
         self.scroll_sound.set_volume(settings['volume'] / 10)
-
-        
-        #if im not playing already
-        if not pygame.mixer.music.get_busy():
-            pygame.mixer.music.load('assets/music/freakyMenu.ogg')
-
-            pygame.mixer.music.set_volume(settings['volume'] / 30)
-            
-            #this WILL be put in titleState eventually... 
-            pygame.mixer.music.play()
     
     def increment_pick(self, increment):
         self.scroll_sound.set_volume(settings['volume'] / 10)
