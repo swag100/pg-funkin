@@ -27,6 +27,8 @@ class Character:
         #Sort character's metadata into dictionaries.
         #This includes an offset dictionary, and an animation dictionary
         metadata_animations = self.metadata['animations']
+
+        print(character)
         spritesheet = Spritesheet('assets/images/'+self.metadata['assetPath']+'.png')
 
         self.offsets_dict = {}

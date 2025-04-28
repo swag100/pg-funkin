@@ -7,6 +7,10 @@ class BarIcon:
         self.health_bar = play_state.health_bar
         self.player = player
 
+        #hardcoded cause im lazy
+        if character.endswith('-car'):
+            character = character.removesuffix('-car')
+
         image_path = os.path.join('assets', 'images', 'ui', 'icons', f'icon-{character}.png')
         self.images = self.seperate_images(image_path, size, player)
 
