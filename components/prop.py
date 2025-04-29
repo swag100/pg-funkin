@@ -1,4 +1,5 @@
 import pygame
+import constants
 
 from components.spritesheet import Spritesheet
 
@@ -6,6 +7,9 @@ class Prop:
     def __init__(self, position, scroll = (1, 1)):
         self.position = position
         self.scroll_factor = scroll
+        
+    def on_beat_hit(self, cur_beat):
+        pass
 
     def tick(self, camera_position): #Update position based on scroll factor
         self.scrolled_position = (
@@ -43,6 +47,8 @@ class ImageProp(Prop):
 
 class AnimatedProp(Prop):
     def __init__(self, prop_data, path_prefix = ''):
+        self.prop_data = prop_data
+
         position = [0, 0]
         if 'position' in prop_data:
             position = prop_data['position']
@@ -64,10 +70,43 @@ class AnimatedProp(Prop):
         spritesheet.preload_animations()
         self.animations = spritesheet.animations
 
-        #print(path, prop_data['animations'][0])
+        start_animation = prop_data['animations'][0]['prefix']
+        if 'startingAnimation' in prop_data:
+            start_animation = prop_data['startingAnimation']
 
-        self.animation = self.animations[prop_data['animations'][0]['prefix']]
-        self.animation.play()
+        self.dance_every = 0
+        if 'danceEvery' in prop_data:
+            self.dance_every = prop_data['danceEvery']
+        
+        """
+        if 'name' in prop_data:
+            print(prop_data['name'], start_animation)
+
+            print(prop_data['animations'])
+            print(self.animations)
+        """
+            
+        self.animation = self.animations[start_animation]
+
+        anim_names = list(self.animations.keys()) #easier to read
+
+        #this code is disgusting. I might clean it up later. But it works!
+        try:
+            self.animation.play(loop=prop_data['animations'][anim_names.index(start_animation)]['looped'])
+        except:
+            self.animation.play()
+
+    
+    def on_beat_hit(self, cur_beat):
+        if self.dance_every > 0:
+            if cur_beat % 2 == 0: #TODO: make proportional to self.dance_every
+                if 'idle' in self.animations:
+                    self.play_animation('idle')
+                elif 'danceLeft' in self.animations:
+                    self.play_animation('danceLeft')
+            else:
+                if 'danceRight' in self.animations:
+                    self.play_animation('danceRight')
 
     def tick(self, camera_position = [0, 0]): #Update position based on scroll factor
         super().tick(camera_position)

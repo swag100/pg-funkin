@@ -57,17 +57,24 @@ class PlayState(BaseState):
 
         #TODO: Only create characters if A: There was NO previous characters or B: If the previous character is != to self.song.characters['whichever one']
 
-        #create characters; ONLY if they exist in the chars list!
         self.characters = {}
-        if 'girlfriend' in self.song.characters:
-            self.characters['girlfriend'] = Character(self, self.song.characters['girlfriend'], self.stage.gf_position, 'girlfriend')
-        if 'opponent' in self.song.characters:
-            pos = self.stage.opponent_position
-            if self.song.characters['opponent'] == 'gf':
-                pos = self.stage.gf_position
-            self.characters['opponent'] = Character(self, self.song.characters['opponent'], pos, 'opponent')
-        if 'player' in self.song.characters:
-            self.characters['player'] = Character(self, self.song.characters['player'], self.stage.player_position, 'player')
+
+        characters_to_make = ['girlfriend', 'opponent', 'player']
+        character_positions = {
+            'girlfriend': self.stage.gf_position,
+            'opponent': self.stage.opponent_position,
+            'player': self.stage.player_position
+        }
+
+        for char in characters_to_make:
+            #create characters; ONLY if they exist in the chars list!
+            if char in self.song.characters:
+                pos = character_positions[char]
+                if self.song.characters[char] == 'gf':
+                    pos = character_positions['girlfriend']
+            
+                self.characters[char] = Character(self, self.song.characters[char], pos, char)
+
         
         #Make player start with their idle, so you don't see a death sprite when restarting a song.
         self.characters['player'].play_animation('idle')
@@ -180,6 +187,7 @@ class PlayState(BaseState):
                         self.persistent_data['old health'] = self.health_lerp
                         self.persistent_data['previous state'] = 'PlayState'
                         self.next_state = 'PlayState'
+
                         self.done = True
                     if selection == 'exit to menu':
                         self.persistent_data.pop('level progress', None)
@@ -271,6 +279,9 @@ class PlayState(BaseState):
             
             if event_type == constants.BEAT_HIT: #BEAT HIT
                 cur_beat = int(event_parameters[0]) #easier to read
+
+                #let stage handle cool prop bumps
+                self.stage.on_beat_hit(cur_beat)
 
                 if cur_beat == 0:
                     self.song.play_audio()

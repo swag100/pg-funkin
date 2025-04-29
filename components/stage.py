@@ -42,6 +42,10 @@ class Stage:
 
         return stage_data
     
+    def on_beat_hit(self, cur_beat):
+        for prop in self.props: 
+            prop.on_beat_hit(cur_beat)
+    
     def tick(self, camera_position):
         for prop in self.props: prop.tick(camera_position)
     

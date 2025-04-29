@@ -16,36 +16,36 @@
 	<SubTexture name="hench arm spin 20005" x="741" y="4" width="121" height="131" frameX="-7" frameY="0" frameWidth="134" frameHeight="131" />
 	<SubTexture name="hench arm spin 20006" x="866" y="4" width="131" height="120" frameX="-3" frameY="-5" frameWidth="134" frameHeight="131" />
 	<SubTexture name="hench arm spin 20007" x="866" y="4" width="131" height="120" frameX="-3" frameY="-5" frameWidth="134" frameHeight="131" />
-	<SubTexture name="hench dancing0000" x="1001" y="4" width="394" height="394" frameX="0" frameY="-15" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0001" x="1001" y="4" width="394" height="394" frameX="0" frameY="-15" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0002" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0003" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0004" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0005" x="4" y="402" width="395" height="390" frameX="0" frameY="-19" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0006" x="4" y="402" width="395" height="390" frameX="0" frameY="-19" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0007" x="403" y="402" width="389" height="385" frameX="-6" frameY="-24" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0008" x="403" y="402" width="389" height="385" frameX="-6" frameY="-24" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0009" x="796" y="402" width="249" height="358" frameX="-123" frameY="-52" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0010" x="796" y="402" width="249" height="358" frameX="-123" frameY="-52" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0011" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0012" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0013" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0014" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0015" x="1304" y="402" width="404" height="410" frameX="-113" frameY="0" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0016" x="1304" y="402" width="404" height="410" frameX="-113" frameY="0" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0017" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0018" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0019" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0020" x="402" y="816" width="395" height="404" frameX="-119" frameY="-5" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0021" x="402" y="816" width="395" height="404" frameX="-119" frameY="-5" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0022" x="801" y="816" width="395" height="402" frameX="-119" frameY="-7" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0023" x="801" y="816" width="395" height="402" frameX="-119" frameY="-7" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0024" x="1200" y="816" width="254" height="361" frameX="-141" frameY="-49" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0025" x="1200" y="816" width="254" height="361" frameX="-141" frameY="-49" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0026" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0027" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0028" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
-	<SubTexture name="hench dancing0029" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0000" x="1001" y="4" width="394" height="394" frameX="0" frameY="-15" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0001" x="1001" y="4" width="394" height="394" frameX="0" frameY="-15" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0002" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0003" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0004" x="1399" y="4" width="394" height="391" frameX="0" frameY="-18" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0005" x="4" y="402" width="395" height="390" frameX="0" frameY="-19" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0006" x="4" y="402" width="395" height="390" frameX="0" frameY="-19" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0007" x="403" y="402" width="389" height="385" frameX="-6" frameY="-24" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0008" x="403" y="402" width="389" height="385" frameX="-6" frameY="-24" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0009" x="796" y="402" width="249" height="358" frameX="-123" frameY="-52" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0010" x="796" y="402" width="249" height="358" frameX="-123" frameY="-52" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0011" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0012" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0013" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceLeft0014" x="1049" y="402" width="251" height="362" frameX="-121" frameY="-48" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0000" x="1304" y="402" width="404" height="410" frameX="-113" frameY="0" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0001" x="1304" y="402" width="404" height="410" frameX="-113" frameY="0" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0002" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0003" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0004" x="4" y="816" width="394" height="404" frameX="-120" frameY="-5" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0005" x="402" y="816" width="395" height="404" frameX="-119" frameY="-5" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0006" x="402" y="816" width="395" height="404" frameX="-119" frameY="-5" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0007" x="801" y="816" width="395" height="402" frameX="-119" frameY="-7" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0008" x="801" y="816" width="395" height="402" frameX="-119" frameY="-7" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0009" x="1200" y="816" width="254" height="361" frameX="-141" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0010" x="1200" y="816" width="254" height="361" frameX="-141" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0011" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0012" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0013" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
+	<SubTexture name="danceRight0014" x="1458" y="816" width="254" height="361" frameX="-139" frameY="-49" frameWidth="517" frameHeight="410" />
 	<SubTexture name="hench head spin 10000" x="1716" y="816" width="160" height="214" frameX="-38" frameY="0" frameWidth="238" frameHeight="219" />
 	<SubTexture name="hench head spin 10001" x="1716" y="816" width="160" height="214" frameX="-38" frameY="0" frameWidth="238" frameHeight="219" />
 	<SubTexture name="hench head spin 10002" x="4" y="1224" width="222" height="167" frameX="0" frameY="-1" frameWidth="238" frameHeight="219" />
