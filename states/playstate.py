@@ -95,10 +95,7 @@ class PlayState(BaseState):
 
         #Do not tween cam or healthbar if we weren't previously in PlayState!!
         if self.previous_state != 'PlayState':
-            self.camera_position = [
-                200 - constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom) * 2.5 + 1), 
-                -constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom) * 2.5 + 1)
-            ] #self.stage.gf_cam_off
+            self.camera_position = [200, 0] #self.stage.gf_cam_off
             self.camera_position_lerp = self.camera_position
         else:
             if 'old health' in self.persistent_data:
@@ -423,8 +420,9 @@ class PlayState(BaseState):
         #print(self.zoomed_window_size, self.cam_zoom, ((1 - self.cam_zoom) * 2 + 1))
 
         #update cam lerp
-        self.camera_position_lerp[0] += ((self.camera_position[0] - self.zoomed_window_size[0] / 2) - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
-        self.camera_position_lerp[1] += ((self.camera_position[1] - self.zoomed_window_size[1] / 2) - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+        if self.song.conductor.cur_beat >= 0:
+            self.camera_position_lerp[0] += ((self.camera_position[0] - self.zoomed_window_size[0] / 2) - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+            self.camera_position_lerp[1] += ((self.camera_position[1] - self.zoomed_window_size[1] / 2) - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
 
         #update health lerp
         self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
