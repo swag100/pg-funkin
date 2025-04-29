@@ -66,8 +66,12 @@ class Sustain(object):
         sheet_w = spritesheet.get_rect().w
         sheet_h = spritesheet.get_rect().h
 
+        graphic_h = (self.length / constants.SCROLL_SPEED_DIVISOR) - (sheet_h / 2)
+        if graphic_h < 0: 
+            graphic_h = 0
+
         sus_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect(sheet_w / 4 * self.id, 0, sheet_w / 8, 1))
-        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * constants.STRUMLINE_SCALE_MULT, (self.length / constants.SCROLL_SPEED_DIVISOR) - (sheet_h / 2))) #64: height of note end sprite
+        sus_sprite = pygame.transform.smoothscale(sus_sprite, (sheet_w / 8 * constants.STRUMLINE_SCALE_MULT, graphic_h)) #64: height of note end sprite
         end_sprite = pygame.Surface.subsurface(spritesheet, pygame.Rect((sheet_w / 4) * self.id + (sheet_w / 8), 0, sheet_w / 8, sheet_h - 1))
         end_sprite = pygame.transform.smoothscale_by(end_sprite, constants.STRUMLINE_SCALE_MULT)
 
