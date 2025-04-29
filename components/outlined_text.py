@@ -32,6 +32,7 @@ class OutlinedText(object):
         self.font = font
         self.text_surface = self.font.render(self.text, True, self.foreground)
         self.text_outline_surface = self.font.render(self.text, True, self.background)
+        self.alpha = 1
         # There is no good way to get an outline with pygame, so we draw
         # the text at 8 points around the main text to simulate an outline.
         self.directions = [
@@ -94,6 +95,7 @@ class OutlinedText(object):
     def draw(self):
         # blit outline images to screen
         for direction in self.directions:
+            self.text_outline_surface.set_alpha(self.alpha * 255)
             self.screen.blit(
                 self.text_outline_surface,
                 (
@@ -102,4 +104,5 @@ class OutlinedText(object):
                 )
             )
         # blit foreground image to the screen
+        self.text_surface.set_alpha(self.alpha * 255)
         self.screen.blit(self.text_surface, self.position)

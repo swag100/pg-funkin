@@ -1,3 +1,4 @@
+import math
 import pygame
 import constants
 import random
@@ -80,8 +81,10 @@ class PlayState(BaseState):
         self.characters['player'].play_animation('idle')
 
         #cam zoom amount: taken from stage data!
-        self.cam_zoom = self.stage.cam_zoom
-        self.hud_zoom = 1
+        self.cam_zoom = self.stage.cam_zoom #self.stage.cam_zoom #we dynamically create a surface using cam_zoom from stage data
+        self.cam_zoom_lerp = self.cam_zoom
+        self.cam_surface_zoom = 1 #this is for the SURFACE, for cam bump
+        self.hud_surface_zoom = 1
 
         #game variables
         self.combo = 0
@@ -92,7 +95,10 @@ class PlayState(BaseState):
 
         #Do not tween cam or healthbar if we weren't previously in PlayState!!
         if self.previous_state != 'PlayState':
-            self.camera_position = [200, 0] #self.stage.gf_cam_off
+            self.camera_position = [
+                200 - constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom) * 2.5 + 1), 
+                -constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom) * 2.5 + 1)
+            ] #self.stage.gf_cam_off
             self.camera_position_lerp = self.camera_position
         else:
             if 'old health' in self.persistent_data:
@@ -127,7 +133,7 @@ class PlayState(BaseState):
         self.song.stop_audio()
 
         self.persistent_data['cam position'] = self.camera_position_lerp
-        self.persistent_data['cam zoom'] = self.cam_zoom
+        self.persistent_data['cam zoom'] = self.stage.cam_zoom
         self.persistent_data['player'] = self.characters['player'] #much easier to just pass the bf object.
 
         self.next_state = 'GameOverState'
@@ -308,10 +314,10 @@ class PlayState(BaseState):
 
                 #Cam zoom on beat hit
                 if cur_beat % 4 == 0:
-                    self.hud_zoom += 0.025
+                    self.hud_surface_zoom += 0.025
 
                     if settings['preferences']['camera zooming on beat']:
-                        self.cam_zoom += 0.015
+                        self.cam_surface_zoom += 0.015
 
                 for icon in self.health_bar_icons:
                     icon.bump()
@@ -342,6 +348,7 @@ class PlayState(BaseState):
 
                 if self.persistent_data['level progress'] >= len(self.song_list):
                     self.next_state = 'MainMenuState'
+                    pygame.mixer.music.stop()
 
                 self.done = True
             
@@ -371,9 +378,6 @@ class PlayState(BaseState):
                         self.stage.player_position[0] + (self.characters['player'].max_idle_size[0] / 2) + self.stage.player_cam_off[0],
                         self.stage.player_position[1] + (self.characters['player'].max_idle_size[1] / 2) + self.stage.player_cam_off[1]
                     ]
-
-                self.camera_position[0] -= constants.SCREEN_CENTER[0]
-                self.camera_position[1] -= constants.SCREEN_CENTER[1]
 
             #PLAY ANIMATION
             if chart_event['type'] == 'PlayAnimation':
@@ -409,9 +413,18 @@ class PlayState(BaseState):
         #This also ticks conductor
         self.song.tick(dt, self.player_voice_track_muted, self.opponent_voice_track_muted)
 
+        #this is the size for the camGame surface, but we compute it here so camera can tween to the center.
+        self.zoomed_window_size = (
+            constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom) * 2.5 + 1),
+            constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom) * 2.5 + 1)
+        )
+        if self.zoomed_window_size[0] <= constants.WINDOW_SIZE[0]:
+            self.zoomed_window_size = constants.WINDOW_SIZE
+        #print(self.zoomed_window_size, self.cam_zoom, ((1 - self.cam_zoom) * 2 + 1))
+
         #update cam lerp
-        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED)
-        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED)
+        self.camera_position_lerp[0] += ((self.camera_position[0] - self.zoomed_window_size[0] / 2) - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+        self.camera_position_lerp[1] += ((self.camera_position[1] - self.zoomed_window_size[1] / 2) - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
 
         #update health lerp
         self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
@@ -448,8 +461,8 @@ class PlayState(BaseState):
             if popup.alpha <= 0:
                 self.popups.remove(popup)
 
-        self.hud_zoom += (1 - self.hud_zoom) * dt * 7
-        self.cam_zoom += (self.stage.cam_zoom - self.cam_zoom) * dt * 7
+        self.hud_surface_zoom += (1 - self.hud_surface_zoom) * dt * 7
+        self.cam_surface_zoom += (1 - self.cam_surface_zoom) * dt * 7
 
         if settings['preferences']['debug freecam']:
             #TESTING CAMERA CODE:
@@ -458,6 +471,13 @@ class PlayState(BaseState):
             if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
             if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
             if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
+            if keys[pygame.K_u]: self.cam_zoom -= dt
+            if keys[pygame.K_o]: self.cam_zoom += dt
+
+        if self.cam_zoom < constants.MIN_CAMERA_ZOOM: self.cam_zoom = constants.MIN_CAMERA_ZOOM
+        if self.cam_zoom > constants.MAX_CAMERA_ZOOM: self.cam_zoom = constants.MAX_CAMERA_ZOOM
+
+        self.cam_zoom_lerp += (self.cam_zoom - self.cam_zoom_lerp) * dt * 7
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
@@ -465,7 +485,7 @@ class PlayState(BaseState):
         #screen.fill((255, 255, 255))
 
         #Start out by resetting the surfaces completely.
-        cam_surface = pygame.Surface(constants.WINDOW_SIZE)
+        cam_surface = pygame.Surface(self.zoomed_window_size)
         hud_surface = pygame.Surface(constants.WINDOW_SIZE, pygame.SRCALPHA)
 
         #game
@@ -488,11 +508,16 @@ class PlayState(BaseState):
         #Draw the outline for the scoretext, then draw the scoretext itself.
         score_text = OutlinedText(self.score_text_string, (self.score_text_x, self.score_text_y), 1, 16, hud_surface, self.score_text_font)
         score_text.draw()
+
+        if settings['preferences']['botplay']:
+            botplay_text = OutlinedText('BOTPLAY', (500, 20), 6, 32, hud_surface, self.score_text_font)
+            botplay_text.alpha = (math.sin((self.song.conductor.song_position) * 3) + 1) / 2
+            botplay_text.draw()
         #hud_surface.blit(text, self.score_text_rect)
 
         #cameras - This code is really ugly, i know.
-        scaled_cam_surface = pygame.transform.smoothscale_by(cam_surface, self.cam_zoom)
-        scaled_hud_surface = pygame.transform.smoothscale_by(hud_surface, self.hud_zoom)
+        scaled_cam_surface = pygame.transform.smoothscale_by(cam_surface, self.cam_zoom_lerp+(self.cam_surface_zoom - 1))
+        scaled_hud_surface = pygame.transform.smoothscale_by(hud_surface, self.hud_surface_zoom)
         screen.blit(scaled_cam_surface, scaled_cam_surface.get_rect(center = constants.SCREEN_CENTER))
         screen.blit(scaled_hud_surface, scaled_hud_surface.get_rect(center = constants.SCREEN_CENTER))
 

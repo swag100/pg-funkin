@@ -63,6 +63,12 @@ STRUMLINE_SCALE_MULT = 0.7 #What to multiply anything related to strums by
 
 SCROLL_SPEED_DIVISOR = 2
 
+#cam stuff
+MAX_CAMERA_ZOOM = 3
+MIN_CAMERA_ZOOM = 0.4
+
+DEFAULT_CAMERA_SPEED = 1.5 #I don't know if I want to put this in settings.
+
 #event TYPES. Will be used BEFORE the slash (/) when posting an event.
 BEAT_HIT = 'BEAT_HIT'
 
@@ -77,5 +83,3 @@ SONG_ENDED = 'SONG_ENDED' #Called when the conductor's song_position is greater 
 
 SETTINGS_DEFAULT_RATING_POSITION = [500, 200]
 SETTINGS_DEFAULT_COMBO_POSITION = [500, 280]
-
-SETTINGS_DEFAULT_CAMERA_SPEED = 1.5 #I don't know if I want to put this in settings.

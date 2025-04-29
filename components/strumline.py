@@ -1,6 +1,6 @@
 import pygame
 import constants
-import settings
+from settings import settings
 
 from threading import Thread
 from components.spritesheet import Spritesheet
@@ -85,7 +85,7 @@ class Strumline(object):
         self.state = None #Strumline state, either PRESSED, HOLDING, or RELEASED, or None.
 
         self.bot_strum = False
-        if self.id > 3 and not settings.settings['preferences']['two player']:
+        if self.id > 3 and not settings['preferences']['two player'] or settings['preferences']['botplay']:
             self.bot_strum = True
 
         #Positioning
@@ -98,7 +98,7 @@ class Strumline(object):
         ]
 
         #downscroll
-        if settings.settings['preferences']['downscroll']:
+        if settings['preferences']['downscroll']:
             self.pos[1] += constants.DOWNSCROLL_STRUMLINE_Y_OFFSET
 
         #Create strum note, load all notes for the strum from chart
@@ -150,12 +150,12 @@ class Strumline(object):
         if self.bot_strum: return
                 
         if event.type == pygame.KEYDOWN:
-            condition = event.key in settings.settings['keybinds'][self.name]
-            if settings.settings['preferences']['two player']: 
+            condition = event.key in settings['keybinds'][self.name]
+            if settings['preferences']['two player']: 
                 if self.id <= 3: 
-                    condition = event.key == settings.settings['keybinds'][self.name][1]
+                    condition = event.key == settings['keybinds'][self.name][1]
                 else:
-                    condition = event.key == settings.settings['keybinds'][self.name][0]
+                    condition = event.key == settings['keybinds'][self.name][0]
 
             if condition:
                 self.strum_note.play_animation('press')
@@ -197,7 +197,7 @@ class Strumline(object):
                     #pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = 'miss'))
 
         if event.type == pygame.KEYUP:
-            if event.key in settings.settings['keybinds'][self.name]:
+            if event.key in settings['keybinds'][self.name]:
                 if self.state != None:
                     self.state = RELEASED
 
@@ -255,7 +255,7 @@ class Strumline(object):
 
             if self.bot_strum:
                 if note.time <= self.conductor.song_position:
-                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_BOT_PRESS}//{self.id % 4}')) #Post rating event 
+                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_BOT_PRESS}//{self.id}')) #Post rating event 
                     self.state = PRESSED
                     self.notes.remove(note)
                     self.strum_note.play_animation('confirm')

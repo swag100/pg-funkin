@@ -1,5 +1,4 @@
 import pygame
-import constants
 
 from components.spritesheet import Spritesheet
 

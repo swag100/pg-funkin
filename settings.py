@@ -73,6 +73,7 @@ def get_default_settings(): # If we cannot find a save file, use this to get def
             'controller support': True,
             'hide opponent strums': False,
             'debug freecam': False,
+            'botplay': False,
             'offset': 0,
         },
             
