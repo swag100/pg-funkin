@@ -114,7 +114,7 @@ class PlayState(BaseState):
         ]
 
         #Score text
-        self.score_text_font = pygame.font.Font('assets/fonts/vcr.ttf', 16)
+        self.score_text_font = 'vcr.ttf'
         self.score_text_x = self.health_bar.lower_bar.x + self.health_bar.lower_bar.w - 190
         self.score_text_y = self.health_bar.lower_bar.y + 30
 
@@ -508,8 +508,15 @@ class PlayState(BaseState):
         score_text.draw()
 
         if settings['preferences']['botplay']:
-            botplay_text = OutlinedText('BOTPLAY', (500, 20), 6, 32, hud_surface, self.score_text_font)
-            botplay_text.alpha = (math.sin((self.song.conductor.song_position) * 3) + 1) / 2
+            botplay_text = OutlinedText('BOTPLAY', (500, 20), 2, 32, hud_surface, self.score_text_font)
+            botplay_text.change_alpha((math.sin((self.song.conductor.song_position) * 3) + 1) / 2)
+
+            #stupid
+            botplay_text.change_position(
+                50 + ((constants.WINDOW_SIZE[0] - botplay_text.final_surface.get_width() -100) * ((math.cos((pygame.time.get_ticks() / 1000) * 1) + 1) / 2)),
+                50 + ((constants.WINDOW_SIZE[1] - botplay_text.final_surface.get_height()- 100) * ((math.sin((pygame.time.get_ticks() / 1000) * 1) + 1) / 2))
+            )
+
             botplay_text.draw()
         #hud_surface.blit(text, self.score_text_rect)
 

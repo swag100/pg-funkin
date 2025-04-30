@@ -450,6 +450,11 @@ class Animation(object):
         for i in range(len(self._images)):
             self._transformedImages[i] = pygame.transform.scale(self.getFrame(i), width_height)
 
+    def grayscale(self):
+        self._makeTransformedSurfacesIfNeeded()
+        for i in range(len(self._images)):
+            self._transformedImages[i] = pygame.transform.grayscale(self.getFrame(i))
+        
 
     def rotate(self, angle):
         # Rotates the image.

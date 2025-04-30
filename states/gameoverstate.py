@@ -67,8 +67,8 @@ class GameOverState(BaseState):
             self.done = True
 
         #update cam lerp: I purposefully made this slower.
-        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED / 2)
-        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.SETTINGS_DEFAULT_CAMERA_SPEED / 2)
+        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED / 2)
+        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED / 2)
 
         if self.player != None:
             self.player.tick(dt, self.camera_position_lerp)

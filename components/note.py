@@ -48,6 +48,10 @@ class Note(object):
         self.y -= self.y_change * dt
     
     def draw(self, screen):
+        if not self.can_be_hit:
+            self.animation.grayscale()
+            self.animation.set_alpha(128)
+        
         self.animation.blit(screen, (self.x, self.y))
 
 class Sustain(object):

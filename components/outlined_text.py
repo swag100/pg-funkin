@@ -29,7 +29,7 @@ class OutlinedText(object):
         self.background = background_color
         self.outline_width = outline_width
         self.screen = screen
-        self.font = font
+        self.font = pygame.font.Font(f'assets/fonts/{font}', font_size) #font
         self.text_surface = self.font.render(self.text, True, self.foreground)
         self.text_outline_surface = self.font.render(self.text, True, self.background)
         self.alpha = 1
@@ -46,6 +46,9 @@ class OutlinedText(object):
             (-self.outline_width, -self.outline_width)
         ]
 
+
+        self._update_text()
+
     def get_width(self):
         """
         Get width of text including border.
@@ -53,13 +56,22 @@ class OutlinedText(object):
         """
         return self.text_surface.get_width() + self.outline_width * 2
 
-    def change_position(self, position):
+    def change_position(self, x, y):
         """
         change position text is blitted to.
         :param position: tuple in the form of (x, y)
         :return:
         """
-        self.position = position
+        self.position = (x,y)
+
+    def change_alpha(self, newalpha):
+        """
+        set alpha
+        :param newalpha: value from 0 to 1
+        :return:
+        """
+        self.alpha=newalpha
+        self.final_surface.set_alpha(newalpha * 255)
 
     def change_text(self, text):
         """
@@ -92,17 +104,25 @@ class OutlinedText(object):
         self.text_surface = self.font.render(self.text, True, self.foreground)
         self.text_outline_surface = self.font.render(self.text, True, self.background)
 
-    def draw(self):
+        self.final_surface = pygame.Surface(
+            (
+                self.text_surface.get_width() + (self.outline_width * 2),
+                self.text_surface.get_height() + (self.outline_width * 2)
+            ), 
+            pygame.SRCALPHA
+        )
+
         # blit outline images to screen
         for direction in self.directions:
-            self.text_outline_surface.set_alpha(self.alpha * 255)
-            self.screen.blit(
+            self.final_surface.blit(
                 self.text_outline_surface,
                 (
-                    self.position[0] - direction[0],
-                    self.position[1] - direction[1]
+                    direction[0] + self.outline_width,
+                    direction[1] + self.outline_width
                 )
             )
         # blit foreground image to the screen
-        self.text_surface.set_alpha(self.alpha * 255)
-        self.screen.blit(self.text_surface, self.position)
+        self.final_surface.blit(self.text_surface, (self.outline_width,)*2)
+
+    def draw(self):
+        self.screen.blit(self.final_surface, self.position)

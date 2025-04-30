@@ -140,6 +140,12 @@ class Strumline(object):
             if self.note_in_hit_window(note, hit_window):
                 return rating
 
+    def make_splash(self, rating):
+        if rating in ['perfect', 'killer', 'sick']:
+            def do_splash(strumline):
+                strumline.splashes.append(NoteSplash(self))
+
+            Thread(target = do_splash, args = (self,)).start()
 
     def handle_event(self, event):
         if self.state == PRESSED:
@@ -166,28 +172,24 @@ class Strumline(object):
                         self.state = PRESSED
                         
                         rating = self.get_rating(note)
-                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_GOOD_HIT}/{rating}/{self.id}')) #Post rating event            
-
-                        if rating in ['perfect', 'killer', 'sick']:
-                            def do_splash(strumline):
-                                strumline.splashes.append(NoteSplash(self))
-
-                            Thread(target = do_splash, args = (self,)).start()
+                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_GOOD_HIT}/{rating}/{self.id}')) #Post rating event
                         
-                        """
+                        self.make_splash(rating)
+
+                        
                         #bad note
                         if rating in ['shit', 'bad']:
                             #note.animation.getCurrentFrame().fill((255, 255, 255, 128), special_flags = pygame.BLEND_RGBA_MULT) 
-                            note.animation.getCurrentFrame().fill((128, 128, 128), special_flags = pygame.BLEND_RGB_ADD) 
+                            #note.animation.getCurrentFrame().fill((128, 128, 128), special_flags = pygame.BLEND_RGB_ADD) 
                             note.can_be_hit = False
                         else:
                             self.notes.remove(note)
                         #TODO: work on bad notes. 
                         # If player hits incorrect note at the right time, that note will turn into bad note, and note miss event will fire.
                         # Make them look pretty.
-                        """
                         
-                        self.notes.remove(note)
+                        
+                        #self.notes.remove(note)
 
                         self.strum_note.play_animation('confirm') #Override animation
                 
@@ -255,13 +257,18 @@ class Strumline(object):
 
             if self.bot_strum:
                 if note.time <= self.conductor.song_position:
-                    pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_BOT_PRESS}//{self.id}')) #Post rating event 
+                    if self.id <= 3:
+                        rating='perfect'
+                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_GOOD_HIT}/{rating}/{self.id}')) #Post rating event
+                        self.make_splash(rating)
+                    else:
+                        pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_BOT_PRESS}//{self.id}')) #Post rating event 
                     self.state = PRESSED
                     self.notes.remove(note)
                     self.strum_note.play_animation('confirm')
 
             #Miss all notes that are late by 2 steps or over
-            if note.time + (self.conductor.crochet / 2) <= self.conductor.song_position: 
+            if note.time + (self.conductor.crochet / 2) <= self.conductor.song_position and note.can_be_hit: 
                 pygame.event.post(pygame.event.Event(pygame.USEREVENT, id = f'{constants.NOTE_MISS}/miss/{self.id}')) #Post rating event
                 self.notes.remove(note)
         

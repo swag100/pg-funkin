@@ -78,7 +78,7 @@
         "controller support": true,
         "hide opponent strums": false,
         "debug freecam": false,
-        "botplay": true,
+        "botplay": false,
         "offset": 0
     },
     "volume": 4

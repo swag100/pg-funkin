@@ -63,7 +63,7 @@ class HealthBar:
     def __init__(self, play_state, pos):
         self.play_state = play_state
 
-        image_path = os.path.join('assets', 'images', 'ui', 'healthbar.png')
+        image_path = os.path.join('assets', 'images', 'ui', 'healthBar.png')
 
         self.image = pygame.image.load(image_path)
 
