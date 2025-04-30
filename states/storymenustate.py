@@ -185,7 +185,7 @@ class StoryMenuState(MusicBeatState):
         self.persistent_data['difficulty'] = difficulty #Wow, this is variable!
         
         self.next_state = 'PlayState' #Load playstate, make sure to give it the persistant data of the week.
-        self.persistent_data['song position'] = self.conductor.song_position
+        
         self.done = True
 
     def set_volume_and_play(self, sound_path):

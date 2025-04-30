@@ -38,7 +38,10 @@ class Character:
 
             self.offsets_dict[name] = item['offsets']
 
-            anim_frames = spritesheet.load_animation(item['prefix'])
+            if 'assetPath' in item:
+                spritesheet = Spritesheet('assets/images/'+item['assetPath']+'.png')
+
+            anim_frames = spritesheet.load_anim_frames(item['prefix'])
 
             animation = spritesheet.frames_to_animation(anim_frames)
             animation.flip(self.flip_x, False)

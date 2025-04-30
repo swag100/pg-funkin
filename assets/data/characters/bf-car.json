@@ -53,6 +53,37 @@
       "name": "singRIGHTmiss",
       "prefix": "BF NOTE RIGHT MISS",
       "offsets": [-30, 21]
+    },
+    {
+      "name": "hey",
+      "prefix": "BF HEY!!",
+      "offsets": [7, 4],
+      "assetPath": "characters/BOYFRIEND"
+    },
+    {
+      "name": "firstDeath",
+      "prefix": "BF dies",
+      "offsets": [-37, 11],
+      "assetPath": "characters/BOYFRIEND"
+    },
+    {
+      "name": "deathLoop",
+      "prefix": "BF Dead Loop",
+      "looped": true,
+      "offsets": [-37, 5],
+      "assetPath": "characters/BOYFRIEND"
+    },
+    {
+      "name": "deathConfirm",
+      "prefix": "BF Dead confirm",
+      "offsets": [-37, 69],
+      "assetPath": "characters/BOYFRIEND"
+    },
+    {
+      "name": "scared",
+      "prefix": "BF idle shaking",
+      "offsets": [-4, 0],
+      "assetPath": "characters/BOYFRIEND"
     }
   ]
 }

@@ -21,7 +21,7 @@ class Letter:
         if self.alphabet.font == 'bold':
             self.character = self.character.upper()
 
-        self.animation = self.sheet.frames_to_animation(self.sheet.load_animation(f'{self.character} {self.alphabet.font}'))
+        self.animation = self.sheet.frames_to_animation(self.sheet.load_anim_frames(f'{self.character} {self.alphabet.font}'))
         self.animation.play(True)
 
         self.anim_size = self.animation.getMaxSize()
@@ -58,9 +58,13 @@ class Alphabet:
         self.width = 0
         for i in range(len(self.text)):
             if self.text[i] != ' ':
-                letter = Letter(self, i, self.width)
-                self.width += (letter.rect.w + spacing) #add width of letter and 4 extra pixels for spacing.
-                self.character_list.append(letter)
+                try:
+                    letter = Letter(self, i, self.width)
+                    self.width += (letter.rect.w + spacing) #add width of letter and 4 extra pixels for spacing.
+                    self.character_list.append(letter)
+                except:
+                    self.width += 40 * scale
+
             else:
                 self.width += 40 * scale
         

@@ -39,7 +39,7 @@ class Note(object):
         #animation
         spritesheet = Spritesheet('assets/images/strumline/notes.png', constants.STRUMLINE_SCALE_MULT)
 
-        anim_frames = spritesheet.load_animation('note' + self.name.title())
+        anim_frames = spritesheet.load_anim_frames('note' + self.name.title())
         self.animation = spritesheet.frames_to_animation(anim_frames)
         
         self.animation.play()

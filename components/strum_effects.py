@@ -14,7 +14,7 @@ class NoteSplash:
         if rand_anim == 1: peak[1] = ' blue'
 
         spritesheet = Spritesheet('assets/images/strumline/noteSplashes.png', 0.9)
-        anim_frames = spritesheet.load_animation(f'note impact {rand_anim} {peak[self.direction]}')
+        anim_frames = spritesheet.load_anim_frames(f'note impact {rand_anim} {peak[self.direction]}')
 
         self.animation = spritesheet.frames_to_animation(anim_frames)
         self.animation.set_alpha(255 * 0.6)
@@ -69,7 +69,7 @@ class ReleaseSplash:
 
         spritesheet = Spritesheet(f'assets/images/strumline/holdCover{self.color.title()}.png')
 
-        anim_frames = spritesheet.load_animation(f'holdCoverEnd{self.color.title()}')
+        anim_frames = spritesheet.load_anim_frames(f'holdCoverEnd{self.color.title()}')
         self.animation = spritesheet.frames_to_animation(anim_frames)
 
         self.rect = self.animation.getCurrentFrame().get_rect()

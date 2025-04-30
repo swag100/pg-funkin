@@ -31,6 +31,12 @@ class PlayState(BaseState):
         if 'level progress' in persistent_data:
             self.level_progress = persistent_data['level progress'] #Current id for the song in the week you're in
 
+        self.is_freeplay = False
+        if self.previous_state != 'PlayState' and self.previous_state == 'FreeplayMenuState':
+            self.is_freeplay = True
+
+        print(self.is_freeplay, self.previous_state)
+
         #contains chart reader object
         #will automatically start countdown
         self.song = Song(self.song_list[self.level_progress], self.difficulty)
@@ -344,7 +350,7 @@ class PlayState(BaseState):
                 self.next_state = 'PlayState'
 
                 if self.persistent_data['level progress'] >= len(self.song_list):
-                    self.next_state = 'MainMenuState'
+                    self.next_state = 'FreeplayMenuState' if self.is_freeplay else 'StoryMenuState'
                     pygame.mixer.music.stop()
 
                 self.done = True

@@ -4,9 +4,10 @@ from game import Game
 
 from states.mainmenustate import MainMenuState
 from states.storymenustate import StoryMenuState
+from states.freeplaystate import FreeplayMenuState
 from states.playstate import PlayState
 from states.gameoverstate import GameOverState
-from states.optionstate_main import OptionsMenuState
+from states.optionstate import OptionsMenuState
 from states.optionstate_preferences import OptionsPreferenceState
 from states.optionstate_keybinds import OptionsKeyBindState
 
@@ -23,6 +24,7 @@ screen = pygame.display.set_mode(constants.WINDOW_SIZE, pygame.DOUBLEBUF)
 states = {
     'MainMenuState': MainMenuState(),
     'StoryMenuState': StoryMenuState(),
+    'FreeplayMenuState': FreeplayMenuState(),
     'PlayState': PlayState(),
     'GameOverState': GameOverState(),
 

@@ -85,15 +85,18 @@ class AnimatedProp(Prop):
             print(self.animations)
         """
             
-        self.animation = self.animations[start_animation]
-
-        anim_names = list(self.animations.keys()) #easier to read
-
-        #this code is disgusting. I might clean it up later. But it works!
         try:
-            self.animation.play(loop=prop_data['animations'][anim_names.index(start_animation)]['looped'])
+            self.animation = self.animations[start_animation]
+
+            #this code is disgusting. I might clean it up later. But it works!
+            try:
+                anim_names = list(self.animations.keys()) #easier to read
+                self.animation.play(loop=prop_data['animations'][anim_names.index(start_animation)]['looped'])
+            except:
+                self.animation.play()
         except:
-            self.animation.play()
+            self.animation = self.animations[list(self.animations)[0]]
+            print(f'what is {start_animation}\nare you sure you dont mena {self.animations.keys()}')
 
     
     def on_beat_hit(self, cur_beat):

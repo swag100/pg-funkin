@@ -19,7 +19,7 @@ class Spritesheet:
 
         self.subtexture_list = dict(xmltodict.parse(xmlstr))['TextureAtlas']['SubTexture']
         
-    def load_animation(self, anim_name):
+    def load_anim_frames(self, anim_name):
         subtextures = [i for i in self.subtexture_list if anim_name == i['@name'][:-4]]
 
         frame_data = []
@@ -67,14 +67,15 @@ class Spritesheet:
     
     def frames_to_animation(self, anim_frames):
         return Animation(anim_frames)
+    
+    def get_animation_names(self):
+        return [str(self.subtexture_list[i]['@name'][:-4]) for i in range(len(self.subtexture_list))]
 
     def preload_animations(self):
         anim_dict = {}
 
-        for i in range(len(self.subtexture_list)):
-            texture_name = str(self.subtexture_list[i]['@name'][:-4])
-
+        for texture_name in self.get_animation_names():
             if texture_name not in anim_dict:
-                anim_dict[texture_name] = self.frames_to_animation(self.load_animation(texture_name))
+                anim_dict[texture_name] = self.frames_to_animation(self.load_anim_frames(texture_name))
 
         self.animations = anim_dict
