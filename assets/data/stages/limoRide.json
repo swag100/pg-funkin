@@ -5,7 +5,7 @@
     {
       "zIndex": 10,
       "danceEvery": 0,
-      "position": [-520, -50],
+      "position": [-1520, -650],
       "scale": [1, 1],
       "name": "limoSunset",
       "animType": "sparrow",
@@ -17,7 +17,7 @@
     {
       "zIndex": 20,
       "danceEvery": 0,
-      "position": [-200, 1080],
+      "position": [-480, 1130],
       "scale": [1, 1],
       "name": "bgLimo",
       "animType": "sparrow",
@@ -31,14 +31,13 @@
           "flipY": false,
           "frameRate": 24,
           "prefix": "background limo pink",
-          "name": "drive",
           "looped": true,
           "flipX": false
         }
       ]
     },
     {
-      "zIndex": 150,
+      "zIndex": 170,
       "danceEvery": 0,
       "position": [-120, 550],
       "scale": [1, 1],
@@ -75,7 +74,7 @@
     {
       "zIndex": 30,
       "danceEvery": 1.0,
-      "position": [500, 100],
+      "position": [300, 170],
       "scale": [1, 1],
       "name": "limoDancer1",
       "animType": "sparrow",
@@ -105,7 +104,7 @@
     {
       "zIndex": 30,
       "danceEvery": 1.0,
-      "position": [1100, 100],
+      "position": [1000, 170],
       "scale": [1, 1],
       "name": "limoDancer2",
       "animType": "sparrow",
@@ -135,7 +134,7 @@
     {
       "zIndex": 30,
       "danceEvery": 1.0,
-      "position": [1700, 100],
+      "position": [1700, 170],
       "scale": [1, 1],
       "name": "limoDancer3",
       "animType": "sparrow",
@@ -165,7 +164,7 @@
     {
       "zIndex": 30,
       "danceEvery": 1.0,
-      "position": [2300, 100],
+      "position": [2400, 170],
       "scale": [1, 1],
       "name": "limoDancer4",
       "animType": "sparrow",
@@ -195,7 +194,7 @@
     {
       "zIndex": 30,
       "danceEvery": 1.0,
-      "position": [2900, 100],
+      "position": [3200, 170],
       "scale": [1, 1],
       "name": "limoDancer5",
       "animType": "sparrow",
@@ -227,7 +226,7 @@
     "bf": {
       "zIndex": 300,
       "position": [1217.5, 592],
-      "cameraOffsets": [-300, -100]
+      "cameraOffsets": [100, 100]
     },
     "gf": {
       "zIndex": 100,
@@ -237,7 +236,7 @@
     "dad": {
       "zIndex": 200,
       "position": [329.5, 913],
-      "cameraOffsets": [150, 0]
+      "cameraOffsets": [300, 10]
     }
   },
   "name": "Limo Ride",

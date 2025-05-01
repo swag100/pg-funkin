@@ -474,10 +474,10 @@ class PlayState(BaseState):
         if settings['preferences']['debug freecam']:
             #TESTING CAMERA CODE:
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_j]: self.camera_position[0] -= 500 * dt
-            if keys[pygame.K_l]: self.camera_position[0] += 500 * dt
-            if keys[pygame.K_i]: self.camera_position[1] -= 500 * dt
-            if keys[pygame.K_k]: self.camera_position[1] += 500 * dt
+            if keys[pygame.K_j]: self.camera_position[0] -= 1000 * dt
+            if keys[pygame.K_l]: self.camera_position[0] += 1000 * dt
+            if keys[pygame.K_i]: self.camera_position[1] -= 1000 * dt
+            if keys[pygame.K_k]: self.camera_position[1] += 1000 * dt
             if keys[pygame.K_u]: self.cam_zoom -= dt
             if keys[pygame.K_o]: self.cam_zoom += dt
 

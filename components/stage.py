@@ -26,6 +26,11 @@ class Stage:
         self.props = []
         for prop in self.prop_data:
             #self.props.insert(prop['zIndex'], Prop())
+            
+            #TODO: merge characters INTO stage class
+            #   (basically make it so stage is IN CHARGE of drawing and updating characters, alongside props)
+            #   all camgame stuff can be in the stage class, + zINDEX will WORK!
+
             if 'animations' in prop and len(prop['animations']) > 0:
                 self.props.append(AnimatedProp(prop, 'stages/'))
             else:

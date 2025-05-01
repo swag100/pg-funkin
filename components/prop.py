@@ -12,10 +12,12 @@ class Prop:
         pass
 
     def tick(self, zoomed_window_size = [0, 0], camera_position = [0, 0]): #Update position based on scroll factor
-        self.scrolled_position = (
+        self.scrolled_position = [
             ((self.position[0] - camera_position[0]) * self.scroll_factor[0]) + (zoomed_window_size[0] / 2) - constants.SCREEN_CENTER[0],
-            ((self.position[1] - camera_position[1]) * self.scroll_factor[1]) + (zoomed_window_size[1] / 2) - constants.SCREEN_CENTER[0]
-        )
+            ((self.position[1] - camera_position[1]) * self.scroll_factor[1]) + (zoomed_window_size[1] / 2) - constants.SCREEN_CENTER[1]
+        ]
+        if zoomed_window_size == [0, 0]:
+            for i in range(2): self.scrolled_position[i] += constants.SCREEN_CENTER[i]
     
     def draw(self, screen):
         screen.blit(self.image, self.scrolled_position)
