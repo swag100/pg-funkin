@@ -121,11 +121,12 @@ class Character:
                 if is_opponent or is_player: 
                     self.play_animation(pose)
 
-    def tick(self, dt, camera_position):
+    def tick(self, state):
         self.pos = (
-            self.screen_pos[0] - self.offsets_dict[self.anim_prefix][0] * 0.9 - camera_position[0],
-            self.screen_pos[1] - self.offsets_dict[self.anim_prefix][1] * 0.9 - camera_position[1]
+            (self.screen_pos[0] - self.offsets_dict[self.anim_prefix][0] * 0.9 - state.camera_position_lerp[0]) + (state.zoomed_window_size[0] / 2) - constants.SCREEN_CENTER[0],
+            (self.screen_pos[1] - self.offsets_dict[self.anim_prefix][1] * 0.9 - state.camera_position_lerp[1]) + (state.zoomed_window_size[1] / 2) - constants.SCREEN_CENTER[1]
         )
+
         self.animation.tickFrameNum()
 
     def draw(self, screen):

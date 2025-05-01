@@ -35,8 +35,6 @@ class PlayState(BaseState):
         if self.previous_state != 'PlayState' and self.previous_state == 'FreeplayMenuState':
             self.is_freeplay = True
 
-        print(self.is_freeplay, self.previous_state)
-
         #contains chart reader object
         #will automatically start countdown
         self.song = Song(self.song_list[self.level_progress], self.difficulty)
@@ -381,6 +379,9 @@ class PlayState(BaseState):
                         self.stage.player_position[0] + (self.characters['player'].max_idle_size[0] / 2) + self.stage.player_cam_off[0],
                         self.stage.player_position[1] + (self.characters['player'].max_idle_size[1] / 2) + self.stage.player_cam_off[1]
                     ]
+                
+                self.camera_position[0] -= self.zoomed_window_size[0] / 2
+                self.camera_position[1] -= self.zoomed_window_size[1] / 2
 
             #PLAY ANIMATION
             if chart_event['type'] == 'PlayAnimation':
@@ -418,17 +419,19 @@ class PlayState(BaseState):
 
         #this is the size for the camGame surface, but we compute it here so camera can tween to the center.
         self.zoomed_window_size = (
-            constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom) * 2.5 + 1),
-            constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom) * 2.5 + 1)
+            constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom_lerp) * 2.5 + 1),
+            constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom_lerp) * 2.5 + 1)
         )
         if self.zoomed_window_size[0] <= constants.WINDOW_SIZE[0]:
             self.zoomed_window_size = constants.WINDOW_SIZE
         #print(self.zoomed_window_size, self.cam_zoom, ((1 - self.cam_zoom) * 2 + 1))
 
         #update cam lerp
-        if self.song.conductor.cur_beat >= 0:
-            self.camera_position_lerp[0] += ((self.camera_position[0] - self.zoomed_window_size[0] / 2) - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
-            self.camera_position_lerp[1] += ((self.camera_position[1] - self.zoomed_window_size[1] / 2) - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+        self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+        self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
+
+        #lerp cam zoom
+        self.cam_zoom_lerp += (self.cam_zoom - self.cam_zoom_lerp) * dt * 7
 
         #update health lerp
         self.health_lerp += (self.health - self.health_lerp) * (dt * 10)
@@ -438,8 +441,8 @@ class PlayState(BaseState):
 
         #game objects
 
-        self.stage.tick(self.camera_position_lerp)
-        for character in self.characters.values(): character.tick(dt, self.camera_position_lerp)
+        self.stage.tick(self.zoomed_window_size, self.camera_position_lerp)
+        for character in self.characters.values(): character.tick(self)
 
         #hud
         self.health_bar.tick(dt)
@@ -480,8 +483,6 @@ class PlayState(BaseState):
 
         if self.cam_zoom < constants.MIN_CAMERA_ZOOM: self.cam_zoom = constants.MIN_CAMERA_ZOOM
         if self.cam_zoom > constants.MAX_CAMERA_ZOOM: self.cam_zoom = constants.MAX_CAMERA_ZOOM
-
-        self.cam_zoom_lerp += (self.cam_zoom - self.cam_zoom_lerp) * dt * 7
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 

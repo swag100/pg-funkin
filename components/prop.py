@@ -1,4 +1,5 @@
 import pygame
+import constants
 
 from components.spritesheet import Spritesheet
 
@@ -10,10 +11,10 @@ class Prop:
     def on_beat_hit(self, cur_beat):
         pass
 
-    def tick(self, camera_position): #Update position based on scroll factor
+    def tick(self, zoomed_window_size = [0, 0], camera_position = [0, 0]): #Update position based on scroll factor
         self.scrolled_position = (
-            (self.position[0] - camera_position[0]) * self.scroll_factor[0],
-            (self.position[1] - camera_position[1]) * self.scroll_factor[1]
+            ((self.position[0] - camera_position[0]) * self.scroll_factor[0]) + (zoomed_window_size[0] / 2) - constants.SCREEN_CENTER[0],
+            ((self.position[1] - camera_position[1]) * self.scroll_factor[1]) + (zoomed_window_size[1] / 2) - constants.SCREEN_CENTER[0]
         )
     
     def draw(self, screen):
@@ -110,8 +111,8 @@ class AnimatedProp(Prop):
                 if 'danceRight' in self.animations:
                     self.play_animation('danceRight')
 
-    def tick(self, camera_position = [0, 0]): #Update position based on scroll factor
-        super().tick(camera_position)
+    def tick(self, zoomed_window_size = [0, 0], camera_position = [0, 0]): #Update position based on scroll factor
+        super().tick(zoomed_window_size, camera_position)
         self.animation.tickFrameNum()
 
     def play_animation(self, prefix, loop = False, start_time = None):

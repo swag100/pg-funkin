@@ -46,8 +46,8 @@ class Stage:
         for prop in self.props: 
             prop.on_beat_hit(cur_beat)
     
-    def tick(self, camera_position):
-        for prop in self.props: prop.tick(camera_position)
+    def tick(self, camera_position, zoomed_window_size):
+        for prop in self.props: prop.tick(camera_position, zoomed_window_size)
     
     def draw(self, screen):
         for prop in self.props: prop.draw(screen)
