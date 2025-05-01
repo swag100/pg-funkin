@@ -17,7 +17,7 @@
     {
       "zIndex": 20,
       "danceEvery": 0,
-      "position": [-480, 1130],
+      "position": [-540, 1130],
       "scale": [1, 1],
       "name": "bgLimo",
       "animType": "sparrow",
@@ -226,7 +226,7 @@
     "bf": {
       "zIndex": 300,
       "position": [1217.5, 592],
-      "cameraOffsets": [100, 100]
+      "cameraOffsets": [-110, 100]
     },
     "gf": {
       "zIndex": 100,

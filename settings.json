@@ -77,8 +77,8 @@
         "two player": false,
         "controller support": true,
         "hide opponent strums": false,
-        "debug freecam": true,
-        "botplay": true,
+        "debug freecam": false,
+        "botplay": false,
         "offset": 0
     },
     "volume": 4
