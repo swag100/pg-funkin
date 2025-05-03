@@ -201,7 +201,10 @@ class PlayState(BaseState):
                         self.persistent_data.pop('old health', None)
                         self.persistent_data.pop('previous state', None)
 
-                        self.next_state = 'MainMenuState'
+                        if self.is_freeplay:
+                            self.next_state = 'FreeplayMenuState'
+                        else:
+                            self.next_state = 'StoryMenuState'
                         self.done = True
             else:
                 if event.key in settings['keybinds']['forward'] or event.key in settings['keybinds']['back']:
@@ -348,7 +351,11 @@ class PlayState(BaseState):
                 self.next_state = 'PlayState'
 
                 if self.persistent_data['level progress'] >= len(self.song_list):
-                    self.next_state = 'FreeplayMenuState' if self.is_freeplay else 'StoryMenuState'
+                    if self.is_freeplay:
+                        self.next_state = 'FreeplayMenuState'
+                        self.persistent_data['level progress'] = 0
+                    else:
+                        self.next_state = 'StoryMenuState'
                     pygame.mixer.music.stop()
 
                 self.done = True
