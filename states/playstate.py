@@ -433,6 +433,19 @@ class PlayState(BaseState):
             self.zoomed_window_size = constants.WINDOW_SIZE
         #print(self.zoomed_window_size, self.cam_zoom, ((1 - self.cam_zoom) * 2 + 1))
 
+        if settings['preferences']['debug freecam']:
+            #TESTING CAMERA CODE:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_j]: self.camera_position[0] -= 1000 * dt
+            if keys[pygame.K_l]: self.camera_position[0] += 1000 * dt
+            if keys[pygame.K_i]: self.camera_position[1] -= 1000 * dt
+            if keys[pygame.K_k]: self.camera_position[1] += 1000 * dt
+            if keys[pygame.K_u]: self.cam_zoom -= dt
+            if keys[pygame.K_o]: self.cam_zoom += dt
+
+        if self.cam_zoom < constants.MIN_CAMERA_ZOOM: self.cam_zoom = constants.MIN_CAMERA_ZOOM
+        if self.cam_zoom > constants.MAX_CAMERA_ZOOM: self.cam_zoom = constants.MAX_CAMERA_ZOOM
+
         #update cam lerp
         self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED)
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED)
@@ -477,19 +490,6 @@ class PlayState(BaseState):
 
         self.hud_surface_zoom += (1 - self.hud_surface_zoom) * dt * 7
         self.cam_surface_zoom += (1 - self.cam_surface_zoom) * dt * 7
-
-        if settings['preferences']['debug freecam']:
-            #TESTING CAMERA CODE:
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_j]: self.camera_position[0] -= 1000 * dt
-            if keys[pygame.K_l]: self.camera_position[0] += 1000 * dt
-            if keys[pygame.K_i]: self.camera_position[1] -= 1000 * dt
-            if keys[pygame.K_k]: self.camera_position[1] += 1000 * dt
-            if keys[pygame.K_u]: self.cam_zoom -= dt
-            if keys[pygame.K_o]: self.cam_zoom += dt
-
-        if self.cam_zoom < constants.MIN_CAMERA_ZOOM: self.cam_zoom = constants.MIN_CAMERA_ZOOM
-        if self.cam_zoom > constants.MAX_CAMERA_ZOOM: self.cam_zoom = constants.MAX_CAMERA_ZOOM
 
         #for note in self.song.chart_reader.chart: note.tick(dt)
 
