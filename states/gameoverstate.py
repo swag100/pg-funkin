@@ -71,7 +71,7 @@ class GameOverState(BaseState):
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED / 2)
 
         if self.player != None:
-            self.player.tick(dt, self)
+            self.player.tick(self)
             
             if self.is_retrying:
                 self.player_alpha -= 128 * dt
