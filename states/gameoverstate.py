@@ -16,6 +16,7 @@ class GameOverState(BaseState):
         self.cam_zoom = 1
         if 'cam zoom' in persistent_data:
             self.cam_zoom = persistent_data['cam zoom']
+        self.cam_zoom_lerp = self.cam_zoom
         
         self.player = None
         if 'player' in persistent_data:
@@ -65,6 +66,14 @@ class GameOverState(BaseState):
             self.persistent_data['previous state'] = 'GameOverState'
             self.next_state = 'PlayState'
             self.done = True
+
+        #this is the size for the camGame surface, but we compute it here so camera can tween to the center.
+        self.zoomed_window_size = (
+            constants.WINDOW_SIZE[0] * ((1 - self.cam_zoom_lerp) * 2.5 + 1),
+            constants.WINDOW_SIZE[1] * ((1 - self.cam_zoom_lerp) * 2.5 + 1)
+        )
+        if self.zoomed_window_size[0] <= constants.WINDOW_SIZE[0]:
+            self.zoomed_window_size = constants.WINDOW_SIZE
 
         #update cam lerp: I purposefully made this slower.
         self.camera_position_lerp[0] += (self.camera_position[0] - self.camera_position_lerp[0]) * (dt * constants.DEFAULT_CAMERA_SPEED / 2)
