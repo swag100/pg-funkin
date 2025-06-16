@@ -74,7 +74,7 @@
         "fps": 60,
         "": null,
         "Extra": null,
-        "two player": false,
+        "two player": true,
         "controller support": true,
         "hide opponent strums": false,
         "debug freecam": false,
