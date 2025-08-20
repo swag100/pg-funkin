@@ -249,8 +249,10 @@ class Strumline(object):
 
             #if sustain was not eaten after 2 seconds: Delete it!
             if sustain.note.time + ((sustain.length * 2) / 1000) + 2 <= self.conductor.song_position: 
-                self.sustains.remove(sustain)
-        
+                try:
+                    self.sustains.remove(sustain)
+                except:
+                    print(sustain, 'dropped')
 
         for note in self.notes: 
             note.tick(dt)

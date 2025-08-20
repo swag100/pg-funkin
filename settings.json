@@ -1,0 +1,85 @@
+{
+    "keybinds": {
+        "notes": null,
+        "left": [
+            97,
+            1073741904
+        ],
+        "down": [
+            115,
+            1073741905
+        ],
+        "up": [
+            119,
+            1073741906
+        ],
+        "right": [
+            100,
+            1073741903
+        ],
+        "ui": null,
+        "menu_up": [
+            119,
+            1073741906
+        ],
+        "menu_left": [
+            97,
+            1073741904
+        ],
+        "menu_right": [
+            100,
+            1073741903
+        ],
+        "menu_down": [
+            115,
+            1073741905
+        ],
+        "reset": [
+            114,
+            null
+        ],
+        "forward": [
+            13,
+            null
+        ],
+        "back": [
+            27,
+            null
+        ],
+        "pause": [
+            112,
+            null
+        ],
+        "volume": null,
+        "volume_up": [
+            61,
+            null
+        ],
+        "volume_down": [
+            45,
+            null
+        ],
+        "volume_mute": [
+            48,
+            null
+        ]
+    },
+    "preferences": {
+        "naughtyness": true,
+        "downscroll": false,
+        "flashing lights": true,
+        "camera zooming on beat": true,
+        "debug display": false,
+        "auto pause": true,
+        "fps": 60,
+        "": null,
+        "Extra": null,
+        "two player": true,
+        "controller support": true,
+        "hide opponent strums": false,
+        "debug freecam": false,
+        "botplay": false,
+        "offset": 0
+    },
+    "volume": 10
+}
