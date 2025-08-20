@@ -137,6 +137,8 @@ class PlayState(BaseState):
         self.persistent_data['cam zoom'] = self.stage.cam_zoom
         self.persistent_data['player'] = self.characters['player'] #much easier to just pass the bf object.
 
+        self.persistent_data['stupid fix because im dumb zoomed_window_size'] = self.zoomed_window_size
+
         self.next_state = 'GameOverState'
         self.done = True
 

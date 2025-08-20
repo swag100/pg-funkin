@@ -9,6 +9,9 @@ class GameOverState(BaseState):
 
         self.persistent_data = persistent_data
 
+        #dumb fix. im dumb. never put comments on this repo so its really hard to understand
+        self.zoomed_window_size = persistent_data['stupid fix because im dumb zoomed_window_size']
+
         self.camera_position_lerp = (0, 0)
         if 'cam position' in persistent_data:
             self.camera_position_lerp = persistent_data['cam position']
@@ -22,10 +25,10 @@ class GameOverState(BaseState):
             self.player = persistent_data['player']
 
         self.camera_position = (0, 0)
-        if self.player != None:
+        if self.player:
             self.camera_position = (
-                self.player.screen_pos[0] - 500, 
-                self.player.screen_pos[1] - 250
+                self.player.screen_pos[0] - 300, 
+                self.player.screen_pos[1] - 150
             )
 
             self.player.play_animation('firstDeath')
@@ -71,7 +74,7 @@ class GameOverState(BaseState):
         self.camera_position_lerp[1] += (self.camera_position[1] - self.camera_position_lerp[1]) * (dt * constants.DEFAULT_CAMERA_SPEED / 2)
 
         if self.player != None:
-            self.player.tick(dt, self)
+            self.player.tick(self)
             
             if self.is_retrying:
                 self.player_alpha -= 128 * dt
